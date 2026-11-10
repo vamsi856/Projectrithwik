@@ -52,12 +52,15 @@ function show(view: View) {
     siteTriggers[k].forEach((t) => (k === view ? t.enable() : t.disable()));
   });
   document.body.dataset.view = view;
+  document.documentElement.dataset.view = view;
   document.title = titles[view];
   (document.querySelector('meta[name="theme-color"]') as HTMLMetaElement).content = view === 'food' ? '#e4dfc1' : '#0b1924';
   lenis?.scrollTo(0, { immediate: true, force: true });
   window.scrollTo(0, 0);
   if (view !== 'book' && !inited.has(view)) { inited.add(view); initSite(view, sites[view]); }
   ScrollTrigger.refresh();
+  const bookFlock = $('.page__flock') as unknown as SVGSVGElement | null;
+  if (bookFlock && flockTweens.has(bookFlock)) flockTweens.get(bookFlock)!.forEach((t) => (view === 'book' ? t.play() : t.pause()));
   if (view === 'book') openBook();
 }
 
@@ -232,7 +235,7 @@ async function globe(canvas: HTMLCanvasElement, tone: string) {
   const bird = tone === 'bird';
   const g = createGlobe(canvas, {
     devicePixelRatio: 2, width: size, height: size, phi, theta: 0.25, dark: 1, diffuse: 1.4,
-    mapSamples: 18000, mapBrightness: bird ? 5 : 4,
+    mapSamples: 12000, mapBrightness: bird ? 5 : 4,
     baseColor: bird ? [0.12, 0.25, 0.35] : [0.2, 0.22, 0.26],
     markerColor: bird ? [0.95, 0.7, 0.1] : [0.77, 0.6, 0.27],
     glowColor: bird ? [0.25, 0.45, 0.6] : [0.45, 0.4, 0.3],
@@ -282,12 +285,14 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
 
   // globe
   $$<HTMLCanvasElement>('canvas[data-globe]', root).forEach((c) => {
-    const io = new IntersectionObserver(([en]) => {
-      if (!en.isIntersecting || !c.offsetWidth) return;
-      io.disconnect();
-      globe(c, c.dataset.globe!).catch((err) => console.warn('globe', err));
-    }, { rootMargin: '200px' });
-    io.observe(c);
+    let g: { toggle: (on?: boolean) => void } | null = null, loading = false;
+    import('./pack3d').then(({ softwareGL }) => { if (softwareGL()) { c.closest('.vision__globe')?.classList.add('no-gl'); loading = true; } });
+    new IntersectionObserver(async ([en]) => {
+      if (g) return g.toggle(en.isIntersecting);
+      if (!en.isIntersecting || !c.offsetWidth || loading || c.closest('.no-gl')) return;
+      loading = true;
+      g = await globe(c, c.dataset.globe!).catch(() => null);
+    }, { rootMargin: '150px' }).observe(c);
   });
 
   // filters
@@ -329,6 +334,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     const io = new IntersectionObserver(async ([en]) => {
       if (!en.isIntersecting || !c.offsetWidth) return;
       io.disconnect();
+      await new Promise((r) => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(r, { timeout: 1500 }) : setTimeout(r, 300)));
       const { mountPack } = await import('./pack3d');
       const items = JSON.parse(c.dataset.items!);
       const hero = c.closest<HTMLElement>('[data-hero-pack]');
@@ -345,7 +351,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
           if (studio) {
             $$('[data-pick]', studio).forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.pick) === i)));
             $('[data-studio-name]', studio)!.textContent = items[i].name;
-            $('[data-studio-variant]', studio)!.textContent = items[i].variant;
+            $('[data-studio-variant]', studio)!.textContent = items[i].options;
             $('[data-studio-gst]', studio)!.textContent = items[i].gst;
             $('[data-studio-ask]', studio)!.dataset.product = items[i].ask;
             if (!reduce) gsap.from($$('.studio__detail > *', studio), { y: 14, opacity: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' });
@@ -452,8 +458,8 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     tw(gsap.from($$('.step b', sec), { scale: 0, rotate: -90, duration: 0.8, ease: 'back.out(2)', stagger: 0.15, delay: 0.3, scrollTrigger: { trigger: sec, start: 'top 75%', once: true } }));
   });
 
-  // vision: Kurnool pin and items
-  $$('.vision', root).forEach((v) => tw(gsap.to($('.vision__pin', v), { opacity: 1, scale: 1, duration: 0.6, delay: 0.8, scrollTrigger: { trigger: v, start: 'top 60%', once: true } })));
+  // vision: legend fades in under the globe
+  $$('.vision', root).forEach((v) => tw(gsap.from($('.vision__legend', v), { opacity: 0, y: 16, duration: 0.8, delay: 0.6, scrollTrigger: { trigger: v, start: 'top 60%', once: true } })));
 
   // magnetic primary buttons
   if (fine) $$('[data-magnetic]', root).forEach((b) => {
@@ -506,8 +512,7 @@ if (first === 'book') {
   show('book');
   opened = false; // let the cover open on its own
   stage.classList.remove('is-open');
-  const auto = () => setTimeout(openBook, reduce ? 0 : 1100);
-  if (document.readyState === 'complete') auto(); else addEventListener('load', auto, { once: true });
+  (document.fonts?.ready ?? Promise.resolve()).then(() => setTimeout(openBook, reduce ? 0 : 900));
 } else {
   opened = true; stage.classList.add('is-open');
   show(first);

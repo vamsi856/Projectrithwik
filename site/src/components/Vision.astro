@@ -6,9 +6,17 @@ const { id, tone, vision, mission, image, imageAlt = '' } = Astro.props;
 const img = photo(image);
 ---
 <section class:list={['vision', `vision--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
-  <div class="vision__globe" aria-hidden="true">
-    <canvas class="globe" data-globe={tone} width="900" height="900"></canvas>
-    <span class="vision__pin">Kurnool</span>
+  <div class="vision__globe">
+    <canvas class="globe" data-globe={tone} width="900" height="900" aria-hidden="true"></canvas>
+    <svg class="routes" viewBox="0 0 400 400" aria-hidden="true">
+      <circle class="orbit" cx="200" cy="200" r="190" /><circle class="orbit" cx="200" cy="200" r="130" /><circle class="orbit" cx="200" cy="200" r="70" />
+      <path d="M200 200 Q 140 120 70 110" /><path d="M200 200 Q 260 110 330 90" /><path d="M200 200 Q 300 220 360 260" />
+      <path d="M200 200 Q 120 270 60 300" /><path d="M200 200 Q 230 300 250 360" />
+      <circle class="dot" cx="70" cy="110" r="6" /><circle class="dot" cx="330" cy="90" r="6" /><circle class="dot" cx="360" cy="260" r="6" />
+      <circle class="dot" cx="60" cy="300" r="6" /><circle class="dot" cx="250" cy="360" r="6" />
+      <circle class="home" cx="200" cy="200" r="11" />
+    </svg>
+    <p class="vision__legend"><span><i class="is-home"></i>Kurnool, our home</span><span><i class="is-next"></i>Markets we're working towards</span></p>
   </div>
   <div class="vision__copy">
     <h2 class="section-title" id={`${id}-title`} data-split>From Kurnool to the world</h2>

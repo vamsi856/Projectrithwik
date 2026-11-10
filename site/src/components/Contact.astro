@@ -4,7 +4,7 @@ interface Props { id: string; tone: 'bird' | 'food'; brand: string; email: strin
 const { id, tone, brand, email, options, label, qtyHint, msgHint } = Astro.props;
 ---
 <section class:list={['enquire', tone === 'food' && 'enquire--food']} id={id} aria-labelledby={`${id}-title`}>
-  <span class="ghost ghost--enq" aria-hidden="true">Order</span>
+  <span class="ghost ghost--enq" data-ghost="Order" aria-hidden="true"></span>
   <div class="enquire__grid">
     <div class="enquire__info">
       <h2 class:list={['section-title', tone === 'food' ? 'section-title--food' : 'section-title--light']} id={`${id}-title`} data-split>Ask for a price</h2>

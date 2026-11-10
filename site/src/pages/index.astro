@@ -1,9 +1,4 @@
 ---
-import '@fontsource/anton/400.css';
-import '@fontsource/instrument-sans/400.css';
-import '@fontsource/instrument-sans/500.css';
-import '@fontsource/instrument-sans/600.css';
-import '@fontsource/instrument-sans/700.css';
 import '../styles/site.css';
 import '../styles/v2.css';
 import { Image } from 'astro:assets';
@@ -43,8 +38,29 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
   <title>Rithwik, Kurnool: Bird Feeds and Human Food</title>
   <meta name="description" content="Two businesses from Kurnool, Andhra Pradesh. Rithwik Bird Feeds: foxtail, proso, sunflower, jowar and more. Rithwik Industries: millets, super seeds, quinoa, dals and spices." />
   <meta name="theme-color" content="#0b1924" />
-  <meta name="view-transition" content="same-origin" />
+  <link rel="canonical" href="https://vamsi856.github.io/Projectrithwik/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Rithwik, Kurnool" />
+  <meta property="og:title" content="Rithwik Bird Feeds & Rithwik Industries, Kurnool" />
+  <meta property="og:description" content="Bird feed grains and human food staples from Kurnool, Andhra Pradesh. Millets, sunflower, jowar, super seeds, quinoa, dals and spices." />
+  <meta property="og:url" content="https://vamsi856.github.io/Projectrithwik/" />
+  <meta property="og:image" content={new URL(`${base}og.jpg`, 'https://vamsi856.github.io').href} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="apple-touch-icon" href={`${base}favicon.jpg`} />
+  <script type="application/ld+json" set:html={JSON.stringify([
+    { '@context': 'https://schema.org', '@type': 'LocalBusiness', name: BRANDS.bird.name, email: BRANDS.bird.email, telephone: '+91 83097 82770', taxID: BRANDS.bird.gstin, url: 'https://vamsi856.github.io/Projectrithwik/#bird-feeds',
+      address: { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' } },
+    { '@context': 'https://schema.org', '@type': 'LocalBusiness', name: BRANDS.food.name, email: BRANDS.food.email, telephone: '+91 83097 82770', taxID: BRANDS.food.gstin, url: 'https://vamsi856.github.io/Projectrithwik/#human-food',
+      address: { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' } },
+  ])} />
   <link rel="icon" href={`${base}favicon.jpg`} />
+  <link rel="preload" href={`${base}fonts/anton-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href={`${base}fonts/instrument-sans-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href={`${base}fonts/instrument-sans-latin-600-normal.woff2`} as="font" type="font/woff2" crossorigin />
+  <script is:inline>
+    // Show the right site before first paint when the link points straight at one.
+    (function () { var h = location.hash; document.documentElement.dataset.view = h === '#bird-feeds' ? 'bird' : h === '#human-food' ? 'food' : 'book'; })();
+  </script>
 </head>
 <body data-view="book">
 
@@ -120,12 +136,12 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
         )}
         <canvas class="seedfall" aria-hidden="true"></canvas>
         <svg class="bird__flock" data-flock="11" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
-        <span class="ghost ghost--bird" aria-hidden="true">Feeds</span>
+        <span class="ghost ghost--bird" data-ghost="Feeds" aria-hidden="true"></span>
         <div class="bird__intro bird__intro--pack">
           <div class="bird__copy">
             <Image class="bird__badge bird__badge--sm" src={birdLogo} alt="Rithwik Bird Feeds emblem" width={220} loading="eager" />
             <h1 class="display" id="bird-title" data-split><span class="display__a">Rithwik</span> <span class="display__b">Bird feeds</span></h1>
-            <p class="bird__lede" data-rise>Seventeen feed grains, sold raw or cleaned, from our office in Kurnool and our warehouse at Duvvur.</p>
+            <p class="bird__lede" data-rise>Seventeen feed lines, sold raw or cleaned, from our office in Kurnool and our warehouse at Duvvur.</p>
             <div class="actions" data-rise>
               <a class="pill pill--gold" href="#b-feeds" data-jump data-magnetic>See the feeds</a>
               <a class="pill pill--line" href={`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent('Hello Rithwik Bird Feeds, I would like a price.')}`} target="_blank" rel="noopener">WhatsApp an order</a>
@@ -137,7 +153,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
       </section>
 
       <div class="facts" aria-label="Rithwik Bird Feeds at a glance">
-        <div class="fact"><b data-count={nBird}>{nBird}</b><span>feed lines in stock</span></div>
+        <div class="fact"><b data-count={nBird}>{nBird}</b><span>feed lines</span></div>
         <div class="fact"><b>Summer &amp; winter</b><span>foxtail crops, raw or cleaned</span></div>
         <div class="fact"><b>Sortex</b><span>cleaned white proso</span></div>
         <div class="fact fact--code"><b>{BRANDS.bird.gstin}</b><span>GSTIN</span></div>
@@ -213,7 +229,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
 
     <main>
       <section class="food-hero" id="f-top" aria-labelledby="food-title">
-        <span class="ghost ghost--food" aria-hidden="true">Grain</span>
+        <span class="ghost ghost--food" data-ghost="Grain" aria-hidden="true"></span>
         <div class="food-hero__copy">
           <p class="food-hero__brand" data-rise>Rithwik Industries</p>
           <h1 class="display display--food" id="food-title" data-split>Nature's grain, nurtured for you</h1>

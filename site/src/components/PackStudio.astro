@@ -1,11 +1,11 @@
 ---
 // "Our packs": pick any product, the pack spins and reprints its label.
-interface Item { id: string; name: string; variant: string; photo?: string; c1: string; c2: string; ask: string; gst: string }
+interface Item { id: string; name: string; variant: string; options: string; photo?: string; c1: string; c2: string; ask: string; gst: string }
 interface Props { id: string; kind: 'sack' | 'pouch'; tone: 'bird' | 'food'; logo: string; items: Item[]; contact: string; title: string; lede: string }
 const { id, kind, tone, logo, items, contact, title, lede } = Astro.props;
 ---
 <section class:list={['studio', `studio--${tone}`]} id={id} aria-labelledby={`${id}-title`} data-studio>
-  <span class="ghost ghost--studio" aria-hidden="true">Packs</span>
+  <span class="ghost ghost--studio" data-ghost="Packs" aria-hidden="true"></span>
   <div class="studio__stage">
     <div class="studio__spot" aria-hidden="true"></div>
     <canvas class="studio__canvas" data-pack={kind} data-logo={logo} data-items={JSON.stringify(items)} role="img" aria-label="Product pack, drag to turn"></canvas>
@@ -25,7 +25,7 @@ const { id, kind, tone, logo, items, contact, title, lede } = Astro.props;
     <div class="studio__detail">
       <div>
         <p class="studio__name" data-studio-name>{items[0].name}</p>
-        <p class="studio__variant" data-studio-variant>{items[0].variant}</p>
+        <p class="studio__variant" data-studio-variant>{items[0].options}</p>
       </div>
       <p class="studio__gst">GST <b data-studio-gst>{items[0].gst}</b></p>
       <a class:list={['pill', tone === 'food' ? 'pill--ink' : 'pill--gold']} href={`#${contact}`} data-product={items[0].ask} data-studio-ask>Ask price for this</a>

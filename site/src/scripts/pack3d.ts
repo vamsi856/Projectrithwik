@@ -169,12 +169,73 @@ function packGeometry(kind: PackKind, side: 1 | -1 = 1) {
   return geo;
 }
 
-export async function mountPack(canvas: HTMLCanvasElement, opts: PackOptions) {
+/** True when WebGL would run on the CPU (no graphics card, or blocked). */
+export function softwareGL() {
+  try {
+    const c = document.createElement('canvas');
+    const gl = (c.getContext('webgl', { failIfMajorPerformanceCaveat: true }) || null) as WebGLRenderingContext | null;
+    if (!gl) return true;
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : '';
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return /swiftshader|llvmpipe|software|basic render/i.test(name);
+  } catch { return true; }
+}
+
+type PackControl = { show: (i: number) => Promise<void>; next: () => Promise<void>; prev: () => Promise<void>; readonly index: number; setScrollSpin: (v: number) => void; stopAuto: () => void };
+
+/** Light 2D version of the pack for machines without a graphics card. */
+async function mountFlat(canvas: HTMLCanvasElement, opts: PackOptions): Promise<PackControl> {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  await Promise.all([document.fonts.load('400 80px Anton'), document.fonts.load('600 40px "Instrument Sans"')]).catch(() => {});
+  const label = document.createElement('canvas'); label.width = TW; label.height = TH;
+  const lctx = label.getContext('2d')!;
+  const ctx = canvas.getContext('2d')!;
+  const logo = await loadImg(opts.logo);
+  const paint = opts.kind === 'sack' ? paintSack : paintPouch;
+  let index = 0;
+  const render = () => {
+    const dpr = Math.min(devicePixelRatio, 2), w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return;
+    canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const ph = h * 0.82, pw = ph * (TW / TH), x = (w - pw) / 2, y = (h - ph) / 2 - h * 0.02;
+    ctx.clearRect(0, 0, w, h);
+    const sh = ctx.createRadialGradient(w / 2, y + ph + 14, 0, w / 2, y + ph + 14, pw * 0.6);
+    sh.addColorStop(0, 'rgba(0,0,0,.35)'); sh.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = sh; ctx.fillRect(0, y + ph - 20, w, 70);
+    ctx.save(); ctx.beginPath(); (ctx as any).roundRect?.(x, y, pw, ph, 14) ?? ctx.rect(x, y, pw, ph); ctx.clip();
+    ctx.drawImage(label, x, y, pw, ph);
+    const g = ctx.createLinearGradient(x, 0, x + pw, 0); // pillow shading
+    g.addColorStop(0, 'rgba(0,0,0,.32)'); g.addColorStop(0.18, 'rgba(255,255,255,.08)'); g.addColorStop(0.5, 'rgba(255,255,255,0)'); g.addColorStop(0.85, 'rgba(0,0,0,.1)'); g.addColorStop(1, 'rgba(0,0,0,.38)');
+    ctx.fillStyle = g; ctx.fillRect(x, y, pw, ph); ctx.restore();
+  };
+  const draw = async (i: number) => { const it = opts.items[i]; await paint(lctx, it, logo, await loadImg(it.photo)); render(); };
+  await draw(0);
+  new ResizeObserver(render).observe(canvas);
+  let busy = false;
+  const show = async (i: number) => {
+    if (busy || i === index) return; busy = true;
+    index = (i + opts.items.length) % opts.items.length; opts.onChange?.(index);
+    if (reduce) { await draw(index); busy = false; return; }
+    await gsap.to(canvas, { rotateY: 90, duration: 0.35, ease: 'power2.in', transformPerspective: 900 });
+    await draw(index);
+    await gsap.to(canvas, { rotateY: 0, duration: 0.5, ease: 'back.out(1.6)' });
+    busy = false;
+  };
+  let timer = 0;
+  const startAuto = () => { if (opts.auto && !reduce) timer = window.setInterval(() => show(index + 1), opts.auto); };
+  const stopAuto = () => clearInterval(timer);
+  startAuto();
+  return { show, next: () => show(index + 1), prev: () => show(index - 1), get index() { return index; }, setScrollSpin: () => {}, stopAuto };
+}
+
+export async function mountPack(canvas: HTMLCanvasElement, opts: PackOptions): Promise<PackControl> {
+  if (softwareGL()) return mountFlat(canvas, opts);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   await Promise.all([document.fonts.load('400 80px Anton'), document.fonts.load('600 40px "Instrument Sans"'), document.fonts.load('italic 500 40px "Instrument Sans"')]).catch(() => {});
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = opts.kind === 'sack' ? 0.9 : 1.0;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -230,36 +291,39 @@ export async function mountPack(canvas: HTMLCanvasElement, opts: PackOptions) {
     renderer.setSize(w, h, false); camera.aspect = w / h;
     camera.position.z = w / h < 0.8 ? 3.9 : 3.3;
     camera.updateProjectionMatrix();
+    dirty = true;
   };
   size(); new ResizeObserver(size).observe(canvas);
 
-  let visible = true, dragY = 0, dragV = 0, tiltX = 0, tiltY = 0, scrollSpin = 0, t0 = performance.now();
+  // Render on demand: the GPU only works while something changes (a spin, a drag,
+  // scrolling, the pointer). The gentle idle float is done in CSS on the canvas.
+  let visible = true, dirty = true, dragY = 0, dragV = 0, tiltX = 0, tiltY = 0, scrollSpin = 0;
+  const wake = () => { dirty = true; };
   const tick = () => {
-    if (!visible) return;
-    const t = (performance.now() - t0) / 1000;
-    if (!reduce) { dragY += dragV; dragV *= 0.94; }
-    rig.position.y = reduce ? 0 : Math.sin(t * 1.1) * 0.04;
-    rig.rotation.y = dragY + scrollSpin + (reduce ? 0 : Math.sin(t * 0.6) * 0.22) + tiltY;
-    rig.rotation.x = tiltX + (reduce ? 0 : Math.sin(t * 0.8) * 0.03);
-    rig.rotation.z = reduce ? 0 : Math.sin(t * 0.7) * 0.02;
-    (shadow.material as THREE.MeshBasicMaterial).opacity = 0.9 - rig.position.y * 3;
+    if (!visible || document.hidden) return;
+    if (Math.abs(dragV) > 1e-4) { dragY += dragV; dragV *= 0.92; dirty = true; }
+    if (!dirty) return;
+    dirty = false;
+    rig.rotation.y = dragY + scrollSpin + tiltY - 0.25;
+    rig.rotation.x = tiltX;
     renderer.render(scene, camera);
   };
   gsap.ticker.add(tick);
-  new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(canvas);
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) wake(); }).observe(canvas);
 
   // pointer: tilt on hover, drag to spin
   canvas.addEventListener('pointermove', (e) => {
     const r = canvas.getBoundingClientRect();
     tiltY = ((e.clientX - r.left) / r.width - 0.5) * 0.5;
     tiltX = ((e.clientY - r.top) / r.height - 0.5) * 0.25;
+    wake();
   });
-  canvas.addEventListener('pointerleave', () => { const o = { x: tiltX, y: tiltY }; gsap.to(o, { x: 0, y: 0, duration: 0.8, onUpdate: () => { tiltX = o.x; tiltY = o.y; } }); });
+  canvas.addEventListener('pointerleave', () => { const o = { x: tiltX, y: tiltY }; gsap.to(o, { x: 0, y: 0, duration: 0.8, onUpdate: () => { tiltX = o.x; tiltY = o.y; wake(); } }); });
   if (opts.drag !== false) {
     let lastX = 0, dragging = false;
     canvas.style.touchAction = 'pan-y';
     canvas.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing'; });
-    canvas.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; dragY += dx * 0.012; dragV = dx * 0.004; });
+    canvas.addEventListener('pointermove', (e) => { if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; dragY += dx * 0.012; dragV = dx * 0.004; wake(); });
     const up = () => { dragging = false; canvas.style.cursor = 'grab'; };
     canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
     canvas.style.cursor = 'grab';
@@ -271,15 +335,15 @@ export async function mountPack(canvas: HTMLCanvasElement, opts: PackOptions) {
     if (busy || i === index) return;
     busy = true; index = (i + opts.items.length) % opts.items.length;
     opts.onChange?.(index);
-    if (reduce) { await draw(index); busy = false; return; }
+    if (reduce) { await draw(index); wake(); busy = false; return; }
     const o = { a: 0 }; let swapped = false;
     const start = dragY;
     await new Promise<void>((done) => gsap.to(o, {
       a: Math.PI * 2, duration: 1.15, ease: 'power3.inOut',
-      onUpdate: () => { dragY = start + o.a; if (!swapped && o.a > Math.PI / 2) { swapped = true; draw(index); } },
+      onUpdate: () => { dragY = start + o.a; wake(); if (!swapped && o.a > Math.PI / 2) { swapped = true; draw(index).then(wake); } },
       onComplete: () => done(),
     }));
-    gsap.fromTo(rig.scale, { x: 0.94, y: 1.06 }, { x: 1, y: 1, duration: 0.9, ease: 'elastic.out(1, 0.4)' });
+    gsap.fromTo(rig.scale, { x: 0.94, y: 1.06 }, { x: 1, y: 1, duration: 0.9, ease: 'elastic.out(1, 0.4)', onUpdate: wake });
     busy = false;
   }
 
@@ -290,14 +354,14 @@ export async function mountPack(canvas: HTMLCanvasElement, opts: PackOptions) {
   canvas.addEventListener('pointerdown', () => { stopAuto(); clearTimeout((canvas as any)._resume); (canvas as any)._resume = setTimeout(startAuto, 8000); });
 
   // entrance: the pack drops in and settles
-  if (!reduce) gsap.from(rig.position, { y: 1.4, duration: 1.4, ease: 'bounce.out' }), gsap.from(rig.rotation, { z: 0.5, duration: 1.4, ease: 'power3.out' });
+  if (!reduce) { gsap.from(rig.position, { y: 1.4, duration: 1.4, ease: 'bounce.out', onUpdate: wake }); gsap.from(rig.rotation, { z: 0.5, duration: 1.4, ease: 'power3.out', onUpdate: wake }); }
 
   return {
     show,
     next: () => show(index + 1),
     prev: () => show(index - 1),
     get index() { return index; },
-    setScrollSpin: (v: number) => { scrollSpin = v; },
+    setScrollSpin: (v: number) => { scrollSpin = v; wake(); },
     stopAuto,
   };
 }

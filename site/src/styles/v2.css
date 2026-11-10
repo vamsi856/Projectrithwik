@@ -1,4 +1,5 @@
 /* v2: two self-contained sites, photo product cards, vision globe, richer motion */
+.turn { position: fixed; z-index: 80; left: 0; top: 0; width: 0; height: 0; visibility: hidden; pointer-events: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ---------- book stage extras ---------- */
@@ -9,6 +10,9 @@
 
 /* ---------- sites ---------- */
 .site[hidden], .stage[hidden] { display: none; }
+/* before the script runs, the head snippet has already picked the view from the link */
+html[data-view="bird"] .site--bird[hidden], html[data-view="food"] .site--food[hidden] { display: block; }
+html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .site { position: relative; min-height: 100svh; }
 .site--bird { background: var(--navy); color: var(--khaki); }
 .site--food { background: var(--khaki); color: var(--ink); }
@@ -204,7 +208,12 @@
 .vision__globe { position: relative; aspect-ratio: 1; width: 100%; max-width: 620px; justify-self: center; }
 .globe { width: 100%; height: 100%; display: block; contain: layout paint size; opacity: 0; transition: opacity 1s; }
 .globe.is-ready { opacity: 1; }
-.vision__pin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-weight: 700; font-size: .85rem; padding: 6px 12px; border-radius: 999px; background: var(--marigold); color: var(--navy); pointer-events: none; opacity: 0; }
+.vision__legend { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; font-size: .85rem; font-weight: 600; opacity: .85; }
+.vision__legend span { display: inline-flex; align-items: center; gap: 8px; }
+.vision__legend i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.vision__legend .is-home { background: var(--marigold); box-shadow: 0 0 0 4px rgba(242, 178, 27, .25); }
+.vision__legend .is-next { width: 8px; height: 8px; background: var(--marigold); opacity: .6; }
+.vision--food .vision__legend .is-home, .vision--food .vision__legend .is-next { background: var(--bronze-2); }
 .vm { display: grid; gap: 14px; margin: 8px 0 22px; }
 .vm__item { padding: 22px 24px; border-radius: 22px; }
 .vision--bird .vm__item { background: rgba(124, 196, 234, .08); box-shadow: inset 0 0 0 1px rgba(124, 196, 234, .16); }
@@ -299,7 +308,10 @@
 .food-hero__art--pack { position: relative; width: 100%; justify-self: stretch; }
 .food-hero__art--pack .grainpour { inset: -6% 0 30% 0; width: 100%; height: 76%; }
 .food-hero { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
-@media (max-width: 860px) { .food-hero__art--pack { order: -1; } }
+@media (max-width: 860px) {
+  .food-hero { grid-template-columns: 1fr; padding-top: 24px; gap: 8px; }
+  .food-hero__art--pack { order: -1; }
+}
 
 /* studio */
 .studio {
@@ -345,3 +357,34 @@
   .studio { grid-template-columns: 1fr; }
   .studio__stage { aspect-ratio: 1; max-height: 60svh; }
 }
+
+/* idle float for the 3D packs: done by the compositor, so the GPU scene can sleep */
+.hpack__canvas, .studio__canvas { animation: packfloat 5.5s ease-in-out infinite; will-change: transform; }
+@keyframes packfloat { 0%, 100% { transform: translateY(0) rotate(-.6deg); } 50% { transform: translateY(-12px) rotate(.6deg); } }
+@media (prefers-reduced-motion: reduce) { .hpack__canvas, .studio__canvas { animation: none; } }
+
+/* ghost words are pure decoration: drawn from a data attribute so they stay out of
+   the accessibility tree and contrast checks */
+.ghost::before { content: attr(data-ghost); }
+/* small bronze text on light backgrounds needs the darker ink to meet WCAG AA */
+.food-hero__brand, .site--food .sbar__brand b, .enquire--food .contact dt, .site--food .pcard__gst { color: var(--bronze-ink); }
+.studio__note { opacity: 1; }
+.studio--bird .studio__note { color: rgba(228, 223, 193, .72); }
+.studio--food .studio__note { color: rgba(28, 37, 51, .72); }
+.studio__hint { opacity: 1; }
+.studio--bird .studio__hint { color: rgba(228, 223, 193, .7); }
+.studio--food .studio__hint { color: rgba(28, 37, 51, .7); }
+
+/* globe fallback for devices without hardware graphics */
+.routes { display: none; position: absolute; inset: 6% 6% 14%; }
+.no-gl .globe { display: none; }
+.no-gl .routes { display: block; }
+.routes circle.orbit { fill: none; stroke-width: 1.2; }
+.vision--bird .routes circle.orbit { stroke: rgba(124, 196, 234, .22); }
+.vision--food .routes circle.orbit { stroke: rgba(228, 223, 193, .18); }
+.routes path { fill: none; stroke-width: 2; stroke-dasharray: 5 7; stroke: var(--marigold); opacity: .7; }
+.vision--food .routes path { stroke: var(--bronze-2); }
+.routes .dot { fill: var(--marigold); }
+.vision--food .routes .dot { fill: var(--bronze-2); }
+.routes .home { fill: var(--marigold); stroke: rgba(242, 178, 27, .3); stroke-width: 10; }
+.vision--food .routes .home { fill: var(--bronze-2); stroke: rgba(197, 155, 69, .3); }

@@ -1,8 +1,15 @@
+@font-face { font-family: "Anton"; src: url("../fonts/anton-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("../fonts/instrument-sans-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("../fonts/instrument-sans-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("../fonts/instrument-sans-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("../fonts/instrument-sans-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+
 /* Rithwik Bird Feeds & Rithwik Industries
    Colours are lifted from the two logos: bird feeds navy, sky and marigold;
    industries khaki, bronze and ink. */
 
 :root {
+  --bronze-ink: #6b4d12;
   --navy: #0b1924;
   --navy-2: #132a3b;
   --navy-3: #1c3a50;
@@ -113,8 +120,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-weight: 500; font-size: 1.05rem; color: rgba(28, 37, 51, .75);
   text-align: center;
 }
-.stage__direct { position: relative; margin: 0; font-size: .95rem; color: rgba(28, 37, 51, .75); text-align: center; }
-.stage__direct a { font-weight: 600; color: var(--ink); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
 
 .book {
   position: relative;
@@ -328,92 +333,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .book__shadow { left: 5%; right: 5%; }
 }
 
-/* page-turn layer */
-.turn {
-  position: fixed; z-index: 60; pointer-events: none;
-  left: 0; top: 0; width: 0; height: 0; visibility: hidden;
-}
-
 /* =========================================================
    SITES (each business is its own site)
    ========================================================= */
-.site[hidden], .stage[hidden] { display: none; }
-.site { position: relative; min-height: 100svh; }
-.site--bird { background: var(--navy); color: var(--khaki); }
-.site--food { background: var(--khaki); color: var(--ink); }
-body[data-view="bird"] { background: var(--navy); }
-
-/* utility strip, Umayal-style */
-.strip {
-  display: flex; flex-wrap: wrap; gap: 6px 22px; justify-content: flex-end;
-  padding: 8px var(--gutter); font-size: .85rem; font-weight: 600;
-}
-.strip a { text-decoration: none; }
-.strip a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.site--bird .strip { background: var(--marigold); color: var(--navy); }
-.site--food .strip { background: var(--ink); color: var(--khaki); }
-
-.sbar {
-  position: sticky; top: 0; z-index: 40;
-  display: flex; align-items: center; gap: 18px;
-  padding: 12px var(--gutter);
-  transition: box-shadow .3s, background-color .3s;
-}
-.site--bird .sbar { background: rgba(11, 25, 36, .92); border-bottom: 1px solid rgba(124, 196, 234, .14); }
-.site--food .sbar { background: rgba(228, 223, 193, .94); border-bottom: 1px solid rgba(28, 37, 51, .1); }
-.sbar.is-stuck { box-shadow: 0 10px 30px -18px rgba(0, 0, 0, .6); }
-.sbar { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
-.sbar__brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.sbar__brand img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: 50% 28%; }
-.site--food .sbar__brand img { object-fit: contain; background: var(--paper); padding: 3px; }
-.sbar__brand span { font: 400 1.45rem/1 var(--display); text-transform: uppercase; letter-spacing: .02em; }
-.sbar__brand b { font-weight: 400; }
-.site--bird .sbar__brand span { color: var(--marigold); }
-.site--bird .sbar__brand b { color: var(--sky); }
-.site--food .sbar__brand b { color: var(--bronze); }
-.sbar__nav { display: flex; gap: 2px; margin-left: auto; }
-.sbar__nav a {
-  position: relative; text-decoration: none; font-weight: 600; font-size: .95rem;
-  padding: 10px 14px; opacity: .78; transition: opacity .2s;
-}
-.sbar__nav a::after {
-  content: ""; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 2px; border-radius: 2px;
-  background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease);
-}
-.sbar__nav a:hover, .sbar__nav a.is-current { opacity: 1; }
-.sbar__nav a:hover::after, .sbar__nav a.is-current::after { transform: scaleX(1); }
-.site--bird .sbar__nav a.is-current { color: var(--marigold); }
-.site--food .sbar__nav a.is-current { color: var(--bronze); }
-.sbar__call {
-  text-decoration: none; font-weight: 600; font-size: .92rem;
-  padding: 11px 18px; border-radius: 999px; white-space: nowrap;
-}
-.site--bird .sbar__call { background: var(--marigold); color: var(--navy); }
-.site--food .sbar__call { background: var(--ink); color: var(--khaki); }
-.sbar__book {
-  display: inline-flex; align-items: center; gap: 8px;
-  min-height: 44px; padding: 0 16px 0 12px; border-radius: 999px; text-decoration: none;
-  font-weight: 600; font-size: .9rem; border: 1.5px solid currentColor; opacity: .85;
-  transition: opacity .2s, background-color .2s;
-}
-.sbar__book::before { content: ""; width: 20px; height: 20px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 6.5C10 5 7.2 4.5 3 4.6v13.2c4.2-.1 7 .4 9 1.9 2-1.5 4.8-2 9-1.9V4.6c-4.2-.1-7 .4-9 1.9Zm-1 10.6c-1.8-.8-4-1.2-6.5-1.3V6.6c2.8 0 4.9.4 6.5 1.4v9.1Zm8.5-1.3c-2.5.1-4.7.5-6.5 1.3V8c1.6-1 3.7-1.4 6.5-1.4v9.2Z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 6.5C10 5 7.2 4.5 3 4.6v13.2c4.2-.1 7 .4 9 1.9 2-1.5 4.8-2 9-1.9V4.6c-4.2-.1-7 .4-9 1.9Zm-1 10.6c-1.8-.8-4-1.2-6.5-1.3V6.6c2.8 0 4.9.4 6.5 1.4v9.1Zm8.5-1.3c-2.5.1-4.7.5-6.5 1.3V8c1.6-1 3.7-1.4 6.5-1.4v9.2Z'/%3E%3C/svg%3E") center/contain no-repeat; }
-.sbar__book:hover { opacity: 1; }
-@media (max-width: 980px) {
-  .sbar { flex-wrap: wrap; row-gap: 6px; padding-top: 10px; padding-bottom: 6px; }
-  .sbar__nav { order: 5; width: 100%; margin: 0 -10px; overflow-x: auto; scrollbar-width: none; }
-  .sbar__call { margin-left: auto; }
-}
-@media (max-width: 640px) {
-  .strip { justify-content: center; font-size: .78rem; gap: 4px 14px; }
-  .sbar { gap: 8px; }
-  .sbar__brand img { width: 38px; height: 38px; }
-  .sbar__brand span { font-size: 1.15rem; }
-  .sbar__nav a { padding: 8px 10px; font-size: .9rem; white-space: nowrap; }
-  .sbar__call { font-size: 0; padding: 0; width: 42px; height: 42px; display: grid; place-items: center; }
-  .sbar__call::before { content: ""; width: 18px; height: 18px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z'/%3E%3C/svg%3E") center/contain no-repeat; }
-  .sbar__book { padding: 0; width: 42px; justify-content: center; }
-  .sbar__book span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-}
+.stage[hidden] { display: none; }
 
 /* =========================================================
    BIRD FEEDS
@@ -485,30 +408,6 @@ body[data-view="bird"] { background: var(--navy); }
 .chip:hover { border-color: var(--sky); }
 .chip.is-on { background: var(--sky); border-color: var(--sky); color: var(--navy); }
 
-.feed-list {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px;
-}
-.feed {
-  display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto;
-  column-gap: 16px; align-items: center;
-  padding: 16px 18px 16px 16px;
-  background: var(--navy-2);
-  border-radius: 20px;
-}
-.feed.is-hidden { display: none; }
-.feed .seed { grid-row: 1 / 3; }
-.feed__name { font-weight: 700; font-size: 1.1rem; line-height: 1.25; }
-.feed__note { grid-column: 2; font-size: .9rem; color: rgba(228, 223, 193, .65); min-height: 1.2em; }
-.feed__gst { grid-column: 3; grid-row: 1; justify-self: end; font-size: .78rem; font-weight: 600; color: var(--sky); white-space: nowrap; }
-.feed__ask {
-  grid-column: 3; grid-row: 2; justify-self: end;
-  font-size: .88rem; font-weight: 600; color: var(--marigold);
-  text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(242, 178, 27, .4);
-  padding: 4px 0;
-}
-.feed__ask:hover { text-decoration-color: var(--marigold); }
-
 /* grain swatch: a little heap of seeds drawn with gradients */
 .seed {
   --g: 8px;
@@ -521,11 +420,6 @@ body[data-view="bird"] { background: var(--navy); }
   box-shadow: inset 0 -6px 10px rgba(0, 0, 0, .28), inset 0 3px 6px rgba(255, 255, 255, .18), 0 0 0 3px rgba(255, 255, 255, .06);
   flex: none;
 }
-
-/* =========================================================
-   HUMAN FOOD
-   ========================================================= */
-.site--food main { overflow: hidden; }
 .food-hero {
   position: relative;
   max-width: var(--max); margin: 0 auto;
@@ -536,7 +430,7 @@ body[data-view="bird"] { background: var(--navy); }
 .ghost--food { left: -4vw; bottom: 2vh; color: rgba(160, 122, 44, .1); }
 .food-hero__copy { position: relative; z-index: 1; }
 .food-hero__brand { margin: 0 0 14px; font-weight: 700; color: var(--bronze); font-size: 1.05rem; }
-.display--food { color: var(--ink); font-size: clamp(3rem, 6.6vw, 6.6rem); text-wrap: balance; }
+.display--food { color: var(--ink); font-size: clamp(2.5rem, 6.6vw, 6.6rem); text-wrap: balance; overflow-wrap: anywhere; }
 .food-hero__lede { max-width: 40ch; margin: 24px 0 0; font-size: clamp(1.05rem, 1.4vw, 1.2rem); color: rgba(28, 37, 51, .82); }
 .food-hero__art { margin: 0; position: relative; z-index: 1; justify-self: center; }
 .food-hero__art img { width: min(100%, 360px); mix-blend-mode: multiply; }
@@ -545,53 +439,7 @@ body[data-view="bird"] { background: var(--navy); }
   .food-hero__art { order: -1; justify-self: start; }
   .food-hero__art img { width: 150px; }
 }
-
-.shelf {
-  max-width: var(--max); margin: 0 auto;
-  padding: clamp(40px, 7vw, 96px) var(--gutter);
-  display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(28px, 5vw, 80px); align-items: start;
-}
-.shelf--flip { grid-template-columns: 1.15fr 1fr; }
-.shelf--flip .shelf__photo { order: 2; }
-.shelf__photo {
-  margin: 0; position: sticky; top: 110px;
-  border-radius: 28px; overflow: hidden; aspect-ratio: 4 / 5;
-  background: #2a2c2e;
-}
-.shelf__photo img { width: 100%; height: 118%; object-fit: cover; will-change: transform; }
 .section-title--food { color: var(--ink); }
-.shelf__note { margin: 0 0 28px; max-width: 52ch; color: rgba(28, 37, 51, .8); }
-@media (max-width: 860px) {
-  .shelf, .shelf--flip { grid-template-columns: 1fr; }
-  .shelf--flip .shelf__photo { order: 0; }
-  .shelf__photo { position: relative; top: 0; aspect-ratio: 16 / 10; }
-}
-
-.food-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.food-list--wide { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
-.food {
-  display: grid; grid-template-columns: auto 1fr auto auto; gap: 16px; align-items: center;
-  padding: 12px 18px 12px 12px;
-  background: var(--paper);
-  border-radius: 999px;
-}
-.food .seed { width: 44px; height: 44px; }
-.food__name { font-weight: 700; font-size: 1.05rem; line-height: 1.2; }
-.food__name small { display: block; font-weight: 500; font-size: .85rem; color: rgba(28, 37, 51, .62); }
-.food__gst { font-size: .78rem; font-weight: 600; color: var(--leaf); white-space: nowrap; }
-.food__ask {
-  font-size: .86rem; font-weight: 600; color: var(--bronze); white-space: nowrap;
-  text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(160, 122, 44, .4);
-}
-.food__ask:hover { text-decoration-color: var(--bronze); }
-@media (max-width: 420px) {
-  .food { grid-template-columns: auto 1fr auto; column-gap: 14px; row-gap: 0; border-radius: 22px; padding: 10px 16px 10px 10px; }
-  .food .seed { grid-row: 1 / 3; }
-  .food__gst { grid-column: 2; grid-row: 2; }
-  .food__ask { grid-column: 3; grid-row: 1 / 3; }
-}
-
-.pantry { max-width: var(--max); margin: 0 auto; padding: clamp(40px, 7vw, 96px) var(--gutter) clamp(56px, 8vw, 110px); }
 
 .facts--food { padding-bottom: clamp(72px, 10vw, 130px); }
 .facts--food .fact { background: var(--ink); color: var(--khaki); }
@@ -682,7 +530,7 @@ body[data-view="bird"] { background: var(--navy); }
 .foot p { margin: 0; }
 .foot__sister a { color: var(--marigold); font-weight: 600; text-underline-offset: 4px; }
 .foot--food .foot__sister a { color: var(--bronze-2); }
-.foot__small { opacity: .7; font-size: .88rem; }
+
 
 .wa {
   position: fixed; right: 18px; bottom: 18px; z-index: 55;
@@ -699,7 +547,6 @@ body[data-view="bird"] { background: var(--navy); }
 
 @media (max-width: 640px) {
   .wa { width: 50px; height: 50px; right: 14px; bottom: 14px; }
-  .feed-list, .food-list { padding-bottom: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

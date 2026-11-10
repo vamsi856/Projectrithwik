@@ -5,7 +5,8 @@ import type { Product } from './products';
 export const packItems = (list: Product[]) => list.map((p) => ({
   id: p.id,
   name: p.name,
-  variant: p.variants.length > 1 ? p.variants.map((v) => v.label).join(' / ') : p.variants[0].label,
+  variant: p.variants.length > 1 ? `${p.variants.length} grades available` : p.variants[0].label,
+  options: p.variants.map((v) => v.label).join(', '),
   photo: photoSmall(p.photo),
   c1: p.swatch.c1,
   c2: p.swatch.c2,

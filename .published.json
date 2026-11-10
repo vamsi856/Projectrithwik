@@ -1,7 +1,10 @@
 [
  ".nojekyll",
+ "404.html",
  "Rithwik-Catalogue.pdf",
  "_astro",
  "favicon.jpg",
- "index.html"
+ "fonts",
+ "index.html",
+ "og.jpg"
 ]
