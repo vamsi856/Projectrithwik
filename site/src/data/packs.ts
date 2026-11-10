@@ -2,16 +2,23 @@ import { BIRD, FOOD, lineName } from './products';
 import { photoSmall } from './photos';
 import type { Product } from './products';
 
-export const packItems = (list: Product[]) => list.map((p) => ({
-  id: p.id,
-  name: p.name,
-  variant: p.summary ?? (p.variants.length > 1 ? `${p.variants.length} grades available` : p.variants[0].label),
-  options: p.summary ?? p.variants.map((v) => v.label).join(', '),
-  photo: photoSmall(p.photo),
-  c1: p.swatch.c1,
-  c2: p.swatch.c2,
-  ask: lineName(p, p.variants[0]),
-  gst: [...new Set(p.variants.map((v) => v.gst))].join(' / '),
+// One pack per line: Foxtail millet comes as four packs (summer or winter crop, processed or
+// unprocessed), jowar as five, and so on. The line's name is printed on its pack.
+const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+export const packItems = (list: Product[]) => list.flatMap((p) => p.variants.map((v) => {
+  const photo = v.photo === undefined ? p.photo : v.photo ?? undefined;
+  const sw = v.swatch ?? p.swatch;
+  return {
+    id: p.variants.length > 1 ? `${p.id}-${slug(v.label)}` : p.id,
+    name: p.name,
+    variant: v.label,
+    options: v.label,
+    photo: photoSmall(photo),
+    c1: sw.c1,
+    c2: sw.c2,
+    ask: lineName(p, v),
+    gst: v.gst,
+  };
 }));
 
 export const BIRD_PACKS = packItems(BIRD);

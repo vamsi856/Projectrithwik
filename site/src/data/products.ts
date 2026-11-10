@@ -7,19 +7,21 @@ export type Swatch = { c1: string; c2: string; grain: number };
 export type Product = {
   id: string;
   name: string;
-  /** Catalogue lines this card covers. One entry = no variant picker. */
-  variants: { label: string; gst: string }[];
+  /** Catalogue lines this card covers. One entry = no variant picker. Each line also gets
+   * its own pack in "Our packs". A line whose colour differs from the product photo carries
+   * its own seed colours (and photo: null), so a white-sesame pack never shows black seed. */
+  variants: { label: string; gst: string; photo?: string | null; swatch?: Swatch }[];
   /** Two or more independent choices (e.g. crop season x processing). Each variant label is
    * then the chosen options joined by axesLabel(), so the card shows one row per choice. */
   axes?: { name: string; options: string[] }[];
-  /** One line describing the choices, used where there is no room for the picker. */
-  summary?: string;
   photo?: string;
   swatch: Swatch;
   group: string;
 };
 
 const s = (c1: string, c2: string, grain: number): Swatch => ({ c1, c2, grain });
+/** a line shown by its own seed colour instead of the product photo */
+const tint = (label: string, gst: string, c1: string, c2: string, grain: number) => ({ label, gst, photo: null, swatch: s(c1, c2, grain) });
 
 export const BIRD_GROUPS = [
   { id: 'millets', label: 'Millets' },
@@ -34,7 +36,6 @@ export const BIRD: Product[] = [
       { name: 'Crop', options: ['Summer crop', 'Winter crop'] },
       { name: 'Type', options: ['Processed', 'Unprocessed'] },
     ],
-    summary: 'Summer or winter crop, processed or unprocessed',
     variants: [
       { label: 'Summer crop, processed', gst: '0%' },
       { label: 'Summer crop, unprocessed', gst: '0%' },
@@ -46,13 +47,13 @@ export const BIRD: Product[] = [
   { id: 'b-kodo', name: 'Kodo millet', group: 'millets', photo: 'kodo', swatch: s('#a9824e', '#7d5a2e', 7), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-little', name: 'Little millet', group: 'millets', photo: 'little', swatch: s('#d8c48a', '#b29e60', 6), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-proso', name: 'Proso millet', group: 'millets', photo: 'proso', swatch: s('#e6d39a', '#c4ac68', 8),
-    variants: [{ label: 'Green', gst: '0%' }, { label: 'Yellow', gst: '0%' }] },
+    variants: [tint('Green', '0%', '#c3c27a', '#8f8f48', 8), { label: 'Yellow', gst: '0%' }] },
   { id: 'b-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra', swatch: s('#9aa197', '#6e776c', 8), variants: [{ label: 'Bajra', gst: '0%' }] },
   { id: 'b-jowar', name: 'Jowar', group: 'grains', photo: 'jowar', swatch: s('#eadfc6', '#c7b896', 9),
-    variants: [{ label: 'Mahendra', gst: '0%' }, { label: 'Milky white', gst: '0%' }, { label: 'Nidhi', gst: '0%' }, { label: 'Red', gst: '0%' }, { label: 'Yellow', gst: '0%' }] },
-  { id: 'b-maize', name: 'Maize', group: 'grains', photo: 'maize', swatch: s('#f0e4c4', '#cdbb8d', 12), variants: [{ label: 'Whole kernel', gst: '0%' }] },
+    variants: [{ label: 'Mahendra', gst: '0%' }, { label: 'Milky white', gst: '0%' }, { label: 'Nidhi', gst: '0%' }, tint('Red', '0%', '#a4552f', '#6e3418', 9), tint('Yellow', '0%', '#e2c164', '#b38f34', 9)] },
+  { id: 'b-maize', name: 'Maize', group: 'grains', photo: 'maize', swatch: s('#f0e4c4', '#cdbb8d', 12), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-sunflower', name: 'Sunflower', group: 'oilseeds', photo: 'sf17', swatch: s('#b9b3a6', '#56514b', 11), variants: [{ label: 'Striped', gst: '5%' }] },
-  { id: 'b-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower', swatch: s('#f2ede1', '#cfc6b0', 10), variants: [{ label: 'Whole seed', gst: '5%' }] },
+  { id: 'b-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower', swatch: s('#f2ede1', '#cfc6b0', 10), variants: [{ label: '', gst: '5%' }] },
 ];
 
 export const FOOD_GROUPS = [
@@ -79,7 +80,7 @@ export const FOOD: Product[] = [
   { id: 'f-ragi', name: 'Ragi', group: 'millets', photo: 'ragi', swatch: s('#8a3b2b', '#5e2216', 6), variants: one('Finger millet') },
 
   { id: 'f-chia', name: 'Chia seeds', group: 'superfoods', photo: 'chia', swatch: s('#e9e4d8', '#bdb5a2', 5), variants: one() },
-  { id: 'f-quinoa', name: 'Quinoa', group: 'superfoods', photo: 'quinoaw', swatch: s('#efe5cc', '#cdbf9b', 6), variants: many('Regular', 'Bold', 'Red', 'Black', 'Tricolor') },
+  { id: 'f-quinoa', name: 'Quinoa', group: 'superfoods', photo: 'quinoaw', swatch: s('#efe5cc', '#cdbf9b', 6), variants: [...many('Regular', 'Bold'), tint('Red', '', '#a0402e', '#6a2419', 6), tint('Black', '', '#2b2826', '#4d4844', 6), { label: 'Tricolor', gst: '', photo: 'quinoab' }] },
   { id: 'f-pumpkin', name: 'Pumpkin seeds', group: 'superfoods', photo: 'pumpkin', swatch: s('#7f9a5a', '#556d36', 11), variants: one() },
   { id: 'f-sunhulled', name: 'Sunflower seeds', group: 'superfoods', photo: 'sunkernel', swatch: s('#d9d0bb', '#a99f86', 10), variants: one('Hulled') },
   { id: 'f-flax', name: 'Flax seeds', group: 'superfoods', photo: 'flax', swatch: s('#8a4a2c', '#5c2c16', 7), variants: one() },
@@ -89,19 +90,19 @@ export const FOOD: Product[] = [
   { id: 'f-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower', swatch: s('#f2ede1', '#cfc6b0', 10), variants: one() },
   { id: 'f-castor', name: 'Castor seeds', group: 'oilseeds', photo: 'castor', swatch: s('#8c6a58', '#4a362c', 12), variants: one() },
   { id: 'f-groundnut', name: 'Groundnuts', group: 'oilseeds', photo: 'groundnut', swatch: s('#e2b98c', '#b07f52', 12), variants: one() },
-  { id: 'f-sesame', name: 'Sesame seeds', group: 'oilseeds', photo: 'sesame', swatch: s('#262423', '#4a4542', 6), variants: many('Black', 'Z-black', 'White') },
+  { id: 'f-sesame', name: 'Sesame seeds', group: 'oilseeds', photo: 'sesame', swatch: s('#262423', '#4a4542', 6), variants: [...many('Black', 'Z-black'), tint('White', '', '#f1ead8', '#d3c7a9', 6)] },
 
-  { id: 'f-chana', name: 'Chana', group: 'pulses', photo: 'chana', swatch: s('#e9c25a', '#c29a35', 9), variants: many('White', 'Brown') },
+  { id: 'f-chana', name: 'Chana', group: 'pulses', photo: 'chana', swatch: s('#e9c25a', '#c29a35', 9), variants: [tint('White', '', '#e9d6a6', '#c8ad73', 11), tint('Brown', '', '#8a5a34', '#5b371c', 11)] },
   { id: 'f-toor', name: 'Toor dal', group: 'pulses', photo: 'toor', swatch: s('#e6b33c', '#bf8b1d', 9), variants: one() },
-  { id: 'f-lobia', name: 'Lobia', group: 'pulses', photo: 'lobia', swatch: s('#ece2cb', '#3b322b', 11), variants: many('Red', 'White') },
-  { id: 'f-urad', name: 'Urad dal', group: 'pulses', photo: 'urad', swatch: s('#f1ece0', '#2a2725', 8), variants: one() },
-  { id: 'f-gram', name: 'Gram', group: 'pulses', photo: 'moong', swatch: s('#7d9a46', '#4f6a28', 8), variants: many('Green', 'Black') },
+  { id: 'f-lobia', name: 'Lobia', group: 'pulses', photo: 'lobia', swatch: s('#ece2cb', '#3b322b', 11), variants: [tint('Red', '', '#9c4a34', '#6a2c1d', 11), { label: 'White', gst: '' }] },
+  { id: 'f-urad', name: 'Urad dal', group: 'pulses', swatch: s('#f1ece0', '#2a2725', 8), variants: one() },
+  { id: 'f-gram', name: 'Gram', group: 'pulses', photo: 'moong', swatch: s('#7d9a46', '#4f6a28', 8), variants: [{ label: 'Green', gst: '' }, { label: 'Black', gst: '', photo: 'urad' }] },
 
   { id: 'f-bayleaf', name: 'Bay leaf', group: 'spices', photo: 'bayleaf', swatch: s('#7c8a55', '#566238', 12), variants: one() },
   { id: 'f-clove', name: 'Cloves', group: 'spices', photo: 'clove', swatch: s('#6b3a25', '#43200f', 9), variants: one() },
   { id: 'f-cardamom', name: 'Cardamom', group: 'spices', photo: 'cardamom', swatch: s('#9fb06a', '#6c7d3e', 10), variants: one() },
   { id: 'f-cumin', name: 'Cumin', group: 'spices', photo: 'cumin', swatch: s('#a68457', '#735733', 7), variants: one() },
-  { id: 'f-pepper', name: 'Pepper', group: 'spices', photo: 'pepper', swatch: s('#2e2a27', '#e8e0cc', 9), variants: many('Black', 'White') },
+  { id: 'f-pepper', name: 'Pepper', group: 'spices', photo: 'pepper', swatch: s('#2e2a27', '#e8e0cc', 9), variants: [{ label: 'Black', gst: '' }, tint('White', '', '#ece2c8', '#cbbd98', 9)] },
 
   { id: 'f-buckwheat', name: 'Buckwheat', group: 'cereals', photo: 'buckwheat', swatch: s('#a88d6a', '#7a6243', 9), variants: one() },
   { id: 'f-oats', name: 'Oats', group: 'cereals', photo: 'oats', swatch: s('#e4d3ac', '#b99f6d', 9), variants: one() },

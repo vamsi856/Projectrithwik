@@ -23,7 +23,7 @@ const { id, kind, tone, logo, items, contact, title, lede } = Astro.props;
         {items.map((it, i) => (
           <button type="button" class="studio__pick" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-pick={i}>
             <span class="seed" aria-hidden="true" style={`--c1:${it.c1};--c2:${it.c2};--g:7px`}></span>
-            <span>{it.name}</span>
+            <span>{it.name}{it.variant && <em class="studio__pickvar">{it.variant}</em>}</span>
           </button>
         ))}
       </div>

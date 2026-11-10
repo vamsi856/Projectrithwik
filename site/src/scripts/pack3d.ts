@@ -39,6 +39,17 @@ function seedPattern(ctx: CanvasRenderingContext2D, x: number, y: number, w: num
   }
 }
 
+/** The line on a pack (Winter crop, processed; Milky white; Red...) as a bold pill under the
+ * name, big enough to read on the turning ring, so each variety's pack is told apart at a glance. */
+function variantPill(ctx: CanvasRenderingContext2D, text: string, top: number, bg: string, fg: string) {
+  const h = 74, padX = 34;
+  fitText(ctx, text, (px) => `700 ${px}px "Instrument Sans"`, 820 - padX * 2, 50);
+  const w = ctx.measureText(text).width + padX * 2, x = (TW - w) / 2;
+  ctx.fillStyle = bg; ctx.beginPath(); ctx.roundRect(x, top, w, h, h / 2); ctx.fill();
+  ctx.fillStyle = fg; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, TW / 2, top + h / 2 + 2);
+  ctx.textBaseline = 'alphabetic';
+}
+
 async function paintSack(ctx: CanvasRenderingContext2D, item: PackItem, logo: HTMLImageElement | null, photo: HTMLImageElement | null, back = false) {
   const g = ctx.createLinearGradient(0, 0, TW, TH); g.addColorStop(0, '#163248'); g.addColorStop(1, '#0b1924');
   ctx.fillStyle = g; ctx.fillRect(0, 0, TW, TH);
@@ -86,7 +97,7 @@ async function paintSack(ctx: CanvasRenderingContext2D, item: PackItem, logo: HT
   ctx.textAlign = 'center'; ctx.fillStyle = '#e4dfc1';
   fitText(ctx, item.name.toUpperCase(), (px) => `400 ${px}px Anton`, 880, 140);
   ctx.fillText(item.name.toUpperCase(), TW / 2, 1180);
-  if (item.variant) { ctx.fillStyle = '#7cc4ea'; fitText(ctx, item.variant, (px) => `600 ${px}px "Instrument Sans"`, 860, 46); ctx.fillText(item.variant, TW / 2, 1246); }
+  if (item.variant) variantPill(ctx, item.variant, 1200, '#7cc4ea', '#0b1924');
   // bottom band
   ctx.fillStyle = '#f2b21b'; ctx.fillRect(0, TH - 110, TW, 110);
   ctx.fillStyle = '#0b1924'; ctx.font = '700 38px "Instrument Sans"'; ctx.fillText('Bird feed from Kurnool, Andhra Pradesh', TW / 2, TH - 44);
@@ -135,7 +146,7 @@ async function paintPouch(ctx: CanvasRenderingContext2D, item: PackItem, logo: H
   ctx.fillStyle = '#0f2a20';
   fitText(ctx, item.name.toUpperCase(), (px) => `400 ${px}px Anton`, 860, 128);
   ctx.fillText(item.name.toUpperCase(), TW / 2, 1185);
-  if (item.variant) { ctx.fillStyle = '#2f7a52'; fitText(ctx, item.variant, (px) => `600 ${px}px "Instrument Sans"`, 820, 44); ctx.fillText(item.variant, TW / 2, 1248); }
+  if (item.variant) variantPill(ctx, item.variant, 1208, '#2f7a52', '#fffbf2');
   ctx.fillStyle = 'rgba(15,42,32,.75)'; ctx.font = '600 32px "Instrument Sans"'; ctx.fillText('Kurnool, Andhra Pradesh', TW / 2, TH - 70);
   ctx.textAlign = 'left';
 }

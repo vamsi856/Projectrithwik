@@ -1112,3 +1112,30 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
   .plant__grid--bird .plant__fig--sack { aspect-ratio: 1 / 1; }
   .plant__grid--bird .plant__fig--sack img { object-position: 50% 8%; }
 }
+
+/* the sound switch, minimised: a small round button stacked above WhatsApp on every screen,
+   so it never sits over a card or a price button. Its label shows as a tip on hover. */
+.sound { left: auto; right: 24px; bottom: 88px; flex-direction: row-reverse; }
+.sound__nudge::before { left: auto; right: -6px; }
+.sound__btn { position: relative; width: 46px; height: 46px; padding: 0; justify-content: center; }
+.sound__btn svg { width: 20px; height: 20px; }
+.sound__label {
+  position: absolute; right: calc(100% + 10px); top: 50%; transform: translateY(-50%); width: auto; height: auto; clip: auto; overflow: visible;
+  padding: 6px 10px; border-radius: 10px; background: rgba(11, 25, 36, .92); color: var(--khaki); font-size: .8rem; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+@media (hover: hover) { .sound__btn:hover .sound__label, .sound__btn:focus-visible .sound__label { opacity: 1; } }
+@media (max-width: 640px) { .sound { right: 16px; bottom: 74px; } }
+
+/* names row: the variety rides beside the name (Jowar · Red) */
+.studio__pickvar { font-style: normal; font-weight: 500; opacity: .75; }
+.studio__pickvar::before { content: "·"; margin: 0 6px; }
+
+/* no side scrollbar: the page still scrolls (wheel, touch, keys), and the header's
+   progress bar shows how far down you are */
+html { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+/* product pictures per line: the chosen line's picture fades in over the others */
+.pcard__look { position: absolute; inset: 0; opacity: 0; transition: opacity .45s var(--ease); }
+.pcard__look.is-shown { opacity: 1; }

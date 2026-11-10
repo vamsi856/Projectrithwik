@@ -323,6 +323,9 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     const picked = $$<HTMLInputElement>('[data-axis] input:checked', card).map((i) => i.value);
     const line = card.dataset.name ? `${card.dataset.name} (${picked.map((v, i) => (i ? v.toLowerCase() : v)).join(', ')})` : r.value;
     $('[data-product]', card)!.dataset.product = line;
+    // the picture follows the line: red quinoa shows red quinoa
+    const looks = $$<HTMLElement>('[data-look]', card);
+    if (looks.length > 1) looks.forEach((l) => l.classList.toggle('is-shown', l.dataset.look!.split('|').includes(line)));
     const wa = $<HTMLAnchorElement>('[data-wa]', card);
     if (wa) wa.href = `https://wa.me/${WA}?text=${encodeURIComponent(`Hello ${wa.dataset.wa}, I would like to order: ${line}. Please share the price and availability.`)}`;
   }));

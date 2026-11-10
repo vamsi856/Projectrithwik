@@ -6,7 +6,6 @@ import { photo } from '../data/photos';
 
 interface Props { product: Product; contact: string; tone: 'bird' | 'food' }
 const { product: p, contact, tone } = Astro.props;
-const img = photo(p.photo);
 const multi = p.variants.length > 1;
 const axes = p.axes ?? [];
 // with axes, the first option on each axis is picked to start with
@@ -14,14 +13,32 @@ const first = axes.length ? { label: axesLabel(axes.map((a) => a.options[0])), g
 const brand = tone === 'food' ? 'Rithwik Industries' : 'Rithwik Bird Feeds';
 const wa = (line: string) => `https://wa.me/918309782770?text=${encodeURIComponent(`Hello ${brand}, I would like to order: ${line}. Please share the price and availability.`)}`;
 const swatch = `--c1:${p.swatch.c1};--c2:${p.swatch.c2};--g:${p.swatch.grain}px`;
+// Each line can look different (red quinoa, white sesame...): the card holds one picture per
+// distinct look and shows the one for the line that is picked. A line without its own photo
+// shows its seed colour, never another line's photo.
+type Look = { key: string; photo?: string; sw: { c1: string; c2: string; grain: number }; lines: string[] };
+const looks: Look[] = [];
+for (const v of p.variants) {
+  const ph = v.photo === undefined ? p.photo : v.photo ?? undefined;
+  const real = ph && photo(ph) ? ph : undefined;
+  const sw = v.swatch ?? p.swatch;
+  const key = real ? `p:${real}` : `s:${sw.c1}:${sw.c2}`;
+  const hit = looks.find((l) => l.key === key);
+  if (hit) hit.lines.push(lineName(p, v)); else looks.push({ key, photo: real, sw, lines: [lineName(p, v)] });
+}
+const firstLine = lineName(p, first);
 ---
 <article class:list={['pcard', `pcard--${tone}`]} data-group={p.group} data-card data-name={axes.length ? p.name : undefined}>
-  <div class="pcard__media">
-    {img ? (
-      <Photo name={p.photo!} class="pcard__img" alt={p.name} sizes="(max-width: 640px) 92vw, (max-width: 1100px) 46vw, 380px" />
-    ) : (
-      <div class="pcard__plate"><span class="seed seed--plate" style={swatch} aria-hidden="true"></span></div>
-    )}
+  <div class:list={['pcard__media', looks.length > 1 && 'pcard__media--looks']}>
+    {looks.map((l) => (
+      <div class:list={['pcard__look', l.lines.includes(firstLine) && 'is-shown']} data-look={l.lines.join('|')}>
+        {l.photo ? (
+          <Photo name={l.photo} class="pcard__img" alt={l.lines.length === 1 ? l.lines[0] : p.name} sizes="(max-width: 640px) 92vw, (max-width: 1100px) 46vw, 380px" />
+        ) : (
+          <div class="pcard__plate"><span class="seed seed--plate" style={`--c1:${l.sw.c1};--c2:${l.sw.c2};--g:${l.sw.grain}px`} aria-hidden="true"></span></div>
+        )}
+      </div>
+    ))}
     <span class="seed pcard__swatch" style={swatch} aria-hidden="true"></span>
   </div>
   <div class="pcard__body">
