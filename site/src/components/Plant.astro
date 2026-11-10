@@ -1,0 +1,38 @@
+---
+// Inside Rithwik: the family's own photos of the plant, the warehouse and the sack.
+// Each photo appears once. Images are optimised at build time (astro:assets).
+import { Image } from 'astro:assets';
+import founders from '../assets/plant/founders-portrait.jpg';
+import line from '../assets/plant/cleaning-line.jpg';
+import warehouse from '../assets/plant/warehouse.jpg';
+import sack from '../assets/plant/sack.jpg';
+interface Props { tone: 'bird' | 'food'; id: string }
+const { tone, id } = Astro.props;
+---
+<section class:list={['plant', `plant--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
+  <header class="plant__head">
+    <p class="plant__kicker">Inside Rithwik</p>
+    <h2 class:list={['section-title', tone === 'food' && 'section-title--food']} id={`${id}-title`} data-split>Our people, our plant</h2>
+    <p class="plant__lede">Every lot passes through our own cleaning line before it is weighed and packed. These are our photos, not stock.</p>
+  </header>
+  <div class:list={['plant__grid', tone === 'bird' && 'plant__grid--four']}>
+    <figure class="plant__fig plant__fig--founders" data-curtain>
+      <Image src={founders} alt="The founders of Rithwik at the opening of the new cleaning plant, the machines garlanded with marigolds" widths={[480, 760, 1000]} sizes="(max-width: 860px) 92vw, 40vw" loading="lazy" />
+      <figcaption><b>Our founders</b><span>At the opening of the new cleaning plant</span></figcaption>
+    </figure>
+    <figure class="plant__fig plant__fig--line" data-curtain>
+      <Image src={line} alt="The Rithwik cleaning line: pre-cleaner, graders and bucket elevators, with sacks of grain on the floor" widths={[640, 1000, 1156]} sizes="(max-width: 860px) 92vw, 55vw" loading="lazy" />
+      <figcaption><b>The cleaning line</b><span>Pre-cleaner, graders and elevators</span></figcaption>
+    </figure>
+    <figure class="plant__fig plant__fig--warehouse" data-curtain>
+      <Image src={warehouse} alt="The Rithwik warehouse at Duvvur, with the Rithwik Bird Feeds signboard on the wall" widths={[560, 900, 1156]} sizes="(max-width: 860px) 92vw, 35vw" loading="lazy" />
+      <figcaption><b>Our warehouse</b><span>Duvvur, YSR district</span></figcaption>
+    </figure>
+    {tone === 'bird' && (
+      <figure class="plant__fig plant__fig--sack" data-curtain>
+        <Image src={sack} alt="A filled 50 kg Rithwik Birds Feeds India sack of Super Fine Millets" widths={[400, 700]} sizes="(max-width: 860px) 60vw, 20vw" loading="lazy" />
+        <figcaption><b>The 50 kg sack</b><span>Super Fine Millets</span></figcaption>
+      </figure>
+    )}
+  </div>
+</section>

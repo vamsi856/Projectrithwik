@@ -23,6 +23,7 @@ import { held } from '../data/registrations';
 import Certifications from '../components/Certifications.astro';
 import BirdsWeFeed from '../components/BirdsWeFeed.astro';
 import Legacy from '../components/Legacy.astro';
+import Plant from '../components/Plant.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const nBird = lineCount(BIRD);
@@ -162,7 +163,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
       </section>
 
       <div class="facts" aria-label="Rithwik Bird Feeds at a glance">
-        <div class="fact"><b data-count={nBird}>{nBird}</b><span>feed lines</span></div>
+        <div class="fact"><b data-count={BIRD.length}>{BIRD.length}</b><span>feeds in {nBird} grades</span></div>
         <div class="fact"><b>Summer &amp; winter</b><span>foxtail crops, raw or cleaned</span></div>
         <div class="fact"><b>Since 1925</b><span>a family grain trade</span></div>
         <div class="fact fact--code"><b>{BRANDS.bird.gstin}</b><span>GSTIN</span></div>
@@ -190,8 +191,10 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
 
       <Legacy tone="bird" />
 
+      <Plant tone="bird" id="b-plant" />
+
       <PackStudio id="b-packs" kind="sack" tone="bird" logo={birdLogo.src} items={BIRD_PACKS} contact="b-contact"
-        title="Our packs" lede="Every feed line in its own Rithwik sack. Pick a feed and the pack turns to show it." />
+        title="Our packs" lede="Every feed line in its own Rithwik sack." />
 
       <BirdsWeFeed id="b-birds" />
 
@@ -237,7 +240,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
     </main>
 
     <Footer logo={birdLogo} tone="bird" brand={BRANDS.bird.name} gstin={BRANDS.bird.gstin}
-      sister={{ view: 'food', href: '#human-food', text: 'Rithwik Industries, millets, seeds and dals for people' }} />
+      sister={{ view: 'food', href: '#human-food', text: 'Rithwik Industries, millets, super foods, pulses and spices for people' }} />
     <canvas class="scrollbird" aria-hidden="true"></canvas>
   </div>
 
@@ -253,7 +256,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         <span class="ghost ghost--food" data-ghost="Grain" aria-hidden="true"></span>
         <div class="food-hero__copy">
           <p class="food-hero__brand" data-rise>Rithwik Industries</p>
-          <h1 class="display display--food" id="food-title" data-split>Nature's grain, nurtured for you</h1>
+          <h1 class="display display--food" id="food-title" data-split>Nature's <em class="grainword">grain,</em> nurtured for you</h1>
           <p class="food-hero__lede" data-rise>Millets, super foods, oil seeds, pulses, spices and cereals for homes, shops and bulk buyers.</p>
           <div class="actions" data-rise>
             <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>
@@ -261,7 +264,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
           </div>
           <ul class="trust" data-rise aria-label="Certifications">
             {held('food').filter((r) => r.mark !== 'GST').map((r) => (
-              <li><a href="#f-certs" data-jump><span class="trust__mark">{r.mark}</span><span>{r.status}</span></a></li>
+              <li><a href="#f-certs" data-jump title={`${r.name}, ${r.status.toLowerCase()}`}>{r.logo ? <img class="trust__logo" src={`${base}certs/${r.logo}`} alt={r.name} width="40" height="40" loading="lazy" /> : <span class="trust__mark">{r.mark}</span>}</a></li>
             ))}
           </ul>
         </div>
@@ -278,8 +281,8 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
       <section class="about about--food" id="f-about" aria-labelledby="f-about-title">
         <div class="about__copy">
           <h2 class="section-title section-title--food" id="f-about-title" data-split>Who we are</h2>
-          <p class="about__lead" data-reveal>Rithwik Industries carries forward a family grain trade that began in 1925, bringing millets, super seeds and pulses to homes, shops and bulk buyers.</p>
-          <p data-reveal>We work from our office in Kurnool and our warehouse at Duvvur, keeping six millets, ten seeds and super foods, and a shelf of dals, pulses and whole spices. Tell us the pack size you need and we'll quote for it.</p>
+          <p class="about__lead" data-reveal>Rithwik Industries carries forward a family grain trade that began in 1925, bringing millets, super foods, oil seeds, pulses and spices to homes, shops and bulk buyers.</p>
+          <p data-reveal>We work from our office in Kurnool and our warehouse at Duvvur, keeping eight millets, super foods like chia and five kinds of quinoa, oil seeds, pulses, whole spices, buckwheat and oats. Tell us the pack size you need and we'll quote for it.</p>
         </div>
         <div class="about__media">
           {farmersPhoto && (
@@ -292,8 +295,10 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
 
       <Legacy tone="food" />
 
+      <Plant tone="food" id="f-plant" />
+
       <PackStudio id="f-packs" kind="pouch" tone="food" logo={foodLogo.src} items={FOOD_PACKS} contact="f-contact"
-        title="Our packs" lede="Kraft pouches with a clear window, so you can see the grain. Pick a product to turn the pack." />
+        title="Our packs" lede="Kraft pouches with a clear window, so you can see the grain." />
 
       <div id="f-range">
         {FOOD_GROUPS.map((g) => (
@@ -328,11 +333,11 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         lede="Each ring is a crop; its arc shows the months it usually comes in. The hand points at today. Step through the year to see what's fresh." />
 
       <Vision id="f-vision" tone="food"
-        vision="Indian millets and super seeds on kitchen shelves across the world."
+        vision="Indian millets and super foods on kitchen shelves across the world."
         mission="Source directly from Andhra Pradesh farmers, clean and pack with care, and meet the food-safety and export standards that overseas buyers expect."
         image="port-ship" imageAlt="A container ship leaving port" />
 
-      <Certifications id="f-certs" tone="food" regs={held('food')} photo="quinoab" photoAlt="White, red and black quinoa" />
+      <Certifications id="f-certs" tone="food" regs={held('food')} />
 
       <Steps id="f-order" tone="food" steps={[
         { title: 'Choose your products', body: 'Pick from millets, super foods, oil seeds, pulses, spices and cereals above.' },
@@ -345,7 +350,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
     </main>
 
     <Footer logo={foodLogo} tone="food" brand={BRANDS.food.name} gstin={BRANDS.food.gstin}
-      sister={{ view: 'bird', href: '#bird-feeds', text: 'Rithwik Bird Feeds, grains and seed for birds' }} />
+      sister={{ view: 'bird', href: '#bird-feeds', text: 'Rithwik Bird Feeds, millets, jowar and sunflower for birds' }} />
   </div>
 
   <dialog class="credits" id="credits">

@@ -6,14 +6,16 @@ const { id, kind, tone, logo, items, contact, title, lede } = Astro.props;
 ---
 <section class:list={['studio', `studio--${tone}`]} id={id} aria-labelledby={`${id}-title`} data-studio>
   <span class="ghost ghost--studio" data-ghost="Packs" aria-hidden="true"></span>
+  <header class="studio__head">
+    <h2 class:list={['section-title', tone === 'food' && 'section-title--food']} id={`${id}-title`} data-split>{title}</h2>
+    <p class="studio__lede">{lede}</p>
+  </header>
   <div class="studio__stage">
     <div class="studio__spot" aria-hidden="true"></div>
     <canvas class="studio__canvas" data-pack={kind} data-logo={logo} data-items={JSON.stringify(items)} role="img" aria-label="The full range of packs in a turning ring"></canvas>
-    <p class="studio__hint">Drag the ring or tap a pack</p>
   </div>
   <div class="studio__panel">
-    <h2 class:list={['section-title', tone === 'food' && 'section-title--food']} id={`${id}-title`} data-split>{title}</h2>
-    <p class="studio__lede">{lede}</p>
+    <p class="studio__hint">Pick a name and its pack turns to the front, or drag the ring</p>
     <div class="studio__picker" role="radiogroup" aria-label="Choose a product">
       {items.map((it, i) => (
         <button type="button" class="studio__pick" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-pick={i}>

@@ -40,7 +40,7 @@ const sites: Record<'bird' | 'food', HTMLElement> = { bird: $('[data-site="bird"
 const titles: Record<View, string> = {
   book: 'Rithwik, Kurnool: Bird Feeds and Human Food',
   bird: 'Rithwik Bird Feeds, Kurnool',
-  food: 'Rithwik Industries, Kurnool: millets, seeds and dals',
+  food: 'Rithwik Industries, Kurnool: millets, super foods, pulses and spices',
 };
 const hashFor: Record<View, string> = { book: '', bird: '#bird-feeds', food: '#human-food' };
 const viewFromHash = (): View => (location.hash === '#bird-feeds' ? 'bird' : location.hash === '#human-food' ? 'food' : 'book');
@@ -375,7 +375,22 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
         $('[data-pack-next]', hero)!.addEventListener('click', () => { ctl.stopAuto(); ctl.next(); });
         if (!reduce) st({ trigger: hero.closest('section')!, start: 'top top', end: 'bottom top', scrub: true, onUpdate: (s) => ctl.setScrollSpin(s.progress * Math.PI * 1.2) });
       }
-      if (studio) $$('[data-pick]', studio).forEach((b) => b.addEventListener('click', () => { ctl.stopAuto(); ctl.show(Number(b.dataset.pick)); }));
+      if (studio) {
+        // the names sit below the ring: picking one glides the page so the ring is in the
+        // middle of the screen while the chosen pack turns to the front
+        const stageEl = $<HTMLElement>('.studio__stage', studio)!;
+        $$('[data-pick]', studio).forEach((b) => b.addEventListener('click', () => {
+          ctl.stopAuto();
+          const r = stageEl.getBoundingClientRect();
+          const hdr = ($<HTMLElement>('.sbar', root)?.offsetHeight ?? 0);
+          const off = -(hdr + Math.max(0, (innerHeight - hdr - r.height) / 2));
+          if (r.top < hdr - 4 || r.bottom > innerHeight + 4) {
+            if (lenis) lenis.scrollTo(stageEl, { offset: off, duration: 0.9 });
+            else window.scrollTo({ top: r.top + scrollY + off, behavior: reduce ? 'auto' : 'smooth' });
+          }
+          ctl.show(Number(b.dataset.pick));
+        }));
+      }
     }, { rootMargin: '300px' });
     io.observe(c);
   });
@@ -446,8 +461,8 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     const steps = $$('[data-legacy-step]', lg);
     const tl = gsap.timeline({ scrollTrigger: { trigger: lg, start: 'top 75%', once: true } })
       .fromTo(line, { strokeDasharray: 1000, strokeDashoffset: 1000 }, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' }, 0)
-      .from(steps, { y: 40, opacity: 0, duration: 0.7, ease: 'power3.out', stagger: 0.25 }, 0.15)
-      .from($$('.legacy__dot', lg), { scale: 0, duration: 0.5, ease: 'back.out(3)', stagger: 0.25 }, 0.2);
+      .from(steps, { y: 40, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.12 }, 0.1)
+      .from($$('.legacy__dot', lg), { scale: 0, duration: 0.45, ease: 'back.out(3)', stagger: 0.12 }, 0.15);
     tw(tl);
   });
 
@@ -595,24 +610,33 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     b.addEventListener('pointerleave', () => gsap.to(b, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' }));
   });
 
-  // bird site: a macaw flies down the page with your scroll. Only the canvas moves
-  // (a compositor transform); the canvas itself is tiny.
+  // bird site: a macaw keeps you company down the page. It flies only in the side
+  // margins, so it never covers a card, a price button or the form; when it changes sides
+  // it slips away and comes back on the other side. Hidden where the margins are too narrow.
   const sb = $<HTMLCanvasElement>('.scrollbird', root);
   if (sb) {
-    const f = createFlock(sb, { sheets: [MACAW], count: 1, near: (w) => w * 0.86, far: (w) => w * 0.86, pinned: true });
-    const mx = gsap.quickTo(sb, 'x', { duration: 0.6, ease: 'power2.out' }), my = gsap.quickTo(sb, 'y', { duration: 0.6, ease: 'power2.out' });
-    const mr = gsap.quickTo(sb, 'rotation', { duration: 0.6, ease: 'power2.out' });
-    let lastX = innerWidth / 2, dir = 1, shown = false;
+    const f = createFlock(sb, { sheets: [MACAW], count: 1, near: (w) => w * 0.9, far: (w) => w * 0.9, pinned: true });
+    const my = gsap.quickTo(sb, 'y', { duration: 0.7, ease: 'power2.out' });
+    const mr = gsap.quickTo(sb, 'rotation', { duration: 0.7, ease: 'power2.out' });
+    let side = -1, shown = false, swap: gsap.core.Timeline | null = null;
+    const xFor = (sd: number) => { const m = Math.max(0, (innerWidth - 1240) / 2); return sd === 0 ? m / 2 : innerWidth - m / 2; };
     f.play();
+    addEventListener('resize', () => { if (side >= 0) gsap.set(sb, { x: xFor(side) }); });
     st({
       trigger: root, start: 'top top', end: 'bottom bottom',
       onUpdate: (s) => {
-        const p = s.progress, w = innerWidth, h = innerHeight;
-        // swing side to side but keep the whole bird on screen
-        const half = sb.clientWidth * 0.55, x = w / 2 + (w / 2 - half) * Math.sin(p * Math.PI * 5), y = h * (0.25 + 0.5 * p) + Math.cos(p * Math.PI * 9) * 30;
-        const d = x >= lastX ? 1 : -1; lastX = x;
-        if (d !== dir) { dir = d; gsap.to(sb, { scaleX: d, duration: 0.35, ease: 'power2.inOut' }); }
-        mx(x); my(y); mr(d * Math.cos(p * Math.PI * 5) * 8);
+        const p = s.progress, h = innerHeight;
+        const sd = Math.floor(p * 6) % 2;
+        if (sd !== side) {
+          const first = side < 0; side = sd;
+          swap?.kill();
+          swap = gsap.timeline()
+            .to(sb, { autoAlpha: 0, duration: first ? 0 : 0.25 })
+            .set(sb, { x: xFor(sd), scaleX: sd === 0 ? 1 : -1 })
+            .to(sb, { autoAlpha: shown ? 1 : 0, duration: 0.35 });
+        }
+        my(h * (0.3 + 0.45 * ((p * 6) % 1)) + Math.sin(p * 40) * 12);
+        mr(Math.sin(p * 30) * 5);
         const on = p > 0.04 && p < 0.97;
         if (on !== shown) { shown = on; gsap.to(sb, { autoAlpha: on ? 1 : 0, duration: 0.4 }); }
       },

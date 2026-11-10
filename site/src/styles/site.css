@@ -22,6 +22,7 @@
   --bronze-2: #c59b45;
   --ink: #1c2533;
   --leaf: #5c7f4c;
+  --ink-rgb: 28, 37, 51; --khaki-rgb: 228, 223, 193; --bronze-rgb: 160, 122, 44; --bronze2-rgb: 197, 155, 69; --paper-rgb: 239, 234, 219;
 
   --display: "Anton", "Impact", "Arial Narrow", sans-serif;
   --text: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -85,11 +86,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .pill:active { transform: scale(.97); }
 .pill--gold { background: var(--marigold); color: var(--navy); }
 .pill--gold:hover { background: #ffc63d; }
-.pill--line { border-color: rgba(228, 223, 193, .45); color: var(--khaki); }
-.pill--line:hover { border-color: var(--khaki); background: rgba(228, 223, 193, .08); }
+.pill--line { border-color: rgba(var(--khaki-rgb), .45); color: var(--khaki); }
+.pill--line:hover { border-color: var(--khaki); background: rgba(var(--khaki-rgb), .08); }
 .pill--ink { background: var(--ink); color: var(--khaki); }
 .pill--ink:hover { background: var(--navy-3); }
-.pill--line-ink { border-color: rgba(28, 37, 51, .35); color: var(--ink); }
+.pill--line-ink { border-color: rgba(var(--ink-rgb), .35); color: var(--ink); }
 .pill--line-ink:hover { border-color: var(--ink); }
 .pill--block { width: 100%; }
 
@@ -117,7 +118,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .stage__hint {
   position: relative; margin: 0;
-  font-weight: 500; font-size: 1.05rem; color: rgba(28, 37, 51, .75);
+  font-weight: 500; font-size: 1.05rem; color: rgba(var(--ink-rgb), .75);
   text-align: center;
 }
 
@@ -360,7 +361,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .display__a { display: block; color: var(--marigold); }
 .display__b { display: block; color: var(--sky); }
-.bird__lede { max-width: 46ch; margin: 22px 0 0; font-size: clamp(1.05rem, 1.5vw, 1.25rem); color: rgba(228, 223, 193, .85); }
+.bird__lede { max-width: 46ch; margin: 22px 0 0; font-size: clamp(1.05rem, 1.5vw, 1.25rem); color: rgba(var(--khaki-rgb), .85); }
 @media (max-width: 640px) {
   .bird__intro { grid-template-columns: 1fr; }
   .bird__badge { width: 96px; }
@@ -392,7 +393,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .feeds { max-width: var(--max); margin: 0 auto; padding: clamp(72px, 11vw, 140px) var(--gutter); }
 .feeds__head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: end; margin-bottom: 32px; }
 .feeds__head .section-title { color: var(--khaki); margin: 0; }
-.feeds__head p { margin: 0; max-width: 46ch; color: rgba(228, 223, 193, .78); }
+.feeds__head p { margin: 0; max-width: 46ch; color: rgba(var(--khaki-rgb), .78); }
 .feeds__head em { font-style: normal; color: var(--marigold); font-weight: 600; }
 @media (max-width: 760px) { .feeds__head { grid-template-columns: 1fr; } }
 
@@ -425,11 +426,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   display: grid; grid-template-columns: 1.25fr .75fr; gap: clamp(24px, 5vw, 72px); align-items: center;
   padding: 72px var(--gutter) 80px;
 }
-.ghost--food { left: -4vw; bottom: 2vh; color: rgba(160, 122, 44, .1); }
+.ghost--food { left: -4vw; bottom: 2vh; color: rgba(var(--bronze-rgb), .1); }
 .food-hero__copy { position: relative; z-index: 1; }
 .food-hero__brand { margin: 0 0 14px; font-weight: 700; color: var(--bronze); font-size: 1.05rem; }
 .display--food { color: var(--ink); font-size: clamp(2.5rem, 6.6vw, 6.6rem); text-wrap: balance; overflow-wrap: anywhere; }
-.food-hero__lede { max-width: 40ch; margin: 24px 0 0; font-size: clamp(1.05rem, 1.4vw, 1.2rem); color: rgba(28, 37, 51, .82); }
+.food-hero__lede { max-width: 40ch; margin: 24px 0 0; font-size: clamp(1.05rem, 1.4vw, 1.2rem); color: rgba(var(--ink-rgb), .82); }
 .food-hero__art { margin: 0; position: relative; z-index: 1; justify-self: center; }
 .food-hero__art img { width: min(100%, 360px); mix-blend-mode: multiply; }
 @media (max-width: 860px) {
@@ -458,12 +459,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
   display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 96px); align-items: start;
 }
 .section-title--light { color: var(--marigold); }
-.enquire__info > p { max-width: 46ch; color: rgba(228, 223, 193, .8); margin: 0 0 32px; }
+.enquire__info > p { max-width: 46ch; color: rgba(var(--khaki-rgb), .8); margin: 0 0 32px; }
 .contact { margin: 0; display: grid; gap: 18px; }
 .contact div { display: grid; grid-template-columns: 100px 1fr; gap: 16px; padding-top: 16px; border-top: 1px solid rgba(124, 196, 234, .18); }
 .contact dt { font-weight: 700; color: var(--sky); }
-.contact dd { margin: 0; color: rgba(228, 223, 193, .9); }
-.contact a { text-underline-offset: 3px; text-decoration-color: rgba(228, 223, 193, .35); }
+.contact dd { margin: 0; color: rgba(var(--khaki-rgb), .9); }
+.contact a { text-underline-offset: 3px; text-decoration-color: rgba(var(--khaki-rgb), .35); }
 @media (max-width: 860px) {
   .enquire__grid { grid-template-columns: 1fr; }
   .contact div { grid-template-columns: 1fr; gap: 2px; }
@@ -496,12 +497,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .form__error { margin: -8px 0 0; color: #b3261e; font-weight: 600; font-size: .92rem; }
 
 .enquire--food { background: var(--khaki-2); color: var(--ink); }
-.enquire--food .ghost--enq { color: rgba(28, 37, 51, .05); }
-.enquire--food .enquire__info > p { color: rgba(28, 37, 51, .8); }
-.enquire--food .contact div { border-top-color: rgba(28, 37, 51, .15); }
+.enquire--food .ghost--enq { color: rgba(var(--ink-rgb), .05); }
+.enquire--food .enquire__info > p { color: rgba(var(--ink-rgb), .8); }
+.enquire--food .contact div { border-top-color: rgba(var(--ink-rgb), .15); }
 .enquire--food .contact dt { color: var(--bronze); }
 .enquire--food .contact dd { color: var(--ink); }
-.enquire--food .contact a { text-decoration-color: rgba(28, 37, 51, .35); }
+.enquire--food .contact a { text-decoration-color: rgba(var(--ink-rgb), .35); }
 .enquire--food .form { background: var(--paper); }
 .enquire--food .field input, .enquire--food .field select, .enquire--food .field textarea { background: #fff; }
 
@@ -517,7 +518,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
    FOOTER + WHATSAPP
    ========================================================= */
 .foot {
-  background: #07121a; color: rgba(228, 223, 193, .72);
+  background: #07121a; color: rgba(var(--khaki-rgb), .72);
   padding: 56px var(--gutter) 100px; text-align: center; font-size: .95rem;
   display: grid; gap: 12px; justify-items: center;
 }

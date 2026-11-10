@@ -27,6 +27,8 @@ const lede = 'Our food safety, export and organic credentials. Tap a seal for th
             <span class="cert__seal" aria-hidden="true">
               {r.logo ? (
                 <img src={`${base}certs/${r.logo}`} alt="" loading="lazy" />
+              ) : tone === 'food' ? (
+                <span class="cert__word">{r.mark}</span>
               ) : (
                 <svg viewBox="0 0 200 200">
                   <defs><path id={`${id}-ring-${i}`} d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0" /></defs>
