@@ -6,6 +6,7 @@ import Lenis from 'lenis';
 import { sfx, setMode, setEnabled, isEnabled, wantedBefore } from './sound';
 import { applyFestive } from './festive';
 import { MONTHS_LONG } from '../data/seasons';
+import { createFlock, MACAW } from './flock';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin);
 
@@ -63,8 +64,8 @@ function show(view: View) {
   window.scrollTo(0, 0);
   if (view !== 'book' && !inited.has(view)) { inited.add(view); initSite(view, sites[view]); }
   ScrollTrigger.refresh();
-  const bookFlock = $('.page__flock') as unknown as SVGSVGElement | null;
-  if (bookFlock && flockTweens.has(bookFlock)) flockTweens.get(bookFlock)!.forEach((t) => (view === 'book' ? t.play() : t.pause()));
+  const bookFlock = $<HTMLCanvasElement>('.page__flock');
+  if (bookFlock && flocks.has(bookFlock)) view === 'book' ? flocks.get(bookFlock)!.play() : flocks.get(bookFlock)!.pause();
   if (view === 'book') openBook();
 }
 
@@ -109,7 +110,7 @@ function openBook() {
   coverFront.setAttribute('aria-hidden', 'true');
   coverBack.setAttribute('tabindex', '0');
   $('#stageHint')!.textContent = 'Pick a page to step inside.';
-  startFlock($('.page__flock') as unknown as SVGSVGElement);
+  const bf = $<HTMLCanvasElement>('.page__flock'); if (bf) flockFor(bf).play();
 }
 coverFront.addEventListener('click', openBook);
 
@@ -137,7 +138,7 @@ document.addEventListener('click', (e) => {
   const ctx = c.getContext('2d')!;
   let W = 0, H = 0, raf = 0;
   const motes = Array.from({ length: 46 }, () => ({ x: Math.random(), y: Math.random(), r: 0.6 + Math.random() * 1.8, s: 0.0002 + Math.random() * 0.0005, p: Math.random() * 6.28 }));
-  const size = () => { const d = Math.min(devicePixelRatio, 2); W = c.clientWidth; H = c.clientHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
+  const size = () => { const d = Math.min(devicePixelRatio, 1.5); W = c.clientWidth; H = c.clientHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
   const tick = (t: number) => {
     ctx.clearRect(0, 0, W, H);
     for (const m of motes) {
@@ -164,72 +165,23 @@ if (fine && !reduce) {
 }
 
 /* ------------------------------------------------------------------ flocks */
-const NS = 'http://www.w3.org/2000/svg';
-// Real birds: flight photos cut out of their backgrounds (credits in the Photo credits
-// dialog). All face right; each glides with a soft bob and bank, nearer birds bigger.
-const BIRD_BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'birds/';
-const REAL = [
-  { f: 'scarlet-sky-b-1', w: 571, h: 397, size: 1 },
-  { f: 'bluegold', w: 720, h: 604, size: 1.25 },
-  { f: 'macaw-pair-1', w: 702, h: 293, size: 1.15 },
-  { f: 'scarlet-sky-a-2', w: 519, h: 369, size: 0.95 },
-  { f: 'hyacinth', w: 720, h: 560, size: 1.25 },
-  { f: 'parakeet-side', w: 720, h: 212, size: 0.75 },
-  { f: 'scarlet-sky-b-2', w: 590, h: 322, size: 1 },
-  { f: 'macaw-pair-2', w: 662, h: 285, size: 1.1 },
-  { f: 'scarlet-sky-a-1', w: 483, h: 368, size: 0.9 },
-];
-function realBird(i: number, unit: number) {
-  const b = REAL[i % REAL.length];
-  const w = unit * b.size, h = (w * b.h) / b.w;
-  const img = document.createElementNS(NS, 'image');
-  img.setAttribute('href', `${BIRD_BASE}${b.f}.webp`);
-  img.setAttribute('width', w.toFixed(1)); img.setAttribute('height', h.toFixed(1));
-  img.setAttribute('x', (-w / 2).toFixed(1)); img.setAttribute('y', (-h / 2).toFixed(1));
-  img.setAttribute('decoding', 'async');
-  return img;
+// Real macaws with real wingbeats (footage frames on one canvas, see flock.ts).
+type Flock = ReturnType<typeof createFlock>;
+const flocks = new Map<Element, Flock>();
+function flockFor(c: HTMLCanvasElement) {
+  if (flocks.has(c)) return flocks.get(c)!;
+  const hero = c.classList.contains('bird__flock');
+  const portrait = innerWidth < innerHeight;
+  const f = createFlock(c, {
+    sheets: [MACAW], still: reduce,
+    count: Number(c.dataset.flock) - (hero && portrait ? 2 : 0),
+    near: hero ? (portrait ? 230 : Math.min(400, innerWidth * 0.26)) : 150,
+    far: hero ? (portrait ? 90 : 120) : 60,
+    band: hero ? (portrait ? [0.06, 0.62] : [0.1, 0.7]) : [0.1, 0.55],
+  });
+  flocks.set(c, f);
+  return f;
 }
-const flockTweens = new WeakMap<SVGSVGElement, gsap.core.Tween[]>();
-const birdsOf = new WeakMap<SVGSVGElement, { g: SVGGElement; dodge: SVGGElement; flap: gsap.core.Tween }[]>();
-function buildFlock(svg: SVGSVGElement) {
-  if (flockTweens.has(svg)) return flockTweens.get(svg)!;
-  const big = svg.classList.contains('bird__flock');
-  // on a portrait phone the hero sky is tall, so give the birds a tall sky to fly in
-  if (big && innerWidth < innerHeight) svg.setAttribute('viewBox', '0 0 560 1000');
-  const [, , w, h] = svg.getAttribute('viewBox')!.split(' ').map(Number);
-  const n = Number(svg.dataset.flock) - (big && w < h ? 2 : 0);
-  const tweens: gsap.core.Tween[] = [];
-  birdsOf.set(svg, []);
-  // nearer birds are drawn last so they pass in front
-  for (let i = 0; i < n; i++) {
-    const depth = (big ? 0.55 : 0.6) + (i / Math.max(1, n - 1)) * 0.7 + Math.random() * 0.08;
-    const g = document.createElementNS(NS, 'g');
-    const dodge = document.createElementNS(NS, 'g');
-    const body = document.createElementNS(NS, 'g');
-    body.appendChild(realBird(i * 2 + (big ? 0 : 1), (big ? 150 : 70) * depth));
-    body.setAttribute('class', 'realbird');
-    body.style.opacity = (0.72 + depth * 0.22).toFixed(2);
-    dodge.appendChild(body); g.appendChild(dodge); svg.appendChild(g);
-    const y = h * (0.14 + Math.random() * 0.56);
-    if (reduce) { g.setAttribute('transform', `translate(${(w * (0.12 + (i / n) * 0.76)).toFixed(0)} ${y.toFixed(0)})`); continue; }
-    const off = (big ? 160 : 70) * depth;
-    tweens.push(
-      gsap.to(g, {
-        motionPath: { path: [{ x: -off, y }, { x: w * 0.3, y: y - h * 0.06 * Math.random() - 8 }, { x: w * 0.66, y: y + h * 0.08 * Math.random() }, { x: w + off, y: y - h * 0.1 }], curviness: 1.25 },
-        // nearer birds cross faster, like real parallax
-        duration: ((big ? 26 : 16) - depth * (big ? 9 : 5) + Math.random() * 5) * (w < h ? 0.7 : 1), ease: 'none', repeat: -1, delay: -Math.random() * 24, paused: true,
-      }),
-    );
-    // a glide: lift and dip on the air with a slight bank
-    const glide = gsap.timeline({ repeat: -1, yoyo: true, paused: true, defaults: { ease: 'sine.inOut' } })
-      .fromTo(body, { y: -5 * depth, rotation: -3 }, { y: 6 * depth, rotation: 3.5, duration: 1.6 + Math.random() * 1.2, svgOrigin: '0 0' });
-    tweens.push(glide as unknown as gsap.core.Tween);
-    birdsOf.get(svg)!.push({ g, dodge, flap: glide as unknown as gsap.core.Tween });
-  }
-  flockTweens.set(svg, tweens);
-  return tweens;
-}
-const startFlock = (svg: SVGSVGElement | null) => svg && buildFlock(svg).forEach((t) => t.play());
 
 /* ------------------------------------------------------------------ particle canvases */
 function particleCanvas(c: HTMLCanvasElement, mode: 'fall' | 'pour') {
@@ -241,7 +193,7 @@ function particleCanvas(c: HTMLCanvasElement, mode: 'fall' | 'pour') {
     ? { x: Math.random() * W, y: any ? Math.random() * H : -10, vy: 0.25 + Math.random() * 0.6, vx: (Math.random() - 0.5) * 0.25, r: Math.random() * 3, vr: (Math.random() - 0.5) * 0.03, s: 1.4 + Math.random() * 2.4, c: colours[(Math.random() * colours.length) | 0], a: 0.25 + Math.random() * 0.45 }
     : { x: W * (0.5 + (Math.random() - 0.5) * 0.05), y: any ? Math.random() * H * 0.3 : -10, vy: 1.5 + Math.random() * 2, vx: (Math.random() - 0.5) * 0.3, r: Math.random() * 3, vr: (Math.random() - 0.5) * 0.1, s: 1.6 + Math.random() * 1.6, c: colours[(Math.random() * colours.length) | 0], a: 0.9 };
   const size = () => {
-    const d = Math.min(devicePixelRatio, 2); W = c.clientWidth; H = c.clientHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+    const d = Math.min(devicePixelRatio, 1.5); W = c.clientWidth; H = c.clientHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
     parts = Array.from({ length: mode === 'fall' ? Math.round(Math.min(90, W / 16)) : 70 }, () => spawn(true));
   };
   const floor = () => H * 0.36; // lands on the top seal of the pouch
@@ -281,11 +233,11 @@ function particleCanvas(c: HTMLCanvasElement, mode: 'fall' | 'pour') {
 async function globe(canvas: HTMLCanvasElement, tone: string) {
   const { default: createGlobe } = await import('cobe');
   let phi = 4.6;
-  const size = canvas.offsetWidth * 2;
+  const size = canvas.offsetWidth * Math.min(devicePixelRatio, 1.5);
   const bird = tone === 'bird';
   const g = createGlobe(canvas, {
-    devicePixelRatio: 2, width: size, height: size, phi, theta: 0.25, dark: 1, diffuse: 1.4,
-    mapSamples: 12000, mapBrightness: bird ? 5 : 4,
+    devicePixelRatio: Math.min(devicePixelRatio, 1.5), width: size, height: size, phi, theta: 0.25, dark: 1, diffuse: 1.4,
+    mapSamples: 10000, mapBrightness: bird ? 5 : 4,
     baseColor: bird ? [0.12, 0.25, 0.35] : [0.2, 0.22, 0.26],
     markerColor: bird ? [0.95, 0.7, 0.1] : [0.77, 0.6, 0.27],
     glowColor: bird ? [0.25, 0.45, 0.6] : [0.45, 0.4, 0.3],
@@ -305,6 +257,10 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   const T = siteTriggers[view];
   const st = (cfg: ScrollTrigger.StaticVars) => { const t = ScrollTrigger.create(cfg); T.push(t); return t; };
   const tw = (tween: gsap.core.Tween | gsap.core.Timeline) => { const t = (tween as any).scrollTrigger as ScrollTrigger | undefined; if (t) T.push(t); return tween; };
+
+  // CSS loops (seed-to-sack machines, floating packs, sound waves) pause off screen
+  const offIO = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('is-offscreen', !e.isIntersecting)), { rootMargin: '120px 0px' });
+  $$(':scope > main > section, :scope > main > div, :scope > main > figure, .story, .marquee, .hpack, .studio', root).forEach((el) => offIO.observe(el));
 
   // header: progress bar + current link
   const bar = $('.sbar', root)!;
@@ -326,16 +282,13 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   $$<HTMLIFrameElement>('iframe[data-src]', root).forEach((f) => new IntersectionObserver(([en], o) => { if (en.isIntersecting) { f.src = f.dataset.src!; o.disconnect(); } }, { rootMargin: '600px' }).observe(f));
 
   // flock + canvases
-  $$<SVGSVGElement>('svg[data-flock]', root).forEach((svg) => {
-    const tweens = buildFlock(svg);
-    st({ trigger: svg.parentElement!, start: 'top bottom', end: 'bottom top', onToggle: (s) => tweens.forEach((t) => (s.isActive ? t.play() : t.pause())) });
-  });
+  $$<HTMLCanvasElement>('canvas[data-flock]', root).forEach((c) => flockFor(c).play());
   $$<HTMLCanvasElement>('canvas.seedfall', root).forEach((c) => particleCanvas(c, 'fall'));
   $$<HTMLCanvasElement>('canvas.grainpour', root).forEach((c) => particleCanvas(c, 'pour'));
 
   // globe
   $$<HTMLCanvasElement>('canvas[data-globe]', root).forEach((c) => {
-    let g: { toggle: (on?: boolean) => void } | null = null, loading = false;
+    let g: { toggle: (on: boolean) => void } | null = null, loading = false;
     import('./pack3d').then(({ softwareGL }) => { if (softwareGL()) { c.closest('.vision__globe')?.classList.add('no-gl'); loading = true; } });
     new IntersectionObserver(async ([en]) => {
       if (g) return g.toggle(en.isIntersecting);
@@ -361,6 +314,8 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     const r = e.target as HTMLInputElement;
     if (r.type !== 'radio') return;
     $('[data-product]', card)!.dataset.product = r.value;
+    const wa = $<HTMLAnchorElement>('[data-wa]', card);
+    if (wa) wa.href = `https://wa.me/${WA}?text=${encodeURIComponent(`Hello ${wa.dataset.wa}, I would like to order: ${r.value}. Please share the price and availability.`)}`;
   }));
 
   // Ask price -> fill this site's form
@@ -524,26 +479,12 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   })));
 
   // hero birds scatter from the pointer or a finger, then settle back
-  $$<SVGSVGElement>('.bird__flock', root).forEach((svg) => {
-    const hero = svg.closest('section')!;
+  $$<HTMLCanvasElement>('canvas.bird__flock', root).forEach((c) => {
+    const hero = c.closest('section')!, f = flockFor(c);
     let lastChirp = 0;
     const scare = (e: PointerEvent) => {
-      const ctm = svg.getScreenCTM(); if (!ctm) return;
-      const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
-      let scared = false;
-      (birdsOf.get(svg) || []).forEach((b) => {
-        const bx = Number(gsap.getProperty(b.g, 'x')) + Number(gsap.getProperty(b.dodge, 'x'));
-        const by = Number(gsap.getProperty(b.g, 'y')) + Number(gsap.getProperty(b.dodge, 'y'));
-        const dx = bx - pt.x, dy = by - pt.y, d = Math.hypot(dx, dy);
-        if (d > 170) return;
-        scared = true;
-        const push = ((170 - d) / 170) * 150 + 30;
-        gsap.to(b.dodge, { x: `+=${(dx / (d || 1)) * push}`, y: `+=${(dy / (d || 1)) * push - 40}`, duration: 0.55, ease: 'power3.out', overwrite: true });
-        b.flap.timeScale(3);
-        clearTimeout((b as any).t);
-        (b as any).t = setTimeout(() => { gsap.to(b.dodge, { x: 0, y: 0, duration: 2.4, ease: 'sine.inOut' }); b.flap.timeScale(1); }, 1100);
-      });
-      if (scared && performance.now() - lastChirp > 1600) { lastChirp = performance.now(); sfx('chirp'); }
+      const r = c.getBoundingClientRect();
+      if (f.scare(e.clientX - r.left, e.clientY - r.top) && performance.now() - lastChirp > 1600) { lastChirp = performance.now(); sfx('chirp'); }
     };
     hero.addEventListener('pointermove', scare);
     hero.addEventListener('pointerdown', scare);
@@ -552,14 +493,17 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   // marquees: GSAP loop that speeds up and leans with scroll velocity
   $$('.marquee__track', root).forEach((track) => {
     track.style.animation = 'none';
-    const loop = gsap.to(track, { xPercent: -50, duration: 40, ease: 'none', repeat: -1 });
+    const loop = gsap.to(track, { xPercent: -50, duration: 40, ease: 'none', repeat: -1, paused: true });
     const lean = gsap.quickTo(track, 'skewX', { duration: 0.5, ease: 'power3.out' });
-    st({ trigger: track, start: 'top bottom', end: 'bottom top', onUpdate: (s) => {
-      const v = s.getVelocity();
-      loop.timeScale(1 + Math.min(Math.abs(v) / 300, 6) * (v < 0 ? -1 : 1));
-      lean(gsap.utils.clamp(-12, 12, v / -160));
-      gsap.delayedCall(0.2, () => { loop.timeScale(1); lean(0); });
-    } });
+    const settle = gsap.delayedCall(0.2, () => { loop.timeScale(1); lean(0); }).pause();
+    st({ trigger: track, start: 'top bottom', end: 'bottom top',
+      onToggle: (s) => (s.isActive ? loop.play() : loop.pause()),
+      onUpdate: (s) => {
+        const v = s.getVelocity();
+        loop.timeScale(1 + Math.min(Math.abs(v) / 300, 6) * (v < 0 ? -1 : 1));
+        lean(gsap.utils.clamp(-12, 12, v / -160));
+        settle.restart(true);
+      } });
   });
 
   // headline splits
@@ -646,23 +590,25 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     b.addEventListener('pointerleave', () => gsap.to(b, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' }));
   });
 
-  // bird site: a scarlet macaw flies down the page with your scroll
-  const sb = $<SVGSVGElement>('.scrollbird', root);
+  // bird site: a macaw flies down the page with your scroll. Only the canvas moves
+  // (a compositor transform); the canvas itself is tiny.
+  const sb = $<HTMLCanvasElement>('.scrollbird', root);
   if (sb) {
-    sb.setAttribute('viewBox', '-90 -62 180 124');
-    sb.innerHTML = '';
-    const body = document.createElementNS(NS, 'g'); body.appendChild(realBird(0, 170)); sb.appendChild(body);
-    const flap = gsap.timeline({ repeat: -1, yoyo: true, paused: true, defaults: { duration: 0.9, ease: 'sine.inOut' } })
-      .fromTo(body, { y: -4, rotation: -2 }, { y: 4, rotation: 2.5, svgOrigin: '0 0' });
-    let idle: number, lastX = innerWidth / 2;
+    const f = createFlock(sb, { sheets: [MACAW], count: 1, near: 150, far: 150, pinned: true });
+    const mx = gsap.quickTo(sb, 'x', { duration: 0.6, ease: 'power2.out' }), my = gsap.quickTo(sb, 'y', { duration: 0.6, ease: 'power2.out' });
+    const mr = gsap.quickTo(sb, 'rotation', { duration: 0.6, ease: 'power2.out' });
+    let lastX = innerWidth / 2, dir = 1, shown = false;
+    f.play();
     st({
       trigger: root, start: 'top top', end: 'bottom bottom',
       onUpdate: (s) => {
         const p = s.progress, w = innerWidth, h = innerHeight;
         const x = w * (0.5 + 0.42 * Math.sin(p * Math.PI * 5)), y = h * (0.25 + 0.5 * p) + Math.cos(p * Math.PI * 9) * 30;
-        const dir = x >= lastX ? 1 : -1; lastX = x;
-        gsap.to(sb, { x, y, rotate: dir * Math.cos(p * Math.PI * 5) * 10, scaleX: dir, opacity: p > 0.04 && p < 0.97 ? 1 : 0, duration: 0.6, ease: 'power2.out', overwrite: 'auto' });
-        flap.play(); clearTimeout(idle); idle = window.setTimeout(() => flap.pause(), 260);
+        const d = x >= lastX ? 1 : -1; lastX = x;
+        if (d !== dir) { dir = d; gsap.to(sb, { scaleX: d, duration: 0.35, ease: 'power2.inOut' }); }
+        mx(x); my(y); mr(d * Math.cos(p * Math.PI * 5) * 8);
+        const on = p > 0.04 && p < 0.97;
+        if (on !== shown) { shown = on; gsap.to(sb, { autoAlpha: on ? 1 : 0, duration: 0.4 }); }
       },
     });
   }

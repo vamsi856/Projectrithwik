@@ -403,5 +403,77 @@
   "p": "https://commons.wikimedia.org/wiki/File:Chloebia_gouldiae_-_Tierpark_Hagenbeck_01.jpg",
   "l": "CC BY-SA 3.0",
   "a": "H. Zell"
+ },
+ "castor": {
+  "t": "Castor beans (Ricinus communis) collected from Bolarum Bazar.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Castor_beans_%28Ricinus_communis%29_collected_from_Bolarum_Bazar.jpg",
+  "w": 2600,
+  "h": 2816,
+  "p": "https://commons.wikimedia.org/wiki/File:Castor_beans_(Ricinus_communis)_collected_from_Bolarum_Bazar.jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "Adityamadhav83"
+ },
+ "groundnut": {
+  "t": "Macro raw peanuts texture.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Macro_raw_peanuts_texture.jpg",
+  "w": 1404,
+  "h": 2494,
+  "p": "https://commons.wikimedia.org/wiki/File:Macro_raw_peanuts_texture.jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "Undeka 11"
+ },
+ "urad": {
+  "t": "Black gram.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Black_gram.jpg",
+  "w": 3070,
+  "h": 2182,
+  "p": "https://commons.wikimedia.org/wiki/File:Black_gram.jpg",
+  "l": "CC BY-SA 3.0",
+  "a": "Sanjay Acharya"
+ },
+ "moong": {
+  "t": "Mung beans (Vigna radiata).jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/8/86/Mung_beans_%28Vigna_radiata%29.jpg",
+  "w": 6000,
+  "h": 4000,
+  "p": "https://commons.wikimedia.org/wiki/File:Mung_beans_(Vigna_radiata).jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "Ivar Leidus"
+ },
+ "cardamom": {
+  "t": "Elettaria cardamomum Capsules and seeds.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Elettaria_cardamomum_Capsules_and_seeds.jpg",
+  "w": 3386,
+  "h": 2484,
+  "p": "https://commons.wikimedia.org/wiki/File:Elettaria_cardamomum_Capsules_and_seeds.jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "Didier Descouens"
+ },
+ "cumin": {
+  "t": "Dried cumin seeds.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Dried_cumin_seeds.jpg",
+  "w": 3000,
+  "h": 3000,
+  "p": "https://commons.wikimedia.org/wiki/File:Dried_cumin_seeds.jpg",
+  "l": "CC0",
+  "a": "Fumikas Sagisavas"
+ },
+ "pepper": {
+  "t": "Black Peppercorns.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Black_Peppercorns.jpg",
+  "w": 3456,
+  "h": 2592,
+  "p": "https://commons.wikimedia.org/wiki/File:Black_Peppercorns.jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "Xitop753"
+ },
+ "oats": {
+  "t": "Rolled oats 2.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Rolled_oats_2.jpg",
+  "w": 3264,
+  "h": 2448,
+  "p": "https://commons.wikimedia.org/wiki/File:Rolled_oats_2.jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "Yonygg"
  }
 }

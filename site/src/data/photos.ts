@@ -37,10 +37,10 @@ export function photo(key?: string): Photo | undefined {
   };
 }
 
-// Flying birds in the Bird Feeds hero: cut out from these photos (background removed, some mirrored).
+// Flying birds in the Bird Feeds hero: frames cut from this free footage (background removed).
 export const credits = [
   ...Object.entries(DATA).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
-  ...Object.entries(FLIGHT as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: `${r.t} (cut out, background removed)`, author: r.a, license: r.l, source: r.p })),
+  ...Object.entries(FLIGHT as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
 ];
 
 /** A ~500px version for painting onto 3D pack labels. */

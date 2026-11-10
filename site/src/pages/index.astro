@@ -35,7 +35,7 @@ void photo;
 const birdAboutPhoto = photo('bird-on-millet');
 const birdFlightPhoto = photo('bird-parakeet-flight');
 const farmersPhoto = photo('farmers-millet');
-const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pantry: 'clove' };
+const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab', spices: 'clove' };
 ---
 <!doctype html>
 <html lang="en">
@@ -43,13 +43,13 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rithwik, Kurnool: Bird Feeds and Human Food</title>
-  <meta name="description" content="Two businesses from Kurnool, Andhra Pradesh. Rithwik Bird Feeds: foxtail, proso, sunflower, jowar and more. Rithwik Industries: millets, super seeds, quinoa, dals and spices." />
+  <meta name="description" content="Two businesses from Kurnool, Andhra Pradesh. Rithwik Bird Feeds: foxtail, proso, sunflower, jowar and more. Rithwik Industries: millets, super foods, oil seeds, pulses, spices and cereals." />
   <meta name="theme-color" content="#0b1924" />
   <link rel="canonical" href="https://vamsi856.github.io/Projectrithwik/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Rithwik, Kurnool" />
   <meta property="og:title" content="Rithwik Bird Feeds & Rithwik Industries, Kurnool" />
-  <meta property="og:description" content="Bird feed grains and human food staples from Kurnool, Andhra Pradesh. Millets, sunflower, jowar, super seeds, quinoa, dals and spices." />
+  <meta property="og:description" content="Bird feed grains and human food staples from Kurnool, Andhra Pradesh. Millets, jowar, sunflower, super foods, oil seeds, pulses, spices and cereals." />
   <meta property="og:url" content="https://vamsi856.github.io/Projectrithwik/" />
   <meta property="og:image" content={new URL(`${base}og.jpg`, 'https://vamsi856.github.io').href} />
   <meta name="twitter:card" content="summary_large_image" />
@@ -84,7 +84,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
           <div class="page__text">
             <p class="page__kicker">Rithwik Industries</p>
             <h2 class="page__title">Human<br />food</h2>
-            <p class="page__lede">Millets, super seeds, quinoa, dals and spices for your kitchen and your shelves.</p>
+            <p class="page__lede">Millets, super foods, oil seeds, pulses, spices and cereals for your kitchen and your shelves.</p>
             <span class="page__count">{nFood} products</span>
             <span class="page__cta">Open Human Food</span>
           </div>
@@ -107,7 +107,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
         </button>
         <a class="cover__back page page--bird" href="#bird-feeds" data-enter="bird" tabindex="-1">
           <div class="page__inner">
-            <svg class="page__flock" data-flock="5" data-real viewBox="0 0 400 300" aria-hidden="true"></svg>
+            <canvas class="page__flock" data-flock="4" aria-hidden="true"></canvas>
             <Image class="page__emblem page__emblem--bird" src={birdLogo} alt="" width={260} loading="eager" />
             <div class="page__text">
               <p class="page__kicker">Rithwik Bird Feeds</p>
@@ -143,12 +143,12 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
           </div>
         )}
         <canvas class="seedfall" aria-hidden="true"></canvas>
-        <svg class="bird__flock" data-flock="7" data-real viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+        <canvas class="bird__flock" data-flock="6" aria-hidden="true"></canvas>
         <span class="ghost ghost--bird" data-ghost="Feeds" aria-hidden="true"></span>
         <div class="bird__intro bird__intro--pack">
           <div class="bird__copy">
             <h1 class="display" id="bird-title" data-split><span class="display__a">Rithwik</span> <span class="display__b">Bird feeds</span></h1>
-            <p class="bird__lede" data-rise>Seventeen feed lines, sold raw or cleaned, from our office in Kurnool and our warehouse at Duvvur.</p>
+            <p class="bird__lede" data-rise>{BIRD.length} feeds in {nBird} grades, sold raw or cleaned, from our office in Kurnool and our warehouse at Duvvur.</p>
             <div class="actions" data-rise>
               <a class="pill pill--gold" href="#b-feeds" data-jump data-magnetic>See the feeds</a>
               <a class="pill pill--line" href={`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent('Hello Rithwik Bird Feeds, I would like a price.')}`} target="_blank" rel="noopener">WhatsApp an order</a>
@@ -170,7 +170,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
         <div class="about__copy">
           <h2 class="section-title" id="b-about-title" data-split>Who we are</h2>
           <p class="about__lead" data-reveal>Rithwik Bird Feeds carries forward a family grain trade that began in 1925.</p>
-          <p data-reveal>We bring in millets, sunflower, jowar, maize and horse gram, clean and sort them at our Duvvur warehouse, and supply them raw or cleaned to traders, pet shops and bird keepers. Foxtail comes from both the summer and winter crops, and white proso goes through a Sortex colour sorter.</p>
+          <p data-reveal>We bring in seven millets, five kinds of jowar, maize, sunflower and safflower, clean and sort them at our Duvvur warehouse, and supply them raw or cleaned to traders, pet shops and bird keepers. Foxtail comes from both the summer and winter crops.</p>
         </div>
         <div class="about__media">
           {birdAboutPhoto && (
@@ -236,7 +236,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
 
     <Footer logo={birdLogo} tone="bird" brand={BRANDS.bird.name} gstin={BRANDS.bird.gstin}
       sister={{ view: 'food', href: '#human-food', text: 'Rithwik Industries, millets, seeds and dals for people' }} />
-    <svg class="scrollbird" viewBox="-40 -24 80 48" aria-hidden="true"><path d="M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z" /></svg>
+    <canvas class="scrollbird" aria-hidden="true"></canvas>
   </div>
 
 
@@ -252,7 +252,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
         <div class="food-hero__copy">
           <p class="food-hero__brand" data-rise>Rithwik Industries</p>
           <h1 class="display display--food" id="food-title" data-split>Nature's grain, nurtured for you</h1>
-          <p class="food-hero__lede" data-rise>Millets, super seeds, quinoa, dals and spices for homes, shops and bulk buyers.</p>
+          <p class="food-hero__lede" data-rise>Millets, super foods, oil seeds, pulses, spices and cereals for homes, shops and bulk buyers.</p>
           <div class="actions" data-rise>
             <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>
             <a class="pill pill--line-ink" href={`${base}Rithwik-Catalogue.pdf`} download>Download catalogue (PDF)</a>
@@ -333,7 +333,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
       <Certifications id="f-certs" tone="food" regs={held('food')} photo="quinoab" photoAlt="White, red and black quinoa" />
 
       <Steps id="f-order" tone="food" steps={[
-        { title: 'Choose your products', body: 'Pick from millets, seeds, quinoa, dals and spices above.' },
+        { title: 'Choose your products', body: 'Pick from millets, super foods, oil seeds, pulses, spices and cereals above.' },
         { title: 'Tell us the quantity', body: 'Use the form below or message 83097 82770 with how much you need and where.' },
         { title: 'Get a quote', body: "We reply with today's price and agree packing and delivery with you." },
       ]} />
