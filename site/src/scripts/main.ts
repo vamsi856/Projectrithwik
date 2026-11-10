@@ -366,7 +366,11 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
             $('[data-studio-name]', studio)!.textContent = items[i].name;
             $('[data-studio-variant]', studio)!.textContent = items[i].options;
             $('[data-studio-ask]', studio)!.dataset.product = items[i].ask;
-            if (!reduce) gsap.from($$('.studio__detail > *', studio), { y: 14, opacity: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' });
+            $('[data-studio-index]', studio)!.textContent = String(i + 1).padStart(2, '0');
+            // keep the chosen name in the middle of the row (horizontal scroll only)
+            const pk = $<HTMLElement>('[data-studio-picker]', studio)!, btn = $<HTMLElement>(`[data-pick="${i}"]`, studio)!;
+            pk.scrollTo({ left: btn.offsetLeft - pk.clientWidth / 2 + btn.offsetWidth / 2, behavior: reduce ? 'auto' : 'smooth' });
+            if (!reduce) gsap.from($$('.studio__what > *', studio), { y: 10, opacity: 0, duration: 0.45, stagger: 0.05, ease: 'power2.out' });
           }
         },
       });
@@ -376,20 +380,18 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
         if (!reduce) st({ trigger: hero.closest('section')!, start: 'top top', end: 'bottom top', scrub: true, onUpdate: (s) => ctl.setScrollSpin(s.progress * Math.PI * 1.2) });
       }
       if (studio) {
-        // the names sit below the ring: picking one glides the page so the ring is in the
-        // middle of the screen while the chosen pack turns to the front
-        const stageEl = $<HTMLElement>('.studio__stage', studio)!;
-        $$('[data-pick]', studio).forEach((b) => b.addEventListener('click', () => {
-          ctl.stopAuto();
-          const r = stageEl.getBoundingClientRect();
-          const hdr = ($<HTMLElement>('.sbar', root)?.offsetHeight ?? 0);
-          const off = -(hdr + Math.max(0, (innerHeight - hdr - r.height) / 2));
+        // picking a name (or an arrow) turns that pack to the front; if the section is not
+        // fully on screen, the page glides so it is
+        const bring = () => {
+          const hdr = $<HTMLElement>('.sbar', root)?.offsetHeight ?? 0, r = studio.getBoundingClientRect();
           if (r.top < hdr - 4 || r.bottom > innerHeight + 4) {
-            if (lenis) lenis.scrollTo(stageEl, { offset: off, duration: 0.9 });
-            else window.scrollTo({ top: r.top + scrollY + off, behavior: reduce ? 'auto' : 'smooth' });
+            if (lenis) lenis.scrollTo(studio, { offset: -hdr, duration: 0.9 });
+            else window.scrollTo({ top: r.top + scrollY - hdr, behavior: reduce ? 'auto' : 'smooth' });
           }
-          ctl.show(Number(b.dataset.pick));
-        }));
+        };
+        $$('[data-pick]', studio).forEach((b) => b.addEventListener('click', () => { ctl.stopAuto(); bring(); ctl.show(Number(b.dataset.pick)); }));
+        $('[data-studio-prev]', studio)?.addEventListener('click', () => { ctl.stopAuto(); bring(); ctl.prev(); });
+        $('[data-studio-next]', studio)?.addEventListener('click', () => { ctl.stopAuto(); bring(); ctl.next(); });
       }
     }, { rootMargin: '300px' });
     io.observe(c);

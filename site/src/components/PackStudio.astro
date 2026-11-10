@@ -15,22 +15,30 @@ const { id, kind, tone, logo, items, contact, title, lede } = Astro.props;
     <canvas class="studio__canvas" data-pack={kind} data-logo={logo} data-items={JSON.stringify(items)} role="img" aria-label="The full range of packs in a turning ring"></canvas>
   </div>
   <div class="studio__panel">
-    <p class="studio__hint">Pick a name and its pack turns to the front, or drag the ring</p>
-    <div class="studio__picker" role="radiogroup" aria-label="Choose a product">
-      {items.map((it, i) => (
-        <button type="button" class="studio__pick" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-pick={i}>
-          <span class="seed" aria-hidden="true" style={`--c1:${it.c1};--c2:${it.c2};--g:7px`}></span>
-          <span>{it.name}</span>
-        </button>
-      ))}
+    <div class="studio__rail">
+      <button class="studio__arrow" type="button" data-studio-prev aria-label="Previous product">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="studio__picker" role="radiogroup" aria-label="Choose a product" data-studio-picker>
+        {items.map((it, i) => (
+          <button type="button" class="studio__pick" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-pick={i}>
+            <span class="seed" aria-hidden="true" style={`--c1:${it.c1};--c2:${it.c2};--g:7px`}></span>
+            <span>{it.name}</span>
+          </button>
+        ))}
+      </div>
+      <button class="studio__arrow" type="button" data-studio-next aria-label="Next product">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
     <div class="studio__detail">
-      <div>
+      <span class="studio__count"><b data-studio-index>01</b> / {String(items.length).padStart(2, '0')}</span>
+      <div class="studio__what">
         <p class="studio__name" data-studio-name>{items[0].name}</p>
         <p class="studio__variant" data-studio-variant>{items[0].options}</p>
       </div>
       <a class:list={['pill', tone === 'food' ? 'pill--ink' : 'pill--gold']} href={`#${contact}`} data-product={items[0].ask} data-studio-ask>Ask price for this</a>
     </div>
-    <p class="studio__note">Pack artwork shown is a design concept.</p>
+    <p class="studio__note">Pick a name or drag the ring. Pack artwork shown is a design concept.</p>
   </div>
 </section>
