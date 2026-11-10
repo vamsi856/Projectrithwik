@@ -9,7 +9,8 @@
 import { gsap } from 'gsap';
 
 export type Sheet = {
-  /** sprite sheet url */ src: string;
+  /** sprite sheet urls; frames run across them in order (each stays under GPU texture limits) */ src: string[];
+  /** frames per sheet image */ per: number;
   /** frame size in the sheet, px */ fw: number; fh: number;
   cols: number; frames: number;
   /** footage frame rate after sampling */ fps: number;
@@ -20,10 +21,10 @@ export type Sheet = {
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 /** Blue-and-gold macaw, one full wingbeat cut from free slow-motion footage
  * (Christopher Borges on Pexels, Pexels licence). */
-export const MACAW: Sheet = { src: `${BASE}birds/bgmacaw.webp`, fw: 686, fh: 535, cols: 5, frames: 29, fps: 30, ax: 0.694, ay: 0.647, rot: -0.1 };
+export const MACAW: Sheet = { src: [`${BASE}birds/bgmacaw-0.webp`, `${BASE}birds/bgmacaw-1.webp`], per: 20, fw: 911, fh: 627, cols: 4, frames: 29, fps: 30, ax: 0.713, ay: 0.706, rot: -0.1 };
 
 type Bird = {
-  sheet: Sheet; img: CanvasImageSource;
+  sheet: Sheet; img: CanvasImageSource[];
   x: number; y: number; y0: number; vx: number; size: number; depth: number;
   t: number; rate: number; wob: number; dx: number; dy: number; vdx: number; vdy: number; panic: number;
   flip: boolean;
@@ -44,7 +45,7 @@ export type FlockOptions = {
 // one decoded bitmap per sheet, shared by every flock on the page
 const bitmaps = new Map<string, Promise<CanvasImageSource>>();
 const bitmap = (src: string) => {
-  if (!bitmaps.has(src)) bitmaps.set(src, loadImg(src).then((im) => ('createImageBitmap' in window ? createImageBitmap(im) : im)));
+  if (!bitmaps.has(src)) bitmaps.set(src, loadImg(src).then((im): Promise<CanvasImageSource> | CanvasImageSource => ('createImageBitmap' in window ? createImageBitmap(im) : im)));
   return bitmaps.get(src)!;
 };
 const loadImg = (src: string) => new Promise<HTMLImageElement>((ok, no) => { const i = new Image(); i.decoding = 'async'; i.onload = () => ok(i); i.onerror = no; i.src = src; });
@@ -54,7 +55,7 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
   const band = o.band ?? [0.08, 0.72];
   let W = 0, H = 0, dpr = 1, running = false, visible = false, wanted = false, last = 0;
   const birds: Bird[] = [];
-  const imgs = new Map<string, CanvasImageSource>();
+  const imgs = new Map<Sheet, CanvasImageSource[]>();
 
   const size = () => {
     dpr = Math.min(devicePixelRatio || 1, 1.5);
@@ -66,7 +67,7 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
 
   const px = (v: FlockOptions['near']) => (typeof v === 'function' ? v(W, H) : v);
   const sizeAt = (depth: number) => px(o.far) + (px(o.near) - px(o.far)) * depth;
-  const spawn = (b: Partial<Bird> & { sheet: Sheet; img: CanvasImageSource; depth: number }, anywhere: boolean): Bird => {
+  const spawn = (b: Partial<Bird> & { sheet: Sheet; img: CanvasImageSource[]; depth: number }, anywhere: boolean): Bird => {
     const size = sizeAt(b.depth);
     if (o.pinned) return { sheet: b.sheet, img: b.img, depth: 1, size, x: W / 2, y: H / 2, y0: H / 2, vx: 0, t: 0, rate: 1, wob: 0, dx: 0, dy: 0, vdx: 0, vdy: 0, panic: 0, flip: false };
     const y0 = H * (band[0] + Math.random() * (band[1] - band[0]));
@@ -96,8 +97,8 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
         if (b.x - b.size > W + 40) Object.assign(b, spawn(b, false));
         if (o.pinned) b.x = W / 2;
       }
-      const f = Math.floor(b.t * s.fps) % s.frames;
-      const sx = (f % s.cols) * s.fw, sy = Math.floor(f / s.cols) * s.fh;
+      const f = Math.floor(b.t * s.fps) % s.frames, part = Math.floor(f / s.per), lf = f % s.per;
+      const sx = (lf % s.cols) * s.fw, sy = Math.floor(lf / s.cols) * s.fh;
       // the footage already carries the bird's own rise and fall; add a slow drift
       const y = b.y0 + (o.pinned ? 0 : Math.sin(b.wob) * H * 0.03) + b.dy;
       const x = b.x + b.dx;
@@ -106,7 +107,7 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
       ctx.globalAlpha = 0.78 + b.depth * 0.22;
       ctx.save();
       ctx.translate(x, y); ctx.rotate(bank);
-      ctx.drawImage(b.img, sx, sy, s.fw, s.fh, -w * s.ax, -h * s.ay, w, h);
+      ctx.drawImage(b.img[part], sx, sy, s.fw, s.fh, -w * s.ax, -h * s.ay, w, h);
       ctx.restore();
     }
     ctx.globalAlpha = 1;
@@ -125,13 +126,13 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
 
   const ready = (async () => {
     // decoded once into a bitmap so drawing never stalls on decode
-    await Promise.all(o.sheets.map(async (s) => imgs.set(s.src, await bitmap(s.src))));
+    await Promise.all(o.sheets.map(async (s) => imgs.set(s, await Promise.all(s.src.map(bitmap)))));
     size();
     for (let i = 0; i < o.count; i++) {
       const sheet = o.sheets[i % o.sheets.length];
       // spread depths so the flock reads as near and far; draw far first
       const depth = o.count === 1 ? 1 : i / (o.count - 1);
-      birds.push(spawn({ sheet, img: imgs.get(sheet.src)!, depth }, true));
+      birds.push(spawn({ sheet, img: imgs.get(sheet)!, depth }, true));
     }
     if (o.still) draw(0);
     sync();
