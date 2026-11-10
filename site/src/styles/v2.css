@@ -1092,3 +1092,13 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
   .studio__name { white-space: normal; font-size: 1.35rem; line-height: 1.05; }
   .studio__detail .pill { padding-inline: 16px; }
 }
+
+/* Inside Rithwik, now the warehouse (and the sack on Bird Feeds) */
+.plant__grid--two, .plant__grid--one { grid-auto-rows: auto; }
+.plant__grid--two .plant__fig--warehouse { grid-column: 1 / span 8; grid-row: auto; aspect-ratio: 1156 / 466; }
+.plant__grid--two .plant__fig--sack { grid-column: 9 / span 4; grid-row: auto; aspect-ratio: auto; }
+.plant__grid--one .plant__fig--warehouse { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 1156 / 466; }
+@media (max-width: 860px) {
+  .plant__grid--two .plant__fig--warehouse, .plant__grid--one .plant__fig--warehouse { grid-column: 1 / -1; }
+  .plant__grid--two .plant__fig--sack { grid-column: 1 / -1; aspect-ratio: 1 / 1; }
+}
