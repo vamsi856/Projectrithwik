@@ -12,17 +12,22 @@ The site opens as a book. The cover turns to show two pages, Bird Feeds and Huma
 - Native View Transitions API for switching between the book and the two sites
 - Product photos from Wikimedia Commons (free licences, credited on the site)
 
+## Layout
+
+- `site/` is the Astro source.
+- The repository root holds the built website (`index.html`, `_astro/`, ...), which GitHub Pages serves from `main`.
+
 ## Editing products
 
-Everything is in `src/data/products.ts`: names, crop or grade options, GST rates and swatch colours. Photo links and credits are in `src/data/commons.json`.
+Everything is in `site/src/data/products.ts`: names, crop or grade options, GST rates and swatch colours. Photo links and credits are in `site/src/data/commons.json`.
 
 ## Commands
 
 ```
+cd site
 npm install
 npm run dev       # local preview at http://localhost:4321/Projectrithwik
-npm run build     # static site in dist/
-npm run deploy    # build and publish dist/ to the gh-pages branch
+npm run build     # builds and copies the site to the repository root
 ```
 
-GitHub Pages serves the `gh-pages` branch.
+Commit and push after `npm run build`; GitHub Pages picks it up in a minute or two.
