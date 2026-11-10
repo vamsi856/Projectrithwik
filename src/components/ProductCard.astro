@@ -1,0 +1,43 @@
+---
+import Photo from './Photo.astro';
+import type { Product } from '../data/products';
+import { lineName } from '../data/products';
+import { photo } from '../data/photos';
+
+interface Props { product: Product; contact: string; tone: 'bird' | 'food' }
+const { product: p, contact, tone } = Astro.props;
+const img = photo(p.photo);
+const multi = p.variants.length > 1;
+const first = p.variants[0];
+const swatch = `--c1:${p.swatch.c1};--c2:${p.swatch.c2};--g:${p.swatch.grain}px`;
+---
+<article class:list={['pcard', `pcard--${tone}`]} data-group={p.group} data-card>
+  <div class="pcard__media">
+    {img ? (
+      <Photo name={p.photo!} class="pcard__img" alt={p.name} sizes="(max-width: 640px) 92vw, (max-width: 1100px) 46vw, 380px" />
+    ) : (
+      <div class="pcard__plate"><span class="seed seed--plate" style={swatch} aria-hidden="true"></span></div>
+    )}
+    <span class="seed pcard__swatch" style={swatch} aria-hidden="true"></span>
+  </div>
+  <div class="pcard__body">
+    <h3 class="pcard__name">{p.name}</h3>
+    {multi ? (
+      <fieldset class="variants">
+        <legend class="sr">{p.name} options</legend>
+        {p.variants.map((v, i) => (
+          <label class="variant">
+            <input type="radio" name={`v-${p.id}`} value={lineName(p, v)} data-gst={v.gst} checked={i === 0} />
+            <span>{v.label}</span>
+          </label>
+        ))}
+      </fieldset>
+    ) : (
+      first.label && <p class="pcard__note">{first.label}</p>
+    )}
+    <div class="pcard__foot">
+      <span class="pcard__gst">GST <b data-gst-out>{first.gst}</b></span>
+      <a class="pcard__ask" href={`#${contact}`} data-product={lineName(p, first)}>Ask price</a>
+    </div>
+  </div>
+</article>

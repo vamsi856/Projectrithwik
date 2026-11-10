@@ -1,0 +1,306 @@
+---
+import '@fontsource/anton/400.css';
+import '@fontsource/instrument-sans/400.css';
+import '@fontsource/instrument-sans/500.css';
+import '@fontsource/instrument-sans/600.css';
+import '@fontsource/instrument-sans/700.css';
+import '../styles/site.css';
+import '../styles/v2.css';
+import { Image } from 'astro:assets';
+import birdLogo from '../assets/brand/birdfeeds-emblem.jpg';
+import foodLogo from '../assets/brand/industries-emblem.png';
+import ProductCard from '../components/ProductCard.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import Contact from '../components/Contact.astro';
+import Vision from '../components/Vision.astro';
+import Steps from '../components/Steps.astro';
+import Footer from '../components/Footer.astro';
+import { BIRD, FOOD, BIRD_GROUPS, FOOD_GROUPS, BRANDS, CONTACT, lineCount, lineName } from '../data/products';
+import { photo, credits } from '../data/photos';
+import Photo from '../components/Photo.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const nBird = lineCount(BIRD);
+const nFood = lineCount(FOOD);
+const birdOptions = BIRD.flatMap((p) => p.variants.map((v) => lineName(p, v)));
+const foodOptions = FOOD.flatMap((p) => p.variants.map((v) => lineName(p, v)));
+const marquee = (names: string[]) => [...new Set(names)];
+const birdHeroPhoto = photo('bird-budgies');
+void photo;
+const birdAboutPhoto = photo('bird-on-millet');
+const birdFlightPhoto = photo('bird-parakeet-flight');
+const farmersPhoto = photo('farmers-millet');
+const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pantry: 'clove' };
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rithwik, Kurnool: Bird Feeds and Human Food</title>
+  <meta name="description" content="Two businesses from Kurnool, Andhra Pradesh. Rithwik Bird Feeds: foxtail, proso, sunflower, jowar and more. Rithwik Industries: millets, super seeds, quinoa, dals and spices." />
+  <meta name="theme-color" content="#0b1924" />
+  <meta name="view-transition" content="same-origin" />
+  <link rel="icon" href={`${base}favicon.jpg`} />
+</head>
+<body data-view="book">
+
+  <!-- ================= THE BOOK ================= -->
+  <section class="stage" id="book-view" aria-label="Choose a business">
+    <div class="stage__grain" aria-hidden="true"></div>
+    <canvas class="stage__dust" aria-hidden="true"></canvas>
+    <p class="stage__hint" id="stageHint">Two businesses, one family. Open the book.</p>
+
+    <div class="book" id="book">
+      <a class="page page--food" href="#human-food" data-enter="food">
+        <div class="page__inner">
+          <Image class="page__emblem page__emblem--food" src={foodLogo} alt="" width={300} loading="eager" />
+          <div class="page__text">
+            <p class="page__kicker">Rithwik Industries</p>
+            <h2 class="page__title">Human<br />food</h2>
+            <p class="page__lede">Millets, super seeds, quinoa, dals and spices for your kitchen and your shelves.</p>
+            <span class="page__count">{nFood} products</span>
+            <span class="page__cta">Open Human Food</span>
+          </div>
+          <span class="page__folio" aria-hidden="true">ii</span>
+        </div>
+      </a>
+
+      <div class="cover" id="cover">
+        <button class="cover__front" id="openBook" type="button" aria-label="Open the book">
+          <span class="cover__frame" aria-hidden="true"></span>
+          <span class="cover__emblems" aria-hidden="true">
+            <Image src={birdLogo} alt="" width={260} loading="eager" />
+            <Image src={foodLogo} alt="" width={260} loading="eager" />
+          </span>
+          <span class="cover__title">Rithwik</span>
+          <span class="cover__sub">Bird Feeds &amp; Industries</span>
+          <span class="cover__place">Kurnool, Andhra Pradesh</span>
+          <span class="cover__open">Open the book</span>
+        </button>
+        <a class="cover__back page page--bird" href="#bird-feeds" data-enter="bird" tabindex="-1">
+          <div class="page__inner">
+            <svg class="page__flock" data-flock="6" viewBox="0 0 400 300" aria-hidden="true"></svg>
+            <Image class="page__emblem page__emblem--bird" src={birdLogo} alt="" width={260} loading="eager" />
+            <div class="page__text">
+              <p class="page__kicker">Rithwik Bird Feeds</p>
+              <h2 class="page__title">Bird<br />feeds</h2>
+              <p class="page__lede">Foxtail, proso, sunflower, jowar and more, cleaned for cage birds and aviaries.</p>
+              <span class="page__count">{nBird} feed lines</span>
+              <span class="page__cta">Open Bird Feeds</span>
+            </div>
+            <span class="page__folio" aria-hidden="true">i</span>
+          </div>
+        </a>
+      </div>
+      <span class="book__shadow" aria-hidden="true"></span>
+    </div>
+
+    <p class="stage__direct">Go straight to <a href="#bird-feeds" data-enter="bird">Bird Feeds</a> or <a href="#human-food" data-enter="food">Human Food</a></p>
+  </section>
+
+  <div class="turn" id="turn" aria-hidden="true"></div>
+
+
+  <!-- ================= SITE 1: RITHWIK BIRD FEEDS ================= -->
+  <div class="site site--bird" id="bird-feeds" data-site="bird" hidden>
+    <SiteHeader logo={birdLogo} first="Rithwik" second="Bird Feeds" top="b-top" email={BRANDS.bird.email}
+      phones={[CONTACT.phones[1], CONTACT.phones[2]]}
+      links={[{ href: 'b-about', label: 'About' }, { href: 'b-feeds', label: 'Feeds' }, { href: 'b-vision', label: 'Vision' }, { href: 'b-contact', label: 'Contact' }]} />
+
+    <main>
+      <section class="bird__hero" id="b-top" aria-labelledby="bird-title">
+        {birdHeroPhoto && (
+          <div class="bird__photo" data-parallax="0.18">
+            <Photo name="bird-budgies" alt="" sizes="(max-width: 860px) 100vw, 58vw" eager />
+          </div>
+        )}
+        <canvas class="seedfall" aria-hidden="true"></canvas>
+        <svg class="bird__flock" data-flock="11" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+        <span class="ghost ghost--bird" aria-hidden="true">Feeds</span>
+        <div class="bird__intro">
+          <Image class="bird__badge" src={birdLogo} alt="Rithwik Bird Feeds emblem" width={420} loading="eager" />
+          <div>
+            <h1 class="display" id="bird-title" data-split><span class="display__a">Rithwik</span> <span class="display__b">Bird feeds</span></h1>
+            <p class="bird__lede" data-rise>Seventeen feed grains, sold raw or cleaned, from our office in Kurnool and our warehouse at Duvvur.</p>
+            <div class="actions" data-rise>
+              <a class="pill pill--gold" href="#b-feeds" data-jump data-magnetic>See the feeds</a>
+              <a class="pill pill--line" href={`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent('Hello Rithwik Bird Feeds, I would like a price.')}`} target="_blank" rel="noopener">WhatsApp an order</a>
+            </div>
+          </div>
+        </div>
+        <span class="scrollcue" aria-hidden="true"></span>
+      </section>
+
+      <div class="facts" aria-label="Rithwik Bird Feeds at a glance">
+        <div class="fact"><b data-count={nBird}>{nBird}</b><span>feed lines in stock</span></div>
+        <div class="fact"><b>Summer &amp; winter</b><span>foxtail crops, raw or cleaned</span></div>
+        <div class="fact"><b>Sortex</b><span>cleaned white proso</span></div>
+        <div class="fact fact--code"><b>{BRANDS.bird.gstin}</b><span>GSTIN</span></div>
+      </div>
+
+      <section class="about about--bird" id="b-about" aria-labelledby="b-about-title">
+        <div class="about__copy">
+          <h2 class="section-title" id="b-about-title" data-split>Who we are</h2>
+          <p class="about__lead" data-reveal>Rithwik Bird Feeds is the bird feed side of the Rithwik family business in Kurnool.</p>
+          <p data-reveal>We bring in millets, sunflower, jowar, maize and horse gram, clean and sort them at our Duvvur warehouse, and supply them raw or cleaned to traders, pet shops and bird keepers. Foxtail comes from both the summer and winter crops, and white proso goes through a Sortex colour sorter.</p>
+        </div>
+        <div class="about__media">
+          {birdAboutPhoto && (
+            <figure class="about__photo about__photo--main" data-curtain>
+              <Photo name="bird-on-millet" alt="A rosefinch feeding on a ripe millet head" sizes="(max-width: 860px) 92vw, 46vw" />
+            </figure>
+          )}
+          {birdFlightPhoto && (
+            <figure class="about__photo about__photo--small" data-parallax="-0.12">
+              <Photo name="bird-parakeet-flight" alt="A rose-ringed parakeet carrying a sunflower head" sizes="(max-width: 860px) 34vw, 260px" />
+            </figure>
+          )}
+        </div>
+      </section>
+
+      <div class="marquee marquee--bird" aria-hidden="true"><div class="marquee__track">
+        {[0, 1].map(() => marquee(BIRD.map((b) => b.name)).map((n) => <span>{n}</span>))}
+      </div></div>
+
+      <section class="feeds" id="b-feeds" aria-labelledby="b-feeds-title">
+        <div class="feeds__head">
+          <h2 class="section-title" id="b-feeds-title" data-split>The feeds</h2>
+          <p>Prices change with the crop, so we quote on request. Pick the option you want on a card, then tap <em>Ask price</em> and it goes straight into the order form.</p>
+        </div>
+        <div class="chips" role="group" aria-label="Filter feeds">
+          <button class="chip is-on" type="button" data-filter="all" aria-pressed="true">All feeds</button>
+          {BIRD_GROUPS.map((g) => <button class="chip" type="button" data-filter={g.id} aria-pressed="false">{g.label}</button>)}
+        </div>
+        <div class="pgrid">
+          {BIRD.map((p) => <ProductCard product={p} contact="b-contact" tone="bird" />)}
+        </div>
+      </section>
+
+      <Vision id="b-vision" tone="bird"
+        vision="Kurnool's bird feed in aviaries and pet stores around the world."
+        mission="Clean, sort and pack every feed line to one standard, keep prices fair through the seasons, and build the certifications and shipping partners we need to export."
+        image="port-ship" imageAlt="A container ship leaving port" />
+
+      <Steps id="b-order" tone="bird" steps={[
+        { title: 'Pick your feeds', body: 'Choose from the cards above. Say if you want it raw or cleaned, and which foxtail crop.' },
+        { title: 'Send it on WhatsApp', body: 'Use the form below or message 83097 82770 with the quantity and your town.' },
+        { title: "Get today's price", body: 'We reply with the current rate and work out packing and delivery with you.' },
+      ]} />
+
+      <Contact id="b-contact" tone="bird" brand={BRANDS.bird.name} email={BRANDS.bird.email} options={birdOptions}
+        label="Feed" qtyHint="For example, 50 bags or 2 tonnes" msgHint="Delivery town, raw or cleaned, packing" />
+    </main>
+
+    <Footer logo={birdLogo} tone="bird" brand={BRANDS.bird.name} gstin={BRANDS.bird.gstin}
+      sister={{ view: 'food', href: '#human-food', text: 'Rithwik Industries, millets, seeds and dals for people' }} />
+    <svg class="scrollbird" viewBox="-40 -24 80 48" aria-hidden="true"><path d="M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z" /></svg>
+  </div>
+
+
+  <!-- ================= SITE 2: RITHWIK INDUSTRIES ================= -->
+  <div class="site site--food" id="human-food" data-site="food" hidden>
+    <SiteHeader logo={foodLogo} first="Rithwik" second="Industries" top="f-top" email={BRANDS.food.email}
+      phones={[CONTACT.phones[0], CONTACT.phones[3]]}
+      links={[{ href: 'f-about', label: 'About' }, { href: 'f-range', label: 'Products' }, { href: 'f-vision', label: 'Vision' }, { href: 'f-contact', label: 'Contact' }]} />
+
+    <main>
+      <section class="food-hero" id="f-top" aria-labelledby="food-title">
+        <span class="ghost ghost--food" aria-hidden="true">Grain</span>
+        <div class="food-hero__copy">
+          <p class="food-hero__brand" data-rise>Rithwik Industries</p>
+          <h1 class="display display--food" id="food-title" data-split>Nature's grain, nurtured for you</h1>
+          <p class="food-hero__lede" data-rise>Millets, super seeds, quinoa, dals and spices for homes, shops and bulk buyers.</p>
+          <div class="actions" data-rise>
+            <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>
+            <a class="pill pill--line-ink" href={`${base}Rithwik-Catalogue.pdf`} download>Download catalogue (PDF)</a>
+          </div>
+        </div>
+        <figure class="food-hero__art">
+          <canvas class="grainpour" aria-hidden="true"></canvas>
+          <Image src={foodLogo} alt="Rithwik Industries emblem: a mother and child beside a millet stalk and a bowl of grain" width={560} loading="eager" />
+        </figure>
+      </section>
+
+      <div class="marquee marquee--food" aria-hidden="true"><div class="marquee__track">
+        {[0, 1].map(() => marquee(FOOD.map((f) => f.name)).map((n) => <span>{n}</span>))}
+      </div></div>
+
+      <section class="about about--food" id="f-about" aria-labelledby="f-about-title">
+        <div class="about__copy">
+          <h2 class="section-title section-title--food" id="f-about-title" data-split>Who we are</h2>
+          <p class="about__lead" data-reveal>Rithwik Industries brings millets, super seeds and pulses from Andhra Pradesh to homes, shops and bulk buyers.</p>
+          <p data-reveal>We work from our office in Kurnool and our warehouse at Duvvur, keeping six millets, ten seeds and super foods, and a shelf of dals, pulses and whole spices. Tell us the pack size you need and we'll quote for it.</p>
+        </div>
+        <div class="about__media">
+          {farmersPhoto && (
+            <figure class="about__photo about__photo--main" data-curtain>
+              <Photo name="farmers-millet" alt="Farmers standing in a tall pearl millet field" sizes="(max-width: 860px) 92vw, 46vw" />
+            </figure>
+          )}
+        </div>
+      </section>
+
+      <div id="f-range">
+        {FOOD_GROUPS.map((g) => (
+          <section class="range" id={`f-${g.id}`} aria-labelledby={`f-${g.id}-title`}>
+            {scenes[g.id] && (
+              <figure class="range__banner" data-curtain>
+                <Photo name={scenes[g.id]} alt="" sizes="(max-width: 1240px) 100vw, 1240px" />
+              </figure>
+            )}
+            <div class="range__head">
+              <h2 class="section-title section-title--food" id={`f-${g.id}-title`} data-split>{g.label}</h2>
+              <p>{g.note}</p>
+            </div>
+            <div class="pgrid">
+              {FOOD.filter((p) => p.group === g.id).map((p) => <ProductCard product={p} contact="f-contact" tone="food" />)}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <div class="facts facts--food" aria-label="Rithwik Industries at a glance">
+        <div class="fact"><b data-count={nFood}>{nFood}</b><span>products on the list</span></div>
+        <div class="fact"><b>Kurnool</b><span>office, near Nandyal Checkpost</span></div>
+        <div class="fact"><b>Duvvur, YSR</b><span>warehouse</span></div>
+        <div class="fact fact--code"><b>{BRANDS.food.gstin}</b><span>GSTIN</span></div>
+      </div>
+
+      <Vision id="f-vision" tone="food"
+        vision="Indian millets and super seeds on kitchen shelves across the world."
+        mission="Source directly from Andhra Pradesh farmers, clean and pack with care, and meet the food-safety and export standards that overseas buyers expect."
+        image="port-ship" imageAlt="A container ship leaving port" />
+
+      <Steps id="f-order" tone="food" steps={[
+        { title: 'Choose your products', body: 'Pick from millets, seeds, quinoa, dals and spices above.' },
+        { title: 'Tell us the quantity', body: 'Use the form below or message 83097 82770 with how much you need and where.' },
+        { title: 'Get a quote', body: "We reply with today's price and agree packing and delivery with you." },
+      ]} />
+
+      <Contact id="f-contact" tone="food" brand={BRANDS.food.name} email={BRANDS.food.email} options={foodOptions}
+        label="Product" qtyHint="For example, 25 kg or 1 tonne" msgHint="Delivery town, packing size" />
+    </main>
+
+    <Footer logo={foodLogo} tone="food" brand={BRANDS.food.name} gstin={BRANDS.food.gstin}
+      sister={{ view: 'bird', href: '#bird-feeds', text: 'Rithwik Bird Feeds, grains and seed for birds' }} />
+  </div>
+
+  <dialog class="credits" id="credits">
+    <h2>Photo credits</h2>
+    <p>Product and scene photos are from Wikimedia Commons, used under the licences below. Logos and catalogue belong to Rithwik.</p>
+    <ul>
+      {credits.map((c) => <li><a href={c.source} target="_blank" rel="noopener">{c.title}</a>{c.author && `, ${c.author}`}, {c.license}</li>)}
+    </ul>
+    <form method="dialog"><button class="pill pill--gold">Close</button></form>
+  </dialog>
+
+  <a class="wa" href={`https://wa.me/${CONTACT.whatsapp}`} target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3Zm0 23.6a10.6 10.6 0 0 1-5.4-1.5l-.4-.2-3.9 1 1-3.8-.2-.4A10.6 10.6 0 1 1 16 26.6Zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5 1-1.7.1-.2 0-.4 0-.6l-1-2.3c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.7 3.7 0 0 0-1.1 2.7 6.4 6.4 0 0 0 1.3 3.4 14.7 14.7 0 0 0 5.6 5c2.1.9 2.9 1 4 .8a3.4 3.4 0 0 0 2.2-1.6 2.8 2.8 0 0 0 .2-1.6c-.1-.1-.3-.2-.6-.3Z" /></svg>
+  </a>
+
+  <script>
+    import '../scripts/main.ts';
+  </script>
+</body>
+</html>

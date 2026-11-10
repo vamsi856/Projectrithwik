@@ -1,0 +1,15 @@
+---
+interface Props { id: string; tone: 'bird' | 'food'; steps: { title: string; body: string }[] }
+const { id, tone, steps } = Astro.props;
+---
+<section class:list={['steps', `steps--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
+  <h2 class:list={['section-title', tone === 'food' && 'section-title--food']} id={`${id}-title`} data-split>How to order</h2>
+  <div class="steps__wrap">
+    <svg class="steps__path" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M10 80 C 200 10, 320 110, 500 60 S 800 10, 990 70" /></svg>
+    <ol class="steps__list">
+      {steps.map((s, i) => (
+        <li class="step"><b>{i + 1}</b><h3>{s.title}</h3><p>{s.body}</p></li>
+      ))}
+    </ol>
+  </div>
+</section>

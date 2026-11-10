@@ -1,0 +1,10 @@
+---
+import { photo } from '../data/photos';
+interface Props { name: string; alt: string; sizes: string; class?: string; eager?: boolean }
+const { name, alt, sizes, class: cls, eager = false } = Astro.props;
+const p = photo(name);
+---
+{p && (
+  <img class={cls} src={p.src} srcset={p.srcset} sizes={sizes} width={p.width} height={p.height} alt={alt}
+    loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager ? 'high' : 'auto'} referrerpolicy="no-referrer" />
+)}

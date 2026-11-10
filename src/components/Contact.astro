@@ -1,0 +1,29 @@
+---
+import { CONTACT } from '../data/products';
+interface Props { id: string; tone: 'bird' | 'food'; brand: string; email: string; options: string[]; label: string; qtyHint: string; msgHint: string }
+const { id, tone, brand, email, options, label, qtyHint, msgHint } = Astro.props;
+---
+<section class:list={['enquire', tone === 'food' && 'enquire--food']} id={id} aria-labelledby={`${id}-title`}>
+  <span class="ghost ghost--enq" aria-hidden="true">Order</span>
+  <div class="enquire__grid">
+    <div class="enquire__info">
+      <h2 class:list={['section-title', tone === 'food' ? 'section-title--food' : 'section-title--light']} id={`${id}-title`} data-split>Ask for a price</h2>
+      <p>Tell us what you need and roughly how much. The form opens WhatsApp with your message written out, so you just press send.</p>
+      <dl class="contact">
+        <div><dt>Office</dt><dd>{CONTACT.office}</dd></div>
+        <div><dt>Warehouse</dt><dd>{CONTACT.warehouse}</dd></div>
+        <div><dt>Phone</dt><dd>{CONTACT.phones.map((p, i) => (<><a href={`tel:${p.tel}`}>{p.label}</a>{p.note && ` (${p.note})`}{i < CONTACT.phones.length - 1 && ', '}</>))}</dd></div>
+        <div><dt>Email</dt><dd><a href={`mailto:${email}`}>{email}</a></dd></div>
+      </dl>
+    </div>
+    <form class="form" data-division={brand} novalidate>
+      <label class="field"><span>Your name</span><input name="name" autocomplete="name" required /></label>
+      <p class="form__error" role="alert" hidden>Add your name so we know who to reply to.</p>
+      <label class="field"><span>{label}</span><select name="product">{options.map((o) => <option>{o}</option>)}</select></label>
+      <label class="field"><span>Quantity</span><input name="qty" placeholder={qtyHint} /></label>
+      <label class="field"><span>Anything else</span><textarea name="msg" rows="3" placeholder={msgHint}></textarea></label>
+      <button class:list={['pill', 'pill--block', tone === 'food' ? 'pill--ink' : 'pill--gold']} type="submit">Send on WhatsApp</button>
+    </form>
+  </div>
+  <div class="map"><iframe title="Map to the Rithwik office, Nandyal Checkpost, Kurnool" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src={CONTACT.map}></iframe></div>
+</section>

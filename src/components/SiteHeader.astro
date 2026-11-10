@@ -1,0 +1,25 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props {
+  logo: ImageMetadata; first: string; second: string; top: string;
+  links: { href: string; label: string }[]; email: string; phones: { tel: string; label: string }[];
+}
+const { logo, first, second, top, links, email, phones } = Astro.props;
+---
+<div class="strip">
+  <a href={`mailto:${email}`}>{email}</a>
+  {phones.map((p) => <a href={`tel:${p.tel}`}>{p.label}</a>)}
+</div>
+<header class="sbar">
+  <a class="sbar__brand" href={`#${top}`} data-jump>
+    <Image src={logo} alt="" width={88} height={88} />
+    <span>{first} <b>{second}</b></span>
+  </a>
+  <nav class="sbar__nav" aria-label={`${first} ${second}`}>
+    {links.map((l) => <a href={`#${l.href}`} data-jump data-nav={l.href}>{l.label}</a>)}
+  </nav>
+  <a class="sbar__call" href="tel:+918309782770">Call 83097 82770</a>
+  <a class="sbar__book" href="#" data-book><span>Back to the book</span></a>
+  <span class="sbar__progress" aria-hidden="true"></span>
+</header>

@@ -1,0 +1,32 @@
+---
+import Photo from './Photo.astro';
+import { photo } from '../data/photos';
+interface Props { id: string; tone: 'bird' | 'food'; vision: string; mission: string; image?: string; imageAlt?: string }
+const { id, tone, vision, mission, image, imageAlt = '' } = Astro.props;
+const img = photo(image);
+---
+<section class:list={['vision', `vision--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
+  <div class="vision__globe" aria-hidden="true">
+    <canvas class="globe" data-globe={tone} width="900" height="900"></canvas>
+    <span class="vision__pin">Kurnool</span>
+  </div>
+  <div class="vision__copy">
+    <h2 class="section-title" id={`${id}-title`} data-split>From Kurnool to the world</h2>
+    <div class="vm">
+      <div class="vm__item" data-reveal>
+        <h3>Our vision</h3>
+        <p>{vision}</p>
+      </div>
+      <div class="vm__item" data-reveal>
+        <h3>Our mission</h3>
+        <p>{mission}</p>
+      </div>
+    </div>
+    <p class="vision__where" data-reveal>Where we're heading next: the Gulf, Europe, East and Southeast Asia, and North America.</p>
+    {img && (
+      <figure class="vision__photo" data-curtain>
+        <Photo name={image!} alt={imageAlt} sizes="(max-width: 860px) 92vw, 560px" />
+      </figure>
+    )}
+  </div>
+</section>
