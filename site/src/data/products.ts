@@ -51,7 +51,7 @@ export const BIRD: Product[] = [
   { id: 'b-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra', swatch: s('#9aa197', '#6e776c', 8), variants: [{ label: 'Bajra', gst: '0%' }] },
   { id: 'b-jowar', name: 'Jowar', group: 'grains', photo: 'jowar', swatch: s('#eadfc6', '#c7b896', 9),
     variants: [{ label: 'Mahendra', gst: '0%' }, { label: 'Milky white', gst: '0%' }, { label: 'Nidhi', gst: '0%' }, { label: 'Red', gst: '0%', photo: 'jowar-red', swatch: s('#a4552f', '#6e3418', 9) }, tint('Yellow', '0%', '#e2c164', '#b38f34', 9)] },
-  { id: 'b-maize', name: 'Maize', group: 'grains', photo: 'maize', swatch: s('#f0e4c4', '#cdbb8d', 12), variants: [{ label: '', gst: '0%' }] },
+  { id: 'b-maize', name: 'Maize', group: 'grains', photo: 'maize-grain', swatch: s('#f0e4c4', '#cdbb8d', 12), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-sunflower', name: 'Sunflower', group: 'oilseeds', photo: 'sf17', swatch: s('#b9b3a6', '#56514b', 11), variants: [{ label: 'Striped', gst: '5%' }] },
   { id: 'b-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower', swatch: s('#f2ede1', '#cfc6b0', 10), variants: [{ label: '', gst: '5%' }] },
 ];
@@ -94,7 +94,7 @@ export const FOOD: Product[] = [
 
   { id: 'f-chana', name: 'Chana', group: 'pulses', photo: 'chana', swatch: s('#e9c25a', '#c29a35', 9), variants: [{ label: 'White', gst: '', photo: 'chana-white', swatch: s('#e9d6a6', '#c8ad73', 11) }, tint('Brown', '', '#8a5a34', '#5b371c', 11)] },
   { id: 'f-toor', name: 'Toor dal', group: 'pulses', photo: 'toor', swatch: s('#e6b33c', '#bf8b1d', 9), variants: one() },
-  { id: 'f-lobia', name: 'Lobia', group: 'pulses', photo: 'lobia', swatch: s('#ece2cb', '#3b322b', 11), variants: [tint('Red', '', '#9c4a34', '#6a2c1d', 11), { label: 'White', gst: '' }] },
+  { id: 'f-lobia', name: 'Lobia', group: 'pulses', photo: 'lobia', swatch: s('#ece2cb', '#3b322b', 11), variants: [{ label: 'Red', gst: '', photo: 'lobia-red', swatch: s('#9c4a34', '#6a2c1d', 11) }, { label: 'White', gst: '' }] },
   { id: 'f-urad', name: 'Urad dal', group: 'pulses', photo: 'urad-dal', swatch: s('#f1ece0', '#2a2725', 8), variants: one() },
   { id: 'f-gram', name: 'Gram', group: 'pulses', photo: 'moong', swatch: s('#7d9a46', '#4f6a28', 8), variants: [{ label: 'Green', gst: '' }, { label: 'Black', gst: '', photo: 'urad' }] },
 

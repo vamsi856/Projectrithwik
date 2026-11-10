@@ -529,5 +529,23 @@
   "p": "https://commons.wikimedia.org/wiki/File:Red_Sorghum_Grains.jpg",
   "l": "CC BY-SA 4.0",
   "a": "IBS-Gh"
+ },
+ "lobia-red": {
+  "t": "Sea Island red peas.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/5/52/Sea_Island_red_peas.jpg",
+  "w": 4096,
+  "h": 3072,
+  "p": "https://commons.wikimedia.org/wiki/File:Sea_Island_red_peas.jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "Roemj9999"
+ },
+ "maize-grain": {
+  "t": "Drying maize corns (Himachal Pradesh),1.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Drying_maize_corns_%28Himachal_Pradesh%29%2C1.jpg",
+  "w": 1600,
+  "h": 1200,
+  "p": "https://commons.wikimedia.org/wiki/File:Drying_maize_corns_(Himachal_Pradesh),1.jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "Rajani Gairshail"
  }
 }
