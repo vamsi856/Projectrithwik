@@ -19,14 +19,15 @@ export type Sheet = {
 };
 
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-/** Blue-and-gold macaw, one full wingbeat cut from free slow-motion footage
- * (Christopher Borges on Pexels, Pexels licence). */
-export const MACAW: Sheet = { src: [`${BASE}birds/bgmacaw-0.webp`, `${BASE}birds/bgmacaw-1.webp`], per: 20, fw: 911, fh: 627, cols: 4, frames: 29, fps: 30, ax: 0.713, ay: 0.706, rot: -0.1 };
+/** Blue-and-gold macaw, one full wingbeat cut from the 4K version of free slow-motion
+ * footage (Christopher Borges on Pexels, Pexels licence), colour-corrected to the
+ * bird's true gold and turquoise. */
+export const MACAW: Sheet = { src: [`${BASE}birds/macaw-4k-0.webp`, `${BASE}birds/macaw-4k-1.webp`], per: 20, fw: 947, fh: 651, cols: 4, frames: 27, fps: 30, ax: 0.711, ay: 0.71, rot: -0.1 };
 
 type Bird = {
   sheet: Sheet; img: Mip[];
   x: number; y: number; y0: number; vx: number; size: number; depth: number;
-  t: number; rate: number; wob: number; dx: number; dy: number; vdx: number; vdy: number; panic: number;
+  lane: number; t: number; rate: number; wob: number; dx: number; dy: number; vdx: number; vdy: number; panic: number;
   flip: boolean;
 };
 
@@ -77,15 +78,17 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
 
   const px = (v: FlockOptions['near']) => (typeof v === 'function' ? v(W, H) : v);
   const sizeAt = (depth: number) => px(o.far) + (px(o.near) - px(o.far)) * depth;
-  const spawn = (b: Partial<Bird> & { sheet: Sheet; img: Mip[]; depth: number }, anywhere: boolean): Bird => {
+  const spawn = (b: Partial<Bird> & { sheet: Sheet; img: Mip[]; depth: number; lane?: number }, anywhere: boolean): Bird => {
     const size = sizeAt(b.depth);
-    if (o.pinned) return { sheet: b.sheet, img: b.img, depth: 1, size, x: W / 2, y: H / 2, y0: H / 2, vx: 0, t: 0, rate: 1, wob: 0, dx: 0, dy: 0, vdx: 0, vdy: 0, panic: 0, flip: false };
-    const y0 = H * (band[0] + Math.random() * (band[1] - band[0]));
+    if (o.pinned) return { sheet: b.sheet, img: b.img, depth: 1, size, lane: 0, x: W / 2, y: H / 2, y0: H / 2, vx: 0, t: 0, rate: 1, wob: 0, dx: 0, dy: 0, vdx: 0, vdy: 0, panic: 0, flip: false };
+    // each bird keeps its own height band, so a small flock never bunches up
+    const lanes = Math.max(1, o.count), lane = b.lane ?? 0, lh = (band[1] - band[0]) / lanes;
+    const y0 = H * (band[0] + lh * (lane + 0.2 + Math.random() * 0.6));
     // nearer birds cross faster: parallax
     const vx = (W * 0.045 + 26) * (0.55 + b.depth * 0.9) * (0.85 + Math.random() * 0.3);
     return {
-      sheet: b.sheet, img: b.img, depth: b.depth, size,
-      x: anywhere ? Math.random() * W : -size * 0.8, y: y0, y0, vx,
+      sheet: b.sheet, img: b.img, depth: b.depth, size, lane,
+      x: anywhere ? ((lane + 0.25 + Math.random() * 0.5) / lanes) * W : -size * 0.8, y: y0, y0, vx,
       t: Math.random() * 10, rate: 0.85 + Math.random() * 0.3, wob: Math.random() * 6.28,
       dx: 0, dy: 0, vdx: 0, vdy: 0, panic: 0, flip: false,
     };
@@ -142,7 +145,9 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
       const sheet = o.sheets[i % o.sheets.length];
       // spread depths so the flock reads as near and far; draw far first
       const depth = o.count === 1 ? 1 : i / (o.count - 1);
-      birds.push(spawn({ sheet, img: imgs.get(sheet)!, depth }, true));
+      // lanes are shuffled so the nearest bird is not always lowest
+      const lane = [1, 0, 2, 3, 4][i] ?? i;
+      birds.push(spawn({ sheet, img: imgs.get(sheet)!, depth, lane: Math.min(lane, o.count - 1) }, true));
     }
     if (o.still) draw(0);
     sync();

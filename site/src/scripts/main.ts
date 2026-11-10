@@ -180,7 +180,7 @@ function flockFor(c: HTMLCanvasElement) {
   const near = (w: number, h: number) => (hero ? Math.min(w < h ? w * 0.9 : w * 0.5, h * 1.05, 900) : Math.min(w < h ? w * 0.7 : w * 0.26, h * 0.5, 520));
   const f = createFlock(c, {
     sheets: [MACAW], still: reduce,
-    count: Number(c.dataset.flock) - (hero && portrait ? 2 : 0),
+    count: Math.max(2, Number(c.dataset.flock) - (portrait ? 1 : 0)),
     near, far: (w, h) => near(w, h) * 0.42,
     band: hero ? (portrait ? [0.08, 0.6] : [0.12, 0.66]) : [0.12, 0.78],
   });
