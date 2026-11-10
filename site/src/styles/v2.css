@@ -990,9 +990,7 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 .plant--bird .plant__fig figcaption b { color: var(--marigold); }
 .plant--food .plant__fig figcaption { background: rgba(var(--paper-rgb), .9); color: var(--ink); }
 .plant--food .plant__fig figcaption b { color: var(--ink); }
-/* founders tall on the left, the line wide on the right, then the rest */
-.plant__fig--founders { grid-column: 1 / span 5; grid-row: span 2; }
-.plant__fig--founders img { object-position: 50% 30%; }
+/* base grid; the layouts for each site are set further down */
 .plant__fig--line { grid-column: 6 / span 7; }
 .plant__fig--warehouse { grid-column: 6 / span 7; }
 .plant__grid--four .plant__fig--warehouse { grid-column: 6 / span 4; }
@@ -1000,7 +998,6 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 .plant__fig--sack img { object-position: 50% 40%; }
 @media (max-width: 860px) {
   .plant__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 46vw; }
-  .plant__fig--founders { grid-column: 1 / -1; grid-row: span 2; }
   .plant__fig--line, .plant__fig--warehouse, .plant__grid--four .plant__fig--warehouse { grid-column: 1 / -1; }
   .plant__grid--four .plant__fig--warehouse { grid-column: 1 / span 1; }
   .plant__fig--sack { grid-column: 2 / span 1; }
@@ -1093,12 +1090,17 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
   .studio__detail .pill { padding-inline: 16px; }
 }
 
-/* Inside Rithwik, now the warehouse (and the sack on Bird Feeds) */
-.plant__grid--two, .plant__grid--one { grid-auto-rows: auto; }
-.plant__grid--two .plant__fig--warehouse { grid-column: 1 / span 8; grid-row: auto; aspect-ratio: 1156 / 466; }
-.plant__grid--two .plant__fig--sack { grid-column: 9 / span 4; grid-row: auto; aspect-ratio: auto; }
-.plant__grid--one .plant__fig--warehouse { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 1156 / 466; }
+/* Inside Rithwik: cleaning line, warehouse, and (Bird Feeds) the sack */
+.plant__grid--bird, .plant__grid--food { grid-auto-rows: auto; }
+.plant__grid--bird .plant__fig--line { grid-column: 1 / span 8; grid-row: 1; aspect-ratio: 1156 / 468; }
+.plant__grid--bird .plant__fig--warehouse { grid-column: 1 / span 8; grid-row: 2; aspect-ratio: 1156 / 468; }
+.plant__grid--bird .plant__fig--sack { grid-column: 9 / span 4; grid-row: 1 / span 2; }
+.plant__grid--bird .plant__fig--sack img { position: absolute; inset: 0; }
+.plant__grid--food .plant__fig--line { grid-column: 1 / span 6; grid-row: auto; aspect-ratio: 2 / 1; }
+.plant__grid--food .plant__fig--warehouse { grid-column: 7 / span 6; grid-row: auto; aspect-ratio: 2 / 1; }
 @media (max-width: 860px) {
-  .plant__grid--two .plant__fig--warehouse, .plant__grid--one .plant__fig--warehouse { grid-column: 1 / -1; }
-  .plant__grid--two .plant__fig--sack { grid-column: 1 / -1; aspect-ratio: 1 / 1; }
+  .plant__grid--bird .plant__fig, .plant__grid--food .plant__fig { grid-column: 1 / -1; grid-row: auto; }
+  .plant__grid--bird .plant__fig--line, .plant__grid--bird .plant__fig--warehouse, .plant__grid--food .plant__fig--line, .plant__grid--food .plant__fig--warehouse { aspect-ratio: 1156 / 468; }
+  .plant__grid--bird .plant__fig--sack { aspect-ratio: 1 / 1; }
+  .plant__grid--bird .plant__fig--sack img { object-position: 50% 8%; }
 }
