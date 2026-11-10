@@ -7,7 +7,8 @@ export type Sfx = 'turn' | 'whoosh' | 'tick' | 'rattle' | 'pop' | 'chirp';
 
 const KEY = 'rithwik-sound';
 let ctx: AudioContext | null = null;
-let master: GainNode, ambBus: GainNode, sfxBus: GainNode, noise: AudioBuffer;
+let master: GainNode, ambBus: GainNode, sfxBus: GainNode, musicBus: GainNode, noise: AudioBuffer;
+let drone: { gain: GainNode } | null = null, musicTimer = 0;
 let enabled = false, mode: Mode = 'book', songTimer = 0, wind: { src: AudioBufferSourceNode; gain: GainNode; lfo: OscillatorNode } | null = null;
 
 const rand = (a: number, b: number) => a + Math.random() * (b - a);
@@ -20,7 +21,17 @@ function boot() {
   master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
   // a gentle compressor keeps chirps from ever getting harsh
   const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 3; comp.connect(master);
-  ambBus = ctx.createGain(); ambBus.gain.value = 1; ambBus.connect(comp);
+  // a soft generated room reverb makes everything warmer and more natural
+  const verb = ctx.createConvolver();
+  const len = ctx.sampleRate * 2.8, ir = ctx.createBuffer(2, len, ctx.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+  verb.buffer = ir;
+  const verbGain = ctx.createGain(); verbGain.gain.value = 0.55; verb.connect(verbGain).connect(comp);
+  const soften = ctx.createBiquadFilter(); soften.type = 'lowpass'; soften.frequency.value = 7500; soften.connect(comp);
+  ambBus = ctx.createGain(); ambBus.gain.value = 1; ambBus.connect(soften);
+  const ambSend = ctx.createGain(); ambSend.gain.value = 0.35; ambBus.connect(ambSend).connect(verb);
+  musicBus = ctx.createGain(); musicBus.gain.value = 0.9; musicBus.connect(soften);
+  const musicSend = ctx.createGain(); musicSend.gain.value = 0.9; musicBus.connect(musicSend).connect(verb);
   sfxBus = ctx.createGain(); sfxBus.gain.value = 0.9; sfxBus.connect(comp);
   // two seconds of pink-ish noise, reused by wind and effects
   noise = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
@@ -81,9 +92,9 @@ function song(volume = 1) {
   // distant birds are quieter and duller
   const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3500 + near * 6000;
   out.connect(lp).connect(pan).connect(ambBus);
-  const v = (0.02 + near * 0.07) * volume;
+  const v = (0.018 + near * 0.05) * volume;
   let t = ctx.currentTime + 0.05;
-  const sing = pick(species);
+  const sing = species[pick([0, 0, 1, 1, 1, 2, 2, 2, 4, 4, 3])];
   const reps = Math.random() > 0.6 ? 2 : 1;
   for (let r = 0; r < reps; r++) t += sing(t, out, v) + rand(0.15, 0.4);
 }
@@ -91,8 +102,8 @@ function song(volume = 1) {
 function schedule() {
   clearTimeout(songTimer);
   if (!enabled || mode === 'off') return;
-  const busy = mode === 'bird' ? 1 : mode === 'book' ? 0.6 : 0.22;
-  if (Math.random() < busy) song(mode === 'food' ? 0.55 : 1);
+  const busy = mode === 'bird' ? 1 : mode === 'book' ? 0.6 : 0.12;
+  if (Math.random() < busy) song(mode === 'food' ? 0.4 : 1);
   if (mode === 'bird' && Math.random() < 0.3) setTimeout(() => song(0.8), rand(150, 600)); // a reply
   songTimer = window.setTimeout(schedule, rand(900, 3200) / (0.6 + busy));
 }
@@ -109,8 +120,67 @@ function startWind() {
 }
 function windLevel() {
   if (!ctx || !wind) return;
-  const level = mode === 'food' ? 0.12 : mode === 'bird' ? 0.05 : 0.035;
+  const level = mode === 'food' ? 0.05 : mode === 'bird' ? 0.045 : 0.035;
   wind.gain.gain.setTargetAtTime(enabled ? level : 0, ctx.currentTime, 0.8);
+}
+
+
+/* ---------------------------------------------------------------- calm music (Human Food) */
+// Mohanam, a five-note scale (Sa Ri Ga Pa Dha), played slowly like a distant flute or veena
+const SA = 261.63;
+const MOHANAM = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3];
+function pluck(t: number, f: number, vol: number, dur: number, pan: number) {
+  const o1 = ctx!.createOscillator(), o2 = ctx!.createOscillator(), g = ctx!.createGain(), lp = ctx!.createBiquadFilter();
+  o1.type = 'sine'; o2.type = 'triangle'; o1.frequency.value = f; o2.frequency.value = f * 2.001;
+  const g2 = ctx!.createGain(); g2.gain.value = 0.18;
+  lp.type = 'lowpass'; lp.frequency.setValueAtTime(f * 6, t); lp.frequency.exponentialRampToValueAtTime(f * 1.5, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.06); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o1.connect(g); o2.connect(g2).connect(g); g.connect(lp).connect(panner(pan)).connect(musicBus);
+  o1.start(t); o2.start(t); o1.stop(t + dur + 0.1); o2.stop(t + dur + 0.1);
+}
+function chime(t: number) {
+  const f = SA * 4 * pick(MOHANAM);
+  const o = ctx!.createOscillator(), g = ctx!.createGain();
+  o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.018, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.6);
+  o.connect(g).connect(panner(rand(-0.7, 0.7))).connect(musicBus); o.start(t); o.stop(t + 2.7);
+}
+let lastDeg = 0;
+function phrase() {
+  if (!ctx) return;
+  let t = ctx.currentTime + 0.1;
+  const n = 2 + ((Math.random() * 3) | 0);
+  for (let i = 0; i < n; i++) {
+    // mostly step to a neighbouring note, like a slow alaap
+    lastDeg = Math.max(0, Math.min(7, lastDeg + pick([-1, -1, 1, 1, 2, -2, 0])));
+    const oct = lastDeg >= 5 ? 2 : 1, f = SA * oct * MOHANAM[lastDeg % 5];
+    pluck(t, f, 0.05, rand(1.8, 3), rand(-0.35, 0.35));
+    t += rand(0.45, 0.9);
+  }
+  if (Math.random() < 0.35) chime(t + rand(0.2, 1));
+}
+function startDrone() {
+  if (!ctx || drone) return;
+  const gain = ctx.createGain(); gain.gain.value = 0;
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900;
+  [[SA / 2, 'sine', 0.6], [SA / 2 * 1.5, 'triangle', 0.25], [SA / 2 * 1.003, 'sine', 0.4], [SA, 'sine', 0.15]].forEach(([f, type, v]) => {
+    const o = ctx!.createOscillator(), g = ctx!.createGain(); o.type = type as OscillatorType; o.frequency.value = f as number; g.gain.value = v as number;
+    o.connect(g).connect(lp); o.start();
+  });
+  const lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = 0.12; lg.gain.value = 0.006; lfo.connect(lg).connect(gain.gain); lfo.start();
+  lp.connect(gain).connect(musicBus);
+  drone = { gain };
+}
+function scheduleMusic() {
+  clearTimeout(musicTimer);
+  if (!enabled || mode !== 'food') return;
+  phrase();
+  musicTimer = window.setTimeout(scheduleMusic, rand(2600, 5200));
+}
+function musicLevel() {
+  if (!ctx) return;
+  if (mode === 'food' && enabled) startDrone();
+  if (drone) drone.gain.gain.setTargetAtTime(enabled && mode === 'food' ? 0.022 : 0, ctx.currentTime, 1.2);
+  scheduleMusic();
 }
 
 /* ---------------------------------------------------------------- effects */
@@ -153,6 +223,7 @@ export function setMode(m: Mode) {
   mode = m;
   windLevel();
   schedule();
+  musicLevel();
 }
 
 export async function setEnabled(on: boolean) {
@@ -162,16 +233,16 @@ export async function setEnabled(on: boolean) {
     boot(); await ctx!.resume();
     startWind();
     master.gain.setTargetAtTime(0.9, ctx!.currentTime, 0.4);
-    windLevel(); schedule();
-    song(); // greet straight away so it's obvious sound is on
+    windLevel(); schedule(); musicLevel();
+    if (mode === 'food') phrase(); else song(); // greet straight away so it's obvious sound is on
   } else if (ctx) {
     master.gain.setTargetAtTime(0, ctx.currentTime, 0.25);
-    clearTimeout(songTimer);
-    windLevel();
+    clearTimeout(songTimer); clearTimeout(musicTimer);
+    windLevel(); musicLevel();
   }
   document.documentElement.classList.toggle('sound-on', on);
 }
 
 export const isEnabled = () => enabled;
 /** The visitor turned sound on last time. We still need a click before playing. */
-export function wantedBefore() { try { return localStorage.getItem(KEY) === '1'; } catch { return false; } }
+export function wantedBefore() { try { return localStorage.getItem(KEY) !== '0'; } catch { return true; } } // on by default unless turned off

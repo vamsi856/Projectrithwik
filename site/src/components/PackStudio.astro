@@ -27,7 +27,6 @@ const { id, kind, tone, logo, items, contact, title, lede } = Astro.props;
         <p class="studio__name" data-studio-name>{items[0].name}</p>
         <p class="studio__variant" data-studio-variant>{items[0].options}</p>
       </div>
-      <p class="studio__gst">GST <b data-studio-gst>{items[0].gst}</b></p>
       <a class:list={['pill', tone === 'food' ? 'pill--ink' : 'pill--gold']} href={`#${contact}`} data-product={items[0].ask} data-studio-ask>Ask price for this</a>
     </div>
     <p class="studio__note">Pack artwork shown is a design concept.</p>

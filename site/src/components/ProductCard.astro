@@ -27,7 +27,7 @@ const swatch = `--c1:${p.swatch.c1};--c2:${p.swatch.c2};--g:${p.swatch.grain}px`
         <legend class="sr">{p.name} options</legend>
         {p.variants.map((v, i) => (
           <label class="variant">
-            <input type="radio" name={`v-${p.id}`} value={lineName(p, v)} data-gst={v.gst} checked={i === 0} />
+            <input type="radio" name={`v-${p.id}`} value={lineName(p, v)} checked={i === 0} />
             <span>{v.label}</span>
           </label>
         ))}
@@ -36,7 +36,6 @@ const swatch = `--c1:${p.swatch.c1};--c2:${p.swatch.c2};--g:${p.swatch.grain}px`
       first.label && <p class="pcard__note">{first.label}</p>
     )}
     <div class="pcard__foot">
-      <span class="pcard__gst">GST <b data-gst-out>{first.gst}</b></span>
       <a class="pcard__ask" href={`#${contact}`} data-product={lineName(p, first)}>Ask price</a>
     </div>
   </div>

@@ -21,6 +21,7 @@ import SeedToSack from '../components/SeedToSack.astro';
 import { BIRD_SEASONS, FOOD_SEASONS } from '../data/seasons';
 import { held } from '../data/registrations';
 import Certifications from '../components/Certifications.astro';
+import BirdsWeFeed from '../components/BirdsWeFeed.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const nBird = lineCount(BIRD);
@@ -130,7 +131,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
   <div class="site site--bird" id="bird-feeds" data-site="bird" hidden>
     <SiteHeader logo={birdLogo} first="Rithwik" second="Bird Feeds" top="b-top" email={BRANDS.bird.email}
       phones={[CONTACT.phones[1], CONTACT.phones[2]]}
-      links={[{ href: 'b-about', label: 'About' }, { href: 'b-packs', label: 'Packs' }, { href: 'b-feeds', label: 'Feeds' }, { href: 'b-vision', label: 'Vision' }, { href: 'b-contact', label: 'Contact' }]} />
+      links={[{ href: 'b-about', label: 'About' }, { href: 'b-packs', label: 'Packs' }, { href: 'b-birds', label: 'Birds' }, { href: 'b-feeds', label: 'Feeds' }, { href: 'b-vision', label: 'Vision' }, { href: 'b-contact', label: 'Contact' }]} />
 
     <main>
       <section class="bird__hero" id="b-top" aria-labelledby="bird-title">
@@ -185,6 +186,8 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
 
       <PackStudio id="b-packs" kind="sack" tone="bird" logo={birdLogo.src} items={BIRD_PACKS} contact="b-contact"
         title="Our packs" lede="Every feed line in its own Rithwik sack. Pick a feed and the pack turns to show it." />
+
+      <BirdsWeFeed id="b-birds" />
 
       <div class="marquee marquee--bird" aria-hidden="true"><div class="marquee__track">
         {[0, 1].map(() => marquee(BIRD.map((b) => b.name)).map((n) => <span>{n}</span>))}

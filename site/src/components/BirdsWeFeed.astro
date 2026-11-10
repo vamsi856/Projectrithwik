@@ -1,0 +1,32 @@
+---
+import Photo from './Photo.astro';
+import { BIRDS } from '../data/birds';
+interface Props { id: string }
+const { id } = Astro.props;
+const wa = (text: string) => `https://wa.me/918309782770?text=${encodeURIComponent(text)}`;
+---
+<section class="aviary" id={id} aria-labelledby={`${id}-title`}>
+  <span class="ghost ghost--aviary" data-ghost="Aviary" aria-hidden="true"></span>
+  <div class="aviary__head">
+    <h2 class="section-title" id={`${id}-title`} data-split>Birds we feed</h2>
+    <p>From budgies to macaws. Each card shows the Rithwik feeds a good seed mix for that bird often includes. Tap one to ask us for that mix.</p>
+  </div>
+  <ul class="aviary__grid">
+    {BIRDS.map((b, i) => (
+      <li class:list={['bird-card', i === 0 && 'bird-card--feature']} data-bird-card>
+        <figure class="bird-card__photo">
+          <Photo name={b.photo} alt={`${b.name}, ${b.latin}`} sizes={i === 0 ? '(max-width: 860px) 92vw, 46vw' : '(max-width: 640px) 92vw, (max-width: 1100px) 46vw, 300px'} />
+        </figure>
+        <div class="bird-card__body">
+          <span class="bird-card__size">{b.size}</span>
+          <h3>{b.name}</h3>
+          <p class="bird-card__latin">{b.latin}</p>
+          <p class="bird-card__note">{b.note}</p>
+          <ul class="bird-card__feeds" aria-label="Feeds in the mix">{b.feeds.map((f) => <li>{f}</li>)}</ul>
+          <a class="bird-card__ask" href={wa(`Hello Rithwik Bird Feeds, I'd like a price for a ${b.name.toLowerCase()} mix: ${b.feeds.join(', ')}.`)} target="_blank" rel="noopener" data-bird-ask>Ask for this mix</a>
+        </div>
+      </li>
+    ))}
+  </ul>
+  <p class="aviary__note">Seed is one part of a healthy diet. Fresh greens, fruit and a vet's advice matter too.</p>
+</section>

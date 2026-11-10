@@ -7,16 +7,14 @@ interface Props { id: string; tone: 'bird' | 'food'; regs: Registration[]; photo
 const { id, tone, regs, photo, photoAlt = '' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const certs = regs.filter((r) => r.mark !== 'GST');
-const title = certs.length ? 'Certifications & standards' : 'Registered business';
-const lede = certs.length
-  ? 'Our food safety, export and organic credentials. Tap a seal for the details; a copy of any certificate is available on request.'
-  : 'Rithwik Bird Feeds is a GST-registered business. Every order comes with a proper GST invoice.';
+const title = 'Certifications & standards';
+const lede = 'Our food safety, export and organic credentials. Tap a seal for the details; a copy of any certificate is available on request.';
 ---
-<section class:list={['certs', `certs--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
+{regs.length > 0 && <section class:list={['certs', `certs--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
   {photo && (
     <figure class="certs__photo" data-curtain>
       <Photo name={photo} alt={photoAlt} sizes="(max-width: 860px) 92vw, 40vw" />
-      <figcaption>{certs.length ? `${certs.length} certifications` : 'GST registered'}<span>Rithwik {tone === 'food' ? 'Industries' : 'Bird Feeds'}, Kurnool</span></figcaption>
+      <figcaption>{`${certs.length} certifications`}<span>Rithwik {tone === 'food' ? 'Industries' : 'Bird Feeds'}, Kurnool</span></figcaption>
     </figure>
   )}
   <div class="certs__body">
@@ -72,4 +70,4 @@ const lede = certs.length
       <form method="dialog"><button class="pill pill--line-dlg">Close</button></form>
     </div>
   </dialog>
-</section>
+</section>}

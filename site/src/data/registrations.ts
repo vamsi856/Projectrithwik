@@ -1,6 +1,7 @@
 // Certifications and registrations shown on the site. Only entries with `held: true`
 // appear. BRCGS, US FDA, APEDA and Organic are listed on Rithwik Industries' earlier
-// website (quantumpixel-qp.github.io/rithvik-organic); the owner confirmed they hold them.
+// website (quantumpixel-qp.github.io/rithvik-organic); the owner confirmed they hold them,
+// and FSSAI as well. GST stays in the footer and facts rather than as a seal.
 //
 // To finish an entry, add the certificate or licence `number`, and put a photo or scan
 // of the certificate in site/public/certs/ and its file name in `photo`.
@@ -22,13 +23,13 @@ export type Registration = {
 };
 
 export const REGISTRATIONS: Registration[] = [
-  { id: 'gst-bird', name: 'GST registration', mark: 'GST', status: 'Registered', body: 'Goods and Services Tax, Government of India', what: 'Registered business; GST invoices on every order.', number: '37CCDPV9154P1ZK', held: true, for: ['bird'] },
-  { id: 'gst-food', name: 'GST registration', mark: 'GST', status: 'Registered', body: 'Goods and Services Tax, Government of India', what: 'Registered business; GST invoices on every order.', number: '37ABKFR7391G1ZM', held: true, for: ['food'] },
+  { id: 'gst-bird', name: 'GST registration', mark: 'GST', status: 'Registered', body: 'Goods and Services Tax, Government of India', what: 'Registered business; GST invoices on every order.', number: '37CCDPV9154P1ZK', held: false, for: ['bird'] },
+  { id: 'gst-food', name: 'GST registration', mark: 'GST', status: 'Registered', body: 'Goods and Services Tax, Government of India', what: 'Registered business; GST invoices on every order.', number: '37ABKFR7391G1ZM', held: false, for: ['food'] },
   { id: 'brcgs', name: 'BRCGS', mark: 'BRC', status: 'Certified', body: 'BRCGS Global Standard for Food Safety', what: 'Food safety and quality system audited to a standard many UK and EU buyers require.', held: true, for: ['food'] },
   { id: 'usfda', name: 'US FDA', mark: 'FDA', status: 'Registered', body: 'U.S. Food and Drug Administration, food facility registration', what: 'Facility registered with the FDA, needed to ship food to the United States.', held: true, for: ['food'] },
   { id: 'apeda', name: 'APEDA', mark: 'APEDA', status: 'Registered', body: 'Agricultural and Processed Food Products Export Development Authority', what: 'Registered with India’s export authority for agricultural produce.', held: true, for: ['food'] },
   { id: 'organic', name: 'Organic', mark: 'ORGANIC', status: 'Certified', body: 'Organic certification', what: 'Certified organic products, for buyers who need organic supply.', held: true, for: ['food'] },
-  { id: 'fssai', name: 'FSSAI', mark: 'FSSAI', status: 'Licensed', body: 'Food Safety and Standards Authority of India', what: 'Licensed to handle and sell food in India.', held: false, for: ['food'] },
+  { id: 'fssai', name: 'FSSAI', mark: 'FSSAI', status: 'Licensed', body: 'Food Safety and Standards Authority of India', what: 'Licensed to handle and sell food in India.', held: true, for: ['food'] },
   { id: 'iec', name: 'Import Export Code', mark: 'IEC', status: 'Registered', body: 'Directorate General of Foreign Trade', what: 'Cleared to import and export from India.', held: false, for: ['bird', 'food'] },
   { id: 'udyam', name: 'Udyam (MSME)', mark: 'MSME', status: 'Registered', body: 'Ministry of MSME, Government of India', what: 'Registered small enterprise.', held: false, for: ['bird', 'food'] },
 ];
