@@ -388,3 +388,30 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .vision--food .routes .dot { fill: var(--bronze-2); }
 .routes .home { fill: var(--marigold); stroke: rgba(242, 178, 27, .3); stroke-width: 10; }
 .vision--food .routes .home { fill: var(--bronze-2); stroke: rgba(197, 155, 69, .3); }
+
+/* full range ring: the stage spans the section, picker and details sit below */
+.studio { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "stage stage" "panel panel"; row-gap: 8px; }
+.studio__stage { grid-area: stage; aspect-ratio: auto; height: clamp(380px, 64svh, 660px); max-height: none; }
+.studio__spot { inset: 18% 20% 6%; }
+.studio__panel { grid-area: panel; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 12px clamp(24px, 4vw, 56px); align-items: start; }
+.studio__panel .section-title, .studio__lede { grid-column: 1 / -1; }
+.studio__panel .section-title { margin-bottom: 0; }
+.studio__note { grid-column: 1 / -1; }
+.studio__picker { max-height: none; margin: 0; }
+.studio__canvas { animation: none; }
+@media (max-width: 860px) {
+  .studio__panel { grid-template-columns: 1fr; }
+  .studio__stage { height: clamp(340px, 52svh, 480px); }
+  .studio__picker { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; }
+  .studio__pick { flex: none; scroll-snap-align: start; }
+}
+
+/* CSS ring fallback */
+.ring3d { position: relative; width: 100%; height: 100%; perspective: 1100px; perspective-origin: 50% 35%; touch-action: pan-y; cursor: grab; overflow: hidden; }
+.ring3d__spin { position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; }
+.ring3d__card {
+  position: absolute; left: 0; top: 0; height: auto; translate: -50% -50%;
+  border-radius: 10px; backface-visibility: hidden; cursor: pointer;
+  box-shadow: 0 30px 40px -24px rgba(0, 0, 0, .55);
+  transition: filter .3s;
+}

@@ -335,12 +335,14 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
       if (!en.isIntersecting || !c.offsetWidth) return;
       io.disconnect();
       await new Promise((r) => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(r, { timeout: 1500 }) : setTimeout(r, 300)));
-      const { mountPack } = await import('./pack3d');
+      const { mountPack, mountLineup } = await import('./pack3d');
       const items = JSON.parse(c.dataset.items!);
       const hero = c.closest<HTMLElement>('[data-hero-pack]');
       const studio = c.closest<HTMLElement>('[data-studio]');
-      const ctl = await mountPack(c, {
-        kind: c.dataset.pack as 'sack' | 'pouch', logo: c.dataset.logo!, items, auto: hero ? Number(c.dataset.auto) : 0,
+      const mount = studio ? mountLineup : mountPack;
+      const ctl = await mount(c, {
+        kind: c.dataset.pack as 'sack' | 'pouch', logo: c.dataset.logo!, items, auto: hero ? Number(c.dataset.auto) : studio ? 3800 : 0,
+        bg: view === 'bird' ? '#0e2131' : '#efeadb',
         onChange: (i) => {
           if (hero) {
             $('[data-pack-index]', hero)!.textContent = String(i + 1).padStart(2, '0');
@@ -363,7 +365,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
         $('[data-pack-next]', hero)!.addEventListener('click', () => { ctl.stopAuto(); ctl.next(); });
         if (!reduce) st({ trigger: hero.closest('section')!, start: 'top top', end: 'bottom top', scrub: true, onUpdate: (s) => ctl.setScrollSpin(s.progress * Math.PI * 1.2) });
       }
-      if (studio) $$('[data-pick]', studio).forEach((b) => b.addEventListener('click', () => ctl.show(Number(b.dataset.pick))));
+      if (studio) $$('[data-pick]', studio).forEach((b) => b.addEventListener('click', () => { ctl.stopAuto(); ctl.show(Number(b.dataset.pick)); }));
     }, { rootMargin: '300px' });
     io.observe(c);
   });

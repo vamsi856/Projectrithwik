@@ -230,7 +230,19 @@ async function mountFlat(canvas: HTMLCanvasElement, opts: PackOptions): Promise<
 }
 
 export async function mountPack(canvas: HTMLCanvasElement, opts: PackOptions): Promise<PackControl> {
-  if (softwareGL()) return mountFlat(canvas, opts);
+  const force = new URLSearchParams(location.search).get('gl');
+  if (force !== '3d' && (force === 'flat' || softwareGL())) return mountFlat(canvas, opts);
+  try {
+    return await mount3D(canvas, opts);
+  } catch (err) {
+    console.warn('3D pack unavailable, using the flat pack', err);
+    const fresh = canvas.cloneNode(true) as HTMLCanvasElement; // a canvas that already has a WebGL context can't take a 2D one
+    canvas.replaceWith(fresh);
+    return mountFlat(fresh, opts);
+  }
+}
+
+async function mount3D(canvas: HTMLCanvasElement, opts: PackOptions): Promise<PackControl> {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   await Promise.all([document.fonts.load('400 80px Anton'), document.fonts.load('600 40px "Instrument Sans"'), document.fonts.load('italic 500 40px "Instrument Sans"')]).catch(() => {});
 
@@ -285,6 +297,7 @@ export async function mountPack(canvas: HTMLCanvasElement, opts: PackOptions): P
   opts.items.slice(1, 6).forEach((it) => loadImg(it.photo));
 
   // sizing + render loop
+  let visible = true, dirty = true, dragY = 0, dragV = 0, tiltX = 0, tiltY = 0, scrollSpin = 0;
   const size = () => {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     if (!w || !h) return;
@@ -297,7 +310,6 @@ export async function mountPack(canvas: HTMLCanvasElement, opts: PackOptions): P
 
   // Render on demand: the GPU only works while something changes (a spin, a drag,
   // scrolling, the pointer). The gentle idle float is done in CSS on the canvas.
-  let visible = true, dirty = true, dragY = 0, dragV = 0, tiltX = 0, tiltY = 0, scrollSpin = 0;
   const wake = () => { dirty = true; };
   const tick = () => {
     if (!visible || document.hidden) return;
@@ -364,4 +376,203 @@ export async function mountPack(canvas: HTMLCanvasElement, opts: PackOptions): P
     setScrollSpin: (v: number) => { scrollSpin = v; wake(); },
     stopAuto,
   };
+}
+
+/* =====================================================================
+   Full range: every pack standing in one ring. The chosen pack turns to
+   the front; drag the ring, tap a pack, or use the picker.
+   ===================================================================== */
+const LW = 512, LH = 700;
+type LabelPainter = (ctx: CanvasRenderingContext2D, item: PackItem, logo: HTMLImageElement | null, photo: HTMLImageElement | null, back?: boolean) => Promise<void>;
+
+async function paintSmall(paint: LabelPainter, target: HTMLCanvasElement, item: PackItem, logo: HTMLImageElement | null, photo: HTMLImageElement | null, back = false) {
+  const ctx = target.getContext('2d')!;
+  ctx.setTransform(LW / TW, 0, 0, LH / TH, 0, 0);
+  await paint(ctx, item, logo, photo, back);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+}
+
+export type LineupControl = PackControl;
+
+export async function mountLineup(canvas: HTMLCanvasElement, opts: PackOptions & { bg: string }): Promise<LineupControl> {
+  const force = new URLSearchParams(location.search).get('gl');
+  if (force !== '3d' && (force === 'flat' || softwareGL())) return mountRingCSS(canvas, opts);
+  try { return await mountRing3D(canvas, opts); }
+  catch (err) {
+    console.warn('3D range unavailable, using the CSS ring', err);
+    const fresh = canvas.cloneNode(true) as HTMLCanvasElement; canvas.replaceWith(fresh);
+    return mountRingCSS(fresh, opts);
+  }
+}
+
+async function mountRing3D(canvas: HTMLCanvasElement, opts: PackOptions & { bg: string }): Promise<LineupControl> {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  await Promise.all([document.fonts.load('400 80px Anton'), document.fonts.load('600 40px "Instrument Sans"')]).catch(() => {});
+  const N = opts.items.length;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = opts.kind === 'sack' ? 0.95 : 1.0;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  const R = Math.max(2.3, (N * 1.32) / (Math.PI * 2));
+  scene.fog = new THREE.Fog(new THREE.Color(opts.bg), R + 2.2, R + 3.6 + R * 1.5);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+  const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(2, 4, R + 5); scene.add(key);
+  const rim = new THREE.DirectionalLight(opts.kind === 'sack' ? 0x7cc4ea : 0xffd9a0, 1.2); rim.position.set(-4, 2, R - 2); scene.add(rim);
+
+  const logo = await loadImg(opts.logo);
+  const paint: LabelPainter = opts.kind === 'sack' ? paintSack : paintPouch;
+  const geo = packGeometry(opts.kind);
+  const backC = document.createElement('canvas'); backC.width = LW; backC.height = LH;
+  await paintSmall(paint, backC, opts.items[0], logo, null, true);
+  const backT = new THREE.CanvasTexture(backC); backT.colorSpace = THREE.SRGBColorSpace;
+  const base = opts.kind === 'sack' ? { roughness: 0.82, metalness: 0 } : { roughness: 0.6, metalness: 0 };
+  const backM = new THREE.MeshStandardMaterial({ map: backT, ...base });
+
+  const sc = document.createElement('canvas'); sc.width = sc.height = 64;
+  const sx = sc.getContext('2d')!; const sg = sx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  sg.addColorStop(0, 'rgba(0,0,0,.4)'); sg.addColorStop(1, 'rgba(0,0,0,0)'); sx.fillStyle = sg; sx.fillRect(0, 0, 64, 64);
+  const shadowM = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false });
+  const shadowG = new THREE.PlaneGeometry(1.4, 0.4);
+
+  const ring = new THREE.Group(); scene.add(ring);
+  const packs: THREE.Group[] = [];
+  const textures: THREE.CanvasTexture[] = [];
+  let dirty = true; const wake = () => { dirty = true; };
+
+  for (let i = 0; i < N; i++) {
+    const c = document.createElement('canvas'); c.width = LW; c.height = LH;
+    await paintSmall(paint, c, opts.items[i], logo, null);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; textures.push(t);
+    const front = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: t, ...base }));
+    const back = new THREE.Mesh(geo, backM); back.rotation.y = Math.PI;
+    const g = new THREE.Group(); g.add(front, back);
+    const a = (i / N) * Math.PI * 2;
+    g.position.set(Math.sin(a) * R, 0, Math.cos(a) * R); g.rotation.y = a;
+    g.userData.index = i; front.userData.index = i; back.userData.index = i;
+    const sh = new THREE.Mesh(shadowG, shadowM); sh.rotation.x = -Math.PI / 2; sh.position.set(g.position.x, -0.8, g.position.z); sh.rotation.z = -a;
+    ring.add(g, sh); packs.push(g);
+    // the photo arrives later; repaint that label when it does
+    loadImg(opts.items[i].photo).then(async (ph) => { if (!ph) return; await paintSmall(paint, c, opts.items[i], logo, ph); t.needsUpdate = true; wake(); });
+  }
+
+  const size = () => {
+    const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false); camera.aspect = w / h;
+    const narrow = w / h < 1;
+    camera.position.set(0, narrow ? 0.7 : 0.55, R + (narrow ? 4.6 : 3.3));
+    camera.lookAt(0, -0.05, R - 0.8);
+    camera.updateProjectionMatrix(); wake();
+  };
+  size(); new ResizeObserver(size).observe(canvas);
+
+  let angle = 0, index = 0, visible = true, dragV = 0;
+  const lift = (i: number) => packs.forEach((p, k) => gsap.to(p.scale, { x: k === i ? 1.12 : 0.92, y: k === i ? 1.12 : 0.92, z: 1, duration: 0.8, ease: 'power3.out', onUpdate: wake }));
+  lift(0);
+  gsap.ticker.add(() => {
+    if (!visible || document.hidden) return;
+    if (Math.abs(dragV) > 1e-4) { angle += dragV; dragV *= 0.92; dirty = true; }
+    if (!dirty) return; dirty = false;
+    ring.rotation.y = -angle;
+    renderer.render(scene, camera);
+  });
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) wake(); }).observe(canvas);
+
+  // shortest turn to bring pack i to the front
+  const target = (i: number) => { const step = (Math.PI * 2) / N; let t = i * step; while (t - angle > Math.PI) t -= Math.PI * 2; while (t - angle < -Math.PI) t += Math.PI * 2; return t; };
+  async function show(i: number) {
+    i = ((i % N) + N) % N;
+    index = i; opts.onChange?.(i); lift(i);
+    const o = { a: angle };
+    await new Promise<void>((done) => gsap.to(o, { a: target(i), duration: reduce ? 0 : 1.1, ease: 'power3.inOut', onUpdate: () => { angle = o.a; wake(); }, onComplete: () => done() }));
+  }
+
+  // drag the ring; tap a pack to bring it forward
+  const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2();
+  let downX = 0, lastX = 0, dragging = false, moved = 0;
+  canvas.style.touchAction = 'pan-y'; canvas.style.cursor = 'grab';
+  canvas.addEventListener('pointerdown', (e) => { dragging = true; moved = 0; downX = lastX = e.clientX; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing'; stopAuto(); });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; moved = Math.abs(e.clientX - downX);
+    angle -= dx * 0.005; dragV = -dx * 0.002; wake();
+  });
+  const up = (e: PointerEvent) => {
+    if (!dragging) return; dragging = false; canvas.style.cursor = 'grab';
+    if (moved < 6) {
+      const r = canvas.getBoundingClientRect();
+      ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera);
+      const hit = ray.intersectObjects(packs, true)[0];
+      if (hit) { show(hit.object.userData.index); return; }
+    }
+    // settle on the nearest pack after a drag
+    setTimeout(() => { const step = (Math.PI * 2) / N; show(Math.round((((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)) / step)); }, 250);
+  };
+  canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
+
+  let timer = 0;
+  const startAuto = () => { if (opts.auto && !reduce) { clearInterval(timer); timer = window.setInterval(() => visible && show(index + 1), opts.auto); } };
+  function stopAuto() { clearInterval(timer); clearTimeout((canvas as any)._resume); (canvas as any)._resume = setTimeout(startAuto, 9000); }
+  startAuto();
+
+  // entrance: the ring sweeps round once
+  if (!reduce) { const o = { a: -Math.PI * 0.9 }; gsap.to(o, { a: 0, duration: 2.2, ease: 'power3.out', onUpdate: () => { angle = o.a; wake(); } }); }
+
+  return { show, next: () => show(index + 1), prev: () => show(index - 1), get index() { return index; }, setScrollSpin: () => {}, stopAuto };
+}
+
+/** CSS 3D ring for devices without hardware graphics: same behaviour, no WebGL. */
+async function mountRingCSS(canvas: HTMLCanvasElement, opts: PackOptions & { bg: string }): Promise<LineupControl> {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  await Promise.all([document.fonts.load('400 80px Anton'), document.fonts.load('600 40px "Instrument Sans"')]).catch(() => {});
+  const N = opts.items.length;
+  const logo = await loadImg(opts.logo);
+  const paint: LabelPainter = opts.kind === 'sack' ? paintSack : paintPouch;
+  const stage = document.createElement('div'); stage.className = 'ring3d'; stage.setAttribute('role', 'img'); stage.setAttribute('aria-label', canvas.getAttribute('aria-label') || '');
+  const spin = document.createElement('div'); spin.className = 'ring3d__spin'; stage.appendChild(spin);
+  canvas.replaceWith(stage);
+  const cards: HTMLElement[] = [];
+  for (let i = 0; i < N; i++) {
+    const c = document.createElement('canvas'); c.width = LW; c.height = LH; c.className = 'ring3d__card';
+    await paintSmall(paint, c, opts.items[i], logo, null);
+    loadImg(opts.items[i].photo).then(async (ph) => { if (ph) await paintSmall(paint, c, opts.items[i], logo, ph); });
+    c.addEventListener('click', () => show(i));
+    spin.appendChild(c); cards.push(c);
+  }
+  let angle = 0, index = 0, W = 160, R = 300;
+  const layout = () => {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    W = Math.min(w * 0.3, h * 0.6 * (LW / LH), 230); R = Math.max(W * 1.6, (N * W * 1.12) / (Math.PI * 2));
+    cards.forEach((c, i) => { c.style.width = `${W}px`; c.style.transform = `rotateY(${(i / N) * 360}deg) translateZ(${R}px)`; });
+    apply();
+  };
+  const apply = () => {
+    spin.style.transform = `translateZ(${-R}px) rotateY(${-angle}deg)`;
+    cards.forEach((c, i) => {
+      let d = (((i / N) * 360 - angle) % 360 + 540) % 360 - 180; // -180..180, 0 = front
+      const f = Math.cos((d * Math.PI) / 180);
+      c.style.opacity = String(Math.max(0, 0.15 + f * 0.85));
+      c.style.filter = i === index ? 'none' : `brightness(${0.55 + f * 0.35})`;
+    });
+  };
+  layout(); new ResizeObserver(layout).observe(stage);
+  async function show(i: number) {
+    i = ((i % N) + N) % N; index = i; opts.onChange?.(i);
+    let t = (i / N) * 360; while (t - angle > 180) t -= 360; while (t - angle < -180) t += 360;
+    const o = { a: angle };
+    await gsap.to(o, { a: t, duration: reduce ? 0 : 1, ease: 'power3.inOut', onUpdate: () => { angle = o.a; apply(); } });
+  }
+  let down = 0, last = 0, drag = false;
+  stage.addEventListener('pointerdown', (e) => { drag = true; down = last = e.clientX; stopAuto(); });
+  addEventListener('pointermove', (e) => { if (!drag) return; angle -= (e.clientX - last) * 0.25; last = e.clientX; apply(); });
+  addEventListener('pointerup', (e) => { if (!drag) return; drag = false; if (Math.abs(e.clientX - down) > 6) show(Math.round(angle / (360 / N))); });
+  let timer = 0;
+  const startAuto = () => { if (opts.auto && !reduce) { clearInterval(timer); timer = window.setInterval(() => show(index + 1), opts.auto); } };
+  function stopAuto() { clearInterval(timer); clearTimeout((stage as any)._r); (stage as any)._r = setTimeout(startAuto, 9000); }
+  startAuto();
+  return { show, next: () => show(index + 1), prev: () => show(index - 1), get index() { return index; }, setScrollSpin: () => {}, stopAuto };
 }
