@@ -20,7 +20,7 @@ export type Sheet = {
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 /** Blue-and-gold macaw, one full wingbeat cut from free slow-motion footage
  * (Christopher Borges on Pexels, Pexels licence). */
-export const MACAW: Sheet = { src: `${BASE}birds/bgmacaw.webp`, fw: 412, fh: 321, cols: 6, frames: 29, fps: 30, ax: 0.694, ay: 0.647, rot: -0.1 };
+export const MACAW: Sheet = { src: `${BASE}birds/bgmacaw.webp`, fw: 686, fh: 535, cols: 5, frames: 29, fps: 30, ax: 0.694, ay: 0.647, rot: -0.1 };
 
 type Bird = {
   sheet: Sheet; img: CanvasImageSource;
@@ -32,13 +32,21 @@ type Bird = {
 export type FlockOptions = {
   sheets: Sheet[];
   count: number;
-  /** bird size in CSS px for the nearest and farthest birds */ near: number; far: number;
+  /** bird size in CSS px for the nearest and farthest birds; a function gets the canvas
+   * size, so birds scale with the screen and are resized when it changes */
+  near: number | ((w: number, h: number) => number); far: number | ((w: number, h: number) => number);
   /** vertical band of the sky the birds use (0..1 of height) */ band?: [number, number];
   /** reduced motion: draw one still frame */ still?: boolean;
   /** called when a bird is startled */ onScare?: () => void;
   /** one bird held in the middle of the canvas (the scroll companion) */ pinned?: boolean;
 };
 
+// one decoded bitmap per sheet, shared by every flock on the page
+const bitmaps = new Map<string, Promise<CanvasImageSource>>();
+const bitmap = (src: string) => {
+  if (!bitmaps.has(src)) bitmaps.set(src, loadImg(src).then((im) => ('createImageBitmap' in window ? createImageBitmap(im) : im)));
+  return bitmaps.get(src)!;
+};
 const loadImg = (src: string) => new Promise<HTMLImageElement>((ok, no) => { const i = new Image(); i.decoding = 'async'; i.onload = () => ok(i); i.onerror = no; i.src = src; });
 
 export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
@@ -56,8 +64,10 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
     if (o.still) draw(0);
   };
 
+  const px = (v: FlockOptions['near']) => (typeof v === 'function' ? v(W, H) : v);
+  const sizeAt = (depth: number) => px(o.far) + (px(o.near) - px(o.far)) * depth;
   const spawn = (b: Partial<Bird> & { sheet: Sheet; img: CanvasImageSource; depth: number }, anywhere: boolean): Bird => {
-    const size = o.far + (o.near - o.far) * b.depth;
+    const size = sizeAt(b.depth);
     if (o.pinned) return { sheet: b.sheet, img: b.img, depth: 1, size, x: W / 2, y: H / 2, y0: H / 2, vx: 0, t: 0, rate: 1, wob: 0, dx: 0, dy: 0, vdx: 0, vdy: 0, panic: 0, flip: false };
     const y0 = H * (band[0] + Math.random() * (band[1] - band[0]));
     // nearer birds cross faster: parallax
@@ -114,11 +124,8 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
   };
 
   const ready = (async () => {
-    await Promise.all(o.sheets.map(async (s) => {
-      const im = await loadImg(s.src);
-      // decode once into a bitmap so drawing never stalls on decode
-      imgs.set(s.src, 'createImageBitmap' in window ? await createImageBitmap(im) : im);
-    }));
+    // decoded once into a bitmap so drawing never stalls on decode
+    await Promise.all(o.sheets.map(async (s) => imgs.set(s.src, await bitmap(s.src))));
     size();
     for (let i = 0; i < o.count; i++) {
       const sheet = o.sheets[i % o.sheets.length];
@@ -130,7 +137,11 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
     sync();
   })();
 
-  new ResizeObserver(() => { const ow = W; size(); if (ow && W) birds.forEach((b) => { b.x *= W / ow; }); }).observe(canvas);
+  new ResizeObserver(() => {
+    const ow = W, oh = H; size();
+    if (ow && W) birds.forEach((b) => { b.x *= W / ow; b.y0 *= H / (oh || H); b.size = sizeAt(b.depth); if (o.pinned) b.y0 = H / 2; });
+    if (!running) draw(0);
+  }).observe(canvas);
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); }).observe(canvas);
   document.addEventListener('visibilitychange', sync);
 

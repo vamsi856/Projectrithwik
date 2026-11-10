@@ -172,12 +172,14 @@ function flockFor(c: HTMLCanvasElement) {
   if (flocks.has(c)) return flocks.get(c)!;
   const hero = c.classList.contains('bird__flock');
   const portrait = innerWidth < innerHeight;
+  // sizes follow the canvas: on a laptop the nearest macaw is about half the screen wide,
+  // on a phone it nearly fills the width; far birds are about 40% of that
+  const near = (w: number, h: number) => (hero ? Math.min(w < h ? w * 0.9 : w * 0.5, h * 1.05, 900) : Math.min(w * 0.62, h * 0.9));
   const f = createFlock(c, {
     sheets: [MACAW], still: reduce,
     count: Number(c.dataset.flock) - (hero && portrait ? 2 : 0),
-    near: hero ? (portrait ? 230 : Math.min(400, innerWidth * 0.26)) : 150,
-    far: hero ? (portrait ? 90 : 120) : 60,
-    band: hero ? (portrait ? [0.06, 0.62] : [0.1, 0.7]) : [0.1, 0.55],
+    near, far: (w, h) => near(w, h) * 0.42,
+    band: hero ? (portrait ? [0.08, 0.6] : [0.12, 0.66]) : [0.18, 0.5],
   });
   flocks.set(c, f);
   return f;
@@ -594,7 +596,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   // (a compositor transform); the canvas itself is tiny.
   const sb = $<HTMLCanvasElement>('.scrollbird', root);
   if (sb) {
-    const f = createFlock(sb, { sheets: [MACAW], count: 1, near: 150, far: 150, pinned: true });
+    const f = createFlock(sb, { sheets: [MACAW], count: 1, near: (w) => w * 0.86, far: (w) => w * 0.86, pinned: true });
     const mx = gsap.quickTo(sb, 'x', { duration: 0.6, ease: 'power2.out' }), my = gsap.quickTo(sb, 'y', { duration: 0.6, ease: 'power2.out' });
     const mr = gsap.quickTo(sb, 'rotation', { duration: 0.6, ease: 'power2.out' });
     let lastX = innerWidth / 2, dir = 1, shown = false;
@@ -603,7 +605,8 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
       trigger: root, start: 'top top', end: 'bottom bottom',
       onUpdate: (s) => {
         const p = s.progress, w = innerWidth, h = innerHeight;
-        const x = w * (0.5 + 0.42 * Math.sin(p * Math.PI * 5)), y = h * (0.25 + 0.5 * p) + Math.cos(p * Math.PI * 9) * 30;
+        // swing side to side but keep the whole bird on screen
+        const half = sb.clientWidth * 0.55, x = w / 2 + (w / 2 - half) * Math.sin(p * Math.PI * 5), y = h * (0.25 + 0.5 * p) + Math.cos(p * Math.PI * 9) * 30;
         const d = x >= lastX ? 1 : -1; lastX = x;
         if (d !== dir) { dir = d; gsap.to(sb, { scaleX: d, duration: 0.35, ease: 'power2.inOut' }); }
         mx(x); my(y); mr(d * Math.cos(p * Math.PI * 5) * 8);

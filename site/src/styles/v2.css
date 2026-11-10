@@ -251,7 +251,7 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 @media (max-width: 860px) { .steps__list { grid-template-columns: 1fr; } .steps__path { display: none; } }
 
 /* ---------- scroll bird ---------- */
-.scrollbird { position: fixed; z-index: 30; left: -90px; top: -70px; width: 180px; height: 140px; pointer-events: none; opacity: 0; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .4)); }
+.scrollbird { position: fixed; z-index: 30; --sbw: clamp(200px, 25vw, 360px); width: var(--sbw); height: calc(var(--sbw) * .78); left: calc(var(--sbw) / -2); top: calc(var(--sbw) * -.39); pointer-events: none; opacity: 0; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .4)); }
 
 /* ---------- map lazy ---------- */
 .map iframe:not([src]) { visibility: hidden; }
