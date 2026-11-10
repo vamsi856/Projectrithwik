@@ -275,10 +275,12 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
 
   // globe
   $$<HTMLCanvasElement>('canvas[data-globe]', root).forEach((c) => {
-    let g: any = null;
-    st({ trigger: c, start: 'top bottom', end: 'bottom top', onToggle: async (s) => {
-      if (s.isActive && !g) g = await globe(c, c.dataset.globe!);
-    } });
+    const io = new IntersectionObserver(([en]) => {
+      if (!en.isIntersecting || !c.offsetWidth) return;
+      io.disconnect();
+      globe(c, c.dataset.globe!).catch((err) => console.warn('globe', err));
+    }, { rootMargin: '200px' });
+    io.observe(c);
   });
 
   // filters

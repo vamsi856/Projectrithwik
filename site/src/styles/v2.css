@@ -51,7 +51,7 @@
 .site--food .sbar__call { background: var(--ink); color: var(--khaki); }
 .sbar__book {
   display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 12px; border-radius: 999px;
-  text-decoration: none; font-weight: 600; font-size: .9rem; border: 1.5px solid currentColor; opacity: .85; transition: opacity .2s;
+  text-decoration: none; font-weight: 600; font-size: .9rem; border: 1.5px solid currentColor; opacity: .85; transition: opacity .2s; white-space: nowrap;
 }
 .sbar__book::before {
   content: ""; width: 20px; height: 20px; background: currentColor;
