@@ -64,7 +64,7 @@ function show(view: View) {
   window.scrollTo(0, 0);
   if (view !== 'book' && !inited.has(view)) { inited.add(view); initSite(view, sites[view]); }
   ScrollTrigger.refresh();
-  const bookFlock = $<HTMLCanvasElement>('.page__flock');
+  const bookFlock = $<HTMLCanvasElement>('.stage__flock');
   if (bookFlock && flocks.has(bookFlock)) view === 'book' ? flocks.get(bookFlock)!.play() : flocks.get(bookFlock)!.pause();
   if (view === 'book') openBook();
 }
@@ -110,7 +110,7 @@ function openBook() {
   coverFront.setAttribute('aria-hidden', 'true');
   coverBack.setAttribute('tabindex', '0');
   $('#stageHint')!.textContent = 'Pick a page to step inside.';
-  const bf = $<HTMLCanvasElement>('.page__flock'); if (bf) flockFor(bf).play();
+  const bf = $<HTMLCanvasElement>('.stage__flock'); if (bf) flockFor(bf).play();
 }
 coverFront.addEventListener('click', openBook);
 
@@ -156,7 +156,9 @@ document.addEventListener('click', (e) => {
 
 // book tilts toward the pointer
 if (fine && !reduce) {
-  const book = $('#book')!;
+  // tilt a wrapper, never the book itself: the book's own transform slides it to the
+  // centre when the cover opens, and an inline transform would freeze it off-centre
+  const book = $('#bookTilt')!;
   stage.addEventListener('pointermove', (e) => {
     const rx = (e.clientY / innerHeight - 0.5) * -6, ry = (e.clientX / innerWidth - 0.5) * 8;
     gsap.to(book, { rotateX: rx, rotateY: ry, duration: 0.8, ease: 'power2.out', overwrite: 'auto' });
@@ -174,12 +176,13 @@ function flockFor(c: HTMLCanvasElement) {
   const portrait = innerWidth < innerHeight;
   // sizes follow the canvas: on a laptop the nearest macaw is about half the screen wide,
   // on a phone it nearly fills the width; far birds are about 40% of that
-  const near = (w: number, h: number) => (hero ? Math.min(w < h ? w * 0.9 : w * 0.5, h * 1.05, 900) : Math.min(w * 0.62, h * 0.9));
+  // on the book's desk they fly behind the open book, through the margins
+  const near = (w: number, h: number) => (hero ? Math.min(w < h ? w * 0.9 : w * 0.5, h * 1.05, 900) : Math.min(w < h ? w * 0.7 : w * 0.26, h * 0.5, 520));
   const f = createFlock(c, {
     sheets: [MACAW], still: reduce,
     count: Number(c.dataset.flock) - (hero && portrait ? 2 : 0),
     near, far: (w, h) => near(w, h) * 0.42,
-    band: hero ? (portrait ? [0.08, 0.6] : [0.12, 0.66]) : [0.18, 0.5],
+    band: hero ? (portrait ? [0.08, 0.6] : [0.12, 0.66]) : [0.12, 0.78],
   });
   flocks.set(c, f);
   return f;

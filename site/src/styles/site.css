@@ -202,7 +202,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .page--food .page__folio { right: 7%; }
 .page--bird .page__folio { left: 7%; }
-.page__flock { position: absolute; inset: 0 0 40% 0; width: 100%; height: 60%; }
 
 /* the cover */
 .cover {
@@ -306,7 +305,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .page__lede { display: none; }
   .page__cta { min-height: 40px; padding: 0 16px; font-size: .85rem; }
   .page__folio { display: none; }
-  .page__flock { inset: 0; height: 100%; }
   .cover { left: 0; top: var(--ph); width: var(--pw); height: var(--ph); transform-origin: 50% 0; }
   .is-open .cover { transform: rotateX(180deg); }
   .cover__back { transform: rotateX(180deg); }
