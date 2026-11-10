@@ -415,3 +415,41 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
   box-shadow: 0 30px 40px -24px rgba(0, 0, 0, .55);
   transition: filter .3s;
 }
+
+/* ---------- birdsong toggle ---------- */
+.sound { position: fixed; left: 18px; bottom: 18px; z-index: 55; display: flex; align-items: center; gap: 10px; }
+.sound__btn {
+  display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 16px 0 14px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid rgba(228, 223, 193, .35); background: rgba(11, 25, 36, .82); color: var(--khaki);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  font-weight: 600; font-size: .88rem; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .5);
+  transition: background-color .25s, color .25s, border-color .25s, transform .25s var(--ease);
+}
+.sound__btn:hover { transform: translateY(-2px); }
+.sound__btn[aria-pressed="true"] { background: var(--marigold); color: var(--navy); border-color: var(--marigold); }
+html[data-view="food"] .sound__btn:not([aria-pressed="true"]) { background: rgba(239, 234, 219, .9); color: var(--ink); border-color: rgba(28, 37, 51, .25); }
+html[data-view="food"] .sound__btn[aria-pressed="true"] { background: var(--ink); color: var(--khaki); border-color: var(--ink); }
+.sound__waves, .sound__mute { transition: opacity .2s; }
+.sound__btn[aria-pressed="true"] .sound__mute { opacity: 0; }
+.sound__btn[aria-pressed="false"] .sound__waves { opacity: 0; }
+.sound__btn[aria-pressed="true"] .sound__waves path { animation: wave 1.4s ease-in-out infinite; transform-origin: 12px 12px; }
+.sound__btn[aria-pressed="true"] .sound__waves path:last-child { animation-delay: .2s; }
+@keyframes wave { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.sound__nudge {
+  position: relative; padding: 9px 14px; border-radius: 12px; font-size: .85rem; font-weight: 600; white-space: nowrap;
+  background: var(--marigold); color: var(--navy); box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .45);
+}
+.sound__nudge::before { content: ""; position: absolute; left: -6px; top: 50%; width: 12px; height: 12px; background: inherit; transform: translateY(-50%) rotate(45deg); border-radius: 2px; }
+.sound__nudge[hidden] { display: none; }
+@media (max-width: 640px) {
+  .sound { left: auto; right: 14px; bottom: 74px; flex-direction: row-reverse; }
+  .sound__nudge::before { left: auto; right: -6px; }
+  .sound__btn { height: 50px; width: 50px; padding: 0; justify-content: center; }
+  .sound__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+}
+@media (prefers-reduced-motion: reduce) { .sound__btn[aria-pressed="true"] .sound__waves path { animation: none; } }
+
+/* bird hero without the emblem card: copy sits higher and centred against the pack */
+.bird__hero { align-items: center; padding-top: clamp(24px, 5vh, 64px); padding-bottom: clamp(56px, 8vh, 96px); }
+.bird__copy { align-self: center; }
+@media (max-width: 860px) { .bird__hero { padding-top: 12px; } .hpack__canvas { height: 42svh; } }

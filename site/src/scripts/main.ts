@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import Lenis from 'lenis';
+import { sfx, setMode, setEnabled, isEnabled, wantedBefore } from './sound';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin);
 
@@ -53,6 +54,7 @@ function show(view: View) {
   });
   document.body.dataset.view = view;
   document.documentElement.dataset.view = view;
+  setMode(view);
   document.title = titles[view];
   (document.querySelector('meta[name="theme-color"]') as HTMLMetaElement).content = view === 'food' ? '#e4dfc1' : '#0b1924';
   lenis?.scrollTo(0, { immediate: true, force: true });
@@ -67,6 +69,7 @@ function show(view: View) {
 function go(view: View, from?: { x: number; y: number; el?: Element }, push = true) {
   if (view === current) return;
   if (push) history.pushState({ view }, '', hashFor[view] || location.pathname + location.search);
+  sfx('turn');
   const swap = () => show(view);
   if (reduce) return swap();
   const root = document.documentElement;
@@ -98,6 +101,8 @@ function openBook() {
   if (opened) return;
   opened = true;
   stage.classList.add('is-open');
+  sfx('turn');
+  nudgeSound();
   coverFront.setAttribute('tabindex', '-1');
   coverFront.setAttribute('aria-hidden', 'true');
   coverBack.setAttribute('tabindex', '0');
@@ -219,6 +224,16 @@ function particleCanvas(c: HTMLCanvasElement, mode: 'fall' | 'pour') {
   };
   size(); addEventListener('resize', size);
   new IntersectionObserver(([en]) => { cancelAnimationFrame(raf); if (en.isIntersecting && c.offsetParent) { size(); raf = requestAnimationFrame(tick); } }).observe(c);
+  // click or tap the hero: a handful of seed scatters from that point
+  if (mode === 'fall') c.parentElement!.addEventListener('click', (e) => {
+    if ((e.target as Element).closest('a, button, canvas[data-pack], .hpack')) return;
+    const r = c.getBoundingClientRect();
+    for (let i = 0; i < 28; i++) {
+      const a = Math.random() * Math.PI * 2, sp = 1.5 + Math.random() * 3.5;
+      parts.push({ x: e.clientX - r.left, y: e.clientY - r.top, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2, r: 0, vr: (Math.random() - 0.5) * 0.3, s: 2 + Math.random() * 2.6, c: colours[(Math.random() * colours.length) | 0], a: 0.95, trail: true });
+    }
+    sfx('rattle'); setTimeout(() => sfx('chirp'), 180);
+  });
   // a few seeds tumble from the pointer as it moves over the hero
   if (mode === 'fall' && fine) c.parentElement!.addEventListener('pointermove', (e) => {
     const r = c.getBoundingClientRect();
@@ -299,6 +314,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   const cards = $$('[data-card]', root);
   $$<HTMLButtonElement>('.chip', root).forEach((chip) => chip.addEventListener('click', () => {
     $$('.chip', root).forEach((c) => { c.classList.toggle('is-on', c === chip); c.setAttribute('aria-pressed', String(c === chip)); });
+    sfx('tick');
     const f = chip.dataset.filter;
     const shown = cards.filter((c) => { const on = f === 'all' || c.dataset.group === f; c.classList.toggle('is-hidden', !on); return on; });
     if (!reduce) gsap.fromTo(shown, { opacity: 0, y: 24, rotateX: -12 }, { opacity: 1, y: 0, rotateX: 0, duration: 0.6, stagger: 0.05, ease: 'power3.out', clearProps: 'transform,opacity' });
@@ -318,6 +334,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   const form = $<HTMLFormElement>('form[data-division]', root)!;
   $$<HTMLAnchorElement>('[data-product]', root).forEach((a) => a.addEventListener('click', (e) => {
     e.preventDefault();
+    sfx('rattle');
     const sel = form.elements.namedItem('product') as HTMLSelectElement;
     const opt = [...sel.options].find((o) => o.value === a.dataset.product);
     if (opt) opt.selected = true;
@@ -344,6 +361,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
         kind: c.dataset.pack as 'sack' | 'pouch', logo: c.dataset.logo!, items, auto: hero ? Number(c.dataset.auto) : studio ? 3800 : 0,
         bg: view === 'bird' ? '#0e2131' : '#efeadb',
         onChange: (i) => {
+          sfx('whoosh');
           if (hero) {
             $('[data-pack-index]', hero)!.textContent = String(i + 1).padStart(2, '0');
             const nm = $('[data-pack-name]', hero)!;
@@ -394,7 +412,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   });
   // hero copy
   gsap.from($$('[data-rise]', $('main', root)!).slice(0, 3), { y: 30, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.12, delay: 0.35 });
-  const badge = $('.bird__badge, .food-hero__art img', root);
+  const badge = $('.food-hero__art img', root);
   if (badge) gsap.from(badge, { scale: 0.7, rotate: -8, opacity: 0, duration: 1.4, ease: 'elastic.out(1, 0.7)', delay: 0.2 });
 
   // reveals
@@ -498,9 +516,37 @@ function wireForm(form: HTMLFormElement) {
     err.hidden = true; name.removeAttribute('aria-invalid');
     const f = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement).value || '').trim();
     const lines = [`Hello ${form.dataset.division},`, `I'm ${name.value.trim()}. I'd like a price for ${f('product')}.`, f('qty') && `Quantity: ${f('qty')}`, f('msg')].filter(Boolean);
+    sfx('pop');
     window.open(`https://wa.me/${WA}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
   });
   name.addEventListener('input', () => { if (name.value.trim()) { err.hidden = true; name.removeAttribute('aria-invalid'); } });
+}
+
+/* ------------------------------------------------------------------ sound */
+const soundBtn = $<HTMLButtonElement>('[data-sound-toggle]')!;
+const soundLabel = $('[data-sound-label]')!;
+const nudge = $('[data-sound-nudge]')!;
+const reflectSound = () => {
+  const on = isEnabled();
+  soundBtn.setAttribute('aria-pressed', String(on));
+  soundLabel.textContent = on ? 'Birdsong on' : 'Birdsong off';
+};
+soundBtn.addEventListener('click', async () => { nudge.hidden = true; await setEnabled(!isEnabled()); reflectSound(); });
+function nudgeSound() {
+  if (isEnabled() || wantedBefore()) return;
+  setTimeout(() => {
+    if (isEnabled()) return;
+    nudge.hidden = false;
+    if (!reduce) gsap.fromTo(nudge, { x: -10, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: 'power3.out' });
+    setTimeout(() => { if (!reduce) gsap.to(nudge, { opacity: 0, duration: 0.6, onComplete: () => { nudge.hidden = true; } }); else nudge.hidden = true; }, 7000);
+  }, 1800);
+}
+// they had sound on last time: start again on their first tap anywhere
+if (wantedBefore()) {
+  soundLabel.textContent = 'Tap to resume birdsong';
+  const resume = async () => { if (!isEnabled()) { await setEnabled(true); reflectSound(); } };
+  addEventListener('pointerdown', resume, { once: true });
+  addEventListener('keydown', resume, { once: true });
 }
 
 /* ------------------------------------------------------------------ misc */
