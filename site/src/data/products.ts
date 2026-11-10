@@ -126,7 +126,10 @@ export const CONTACT = {
     { tel: '+917329999996', label: '73299 99996' },
     { tel: '+919245555556', label: '92455 55556' },
   ],
-  map: 'https://maps.google.com/maps?q=Nandyal%20Checkpost%2C%20Kurnool%2C%20Andhra%20Pradesh%20518002&z=15&output=embed',
+  // the office pin: Dhanalakshmi Nagar (87/14xx), by Nandyal Checkpost, Kurnool 518002
+  officeAt: '15.794046,78.053707',
+  map: 'https://maps.google.com/maps?q=15.794046,78.053707&z=17&output=embed',
+  directions: 'https://www.google.com/maps/dir/?api=1&destination=15.794046,78.053707',
 };
 
 export const BRANDS = {

@@ -1139,3 +1139,12 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
 /* product pictures per line: the chosen line's picture fades in over the others */
 .pcard__look { position: absolute; inset: 0; opacity: 0; transition: opacity .45s var(--ease); }
 .pcard__look.is-shown { opacity: 1; }
+
+/* map: the office is pinned; a button opens directions in Google Maps */
+.map { position: relative; }
+.map__go {
+  position: absolute; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; padding: 11px 16px; border-radius: 999px;
+  font-weight: 600; font-size: .9rem; text-decoration: none; background: var(--marigold); color: var(--navy); box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .5);
+}
+.site--food .map__go { background: var(--ink); color: var(--khaki); }
+.map iframe { filter: none; } /* full colour, so the red office pin stands out */
