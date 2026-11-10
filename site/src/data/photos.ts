@@ -1,5 +1,6 @@
 import commons from './commons.json';
 import FLIGHT from './flight.json';
+import SOUNDS from './sounds.json';
 
 // Product and scene photos are served straight from Wikimedia Commons, which allows
 // hotlinking. We request Wikimedia's standard thumbnail widths so every size is cached
@@ -41,6 +42,8 @@ export function photo(key?: string): Photo | undefined {
 export const credits = [
   ...Object.entries(DATA).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
   ...Object.entries(FLIGHT as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
+  // the birdsong and the flute (src/scripts/sound.ts)
+  ...Object.entries(SOUNDS as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
 ];
 
 /** A ~500px version for painting onto 3D pack labels. */

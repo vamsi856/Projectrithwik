@@ -9,6 +9,11 @@ export type Product = {
   name: string;
   /** Catalogue lines this card covers. One entry = no variant picker. */
   variants: { label: string; gst: string }[];
+  /** Two or more independent choices (e.g. crop season x processing). Each variant label is
+   * then the chosen options joined by axesLabel(), so the card shows one row per choice. */
+  axes?: { name: string; options: string[] }[];
+  /** One line describing the choices, used where there is no room for the picker. */
+  summary?: string;
   photo?: string;
   swatch: Swatch;
   group: string;
@@ -25,11 +30,16 @@ export const BIRD_GROUPS = [
 // Bird feed lines, from the owner's list (Nov 2026).
 export const BIRD: Product[] = [
   { id: 'b-foxtail', name: 'Foxtail millet', group: 'millets', photo: 'foxtail', swatch: s('#d9b24a', '#b48a2c', 7),
+    axes: [
+      { name: 'Crop', options: ['Summer crop', 'Winter crop'] },
+      { name: 'Type', options: ['Processed', 'Unprocessed'] },
+    ],
+    summary: 'Summer or winter crop, processed or unprocessed',
     variants: [
-      { label: 'Summer crop, raw', gst: '0%' },
-      { label: 'Summer crop, cleaned', gst: '0%' },
-      { label: 'Winter crop, raw', gst: '0%' },
-      { label: 'Winter crop, cleaned', gst: '0%' },
+      { label: 'Summer crop, processed', gst: '0%' },
+      { label: 'Summer crop, unprocessed', gst: '0%' },
+      { label: 'Winter crop, processed', gst: '0%' },
+      { label: 'Winter crop, unprocessed', gst: '0%' },
     ] },
   { id: 'b-barnyard', name: 'Barnyard millet', group: 'millets', photo: 'barnyard', swatch: s('#e8dcb8', '#c6b78a', 7), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-browntop', name: 'Browntop millet', group: 'millets', photo: 'browntop', swatch: s('#c59a5a', '#996e34', 7), variants: [{ label: '', gst: '0%' }] },
@@ -99,7 +109,10 @@ export const FOOD: Product[] = [
 
 export const lineCount = (list: Product[]) => list.reduce((n, p) => n + p.variants.length, 0);
 
-/** Full name used in enquiries, e.g. "Foxtail millet (Winter crop, cleaned)". */
+/** Variant label from the options picked on each axis, e.g. ["Winter crop", "Processed"] -> "Winter crop, processed". */
+export const axesLabel = (picked: string[]) => picked.map((v, i) => (i ? v.toLowerCase() : v)).join(', ');
+
+/** Full name used in enquiries, e.g. "Foxtail millet (Winter crop, processed)". */
 export const lineName = (p: Product, v: { label: string }) => (v.label ? `${p.name} (${v.label})` : p.name);
 
 export const CONTACT = {

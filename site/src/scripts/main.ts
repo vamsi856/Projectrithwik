@@ -58,6 +58,7 @@ function show(view: View) {
   document.body.dataset.view = view;
   document.documentElement.dataset.view = view;
   setMode(view);
+  document.dispatchEvent(new Event('rithwik:view'));
   document.title = titles[view];
   (document.querySelector('meta[name="theme-color"]') as HTMLMetaElement).content = view === 'food' ? '#e4dfc1' : '#0b1924';
   lenis?.scrollTo(0, { immediate: true, force: true });
@@ -318,9 +319,12 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   cards.forEach((card) => card.addEventListener('change', (e) => {
     const r = e.target as HTMLInputElement;
     if (r.type !== 'radio') return;
-    $('[data-product]', card)!.dataset.product = r.value;
+    // a card with several choices (crop, processing) names the line from all of them
+    const picked = $$<HTMLInputElement>('[data-axis] input:checked', card).map((i) => i.value);
+    const line = card.dataset.name ? `${card.dataset.name} (${picked.map((v, i) => (i ? v.toLowerCase() : v)).join(', ')})` : r.value;
+    $('[data-product]', card)!.dataset.product = line;
     const wa = $<HTMLAnchorElement>('[data-wa]', card);
-    if (wa) wa.href = `https://wa.me/${WA}?text=${encodeURIComponent(`Hello ${wa.dataset.wa}, I would like to order: ${r.value}. Please share the price and availability.`)}`;
+    if (wa) wa.href = `https://wa.me/${WA}?text=${encodeURIComponent(`Hello ${wa.dataset.wa}, I would like to order: ${line}. Please share the price and availability.`)}`;
   }));
 
   // Ask price -> fill this site's form
@@ -666,12 +670,16 @@ function wireForm(form: HTMLFormElement) {
 const soundBtn = $<HTMLButtonElement>('[data-sound-toggle]')!;
 const soundLabel = $('[data-sound-label]')!;
 const nudge = $('[data-sound-nudge]')!;
+// sound they had on last time shows as on, and starts on their first tap anywhere
+let soundPending = wantedBefore();
 const reflectSound = () => {
-  const on = isEnabled();
+  const on = isEnabled() || soundPending;
   soundBtn.setAttribute('aria-pressed', String(on));
-  soundLabel.textContent = on ? 'Birdsong on' : 'Birdsong off';
+  const what = document.documentElement.dataset.view === 'food' ? 'Flute' : 'Birdsong';
+  soundLabel.textContent = `${what} ${on ? 'on' : 'off'}`;
 };
-soundBtn.addEventListener('click', async () => { nudge.hidden = true; await setEnabled(!isEnabled()); reflectSound(); });
+document.addEventListener('rithwik:view', reflectSound);
+soundBtn.addEventListener('click', async () => { nudge.hidden = true; soundPending = false; await setEnabled(!isEnabled()); reflectSound(); });
 function nudgeSound() {
   if (isEnabled() || wantedBefore()) return;
   setTimeout(() => {
@@ -681,11 +689,9 @@ function nudgeSound() {
     setTimeout(() => { if (!reduce) gsap.to(nudge, { opacity: 0, duration: 0.6, onComplete: () => { nudge.hidden = true; } }); else nudge.hidden = true; }, 7000);
   }, 1800);
 }
-// they had sound on last time: start again on their first tap anywhere
-if (wantedBefore()) {
-  soundLabel.textContent = 'Birdsong on';
-  soundBtn.setAttribute('aria-pressed', 'true');
-  const resume = async () => { if (!isEnabled()) { await setEnabled(true); reflectSound(); } };
+if (soundPending) {
+  reflectSound();
+  const resume = async () => { const go = soundPending; soundPending = false; if (go && !isEnabled()) { await setEnabled(true); reflectSound(); } };
   addEventListener('pointerdown', resume, { once: true });
   addEventListener('keydown', resume, { once: true });
 }

@@ -1,19 +1,21 @@
 ---
 import Photo from './Photo.astro';
 import type { Product } from '../data/products';
-import { lineName } from '../data/products';
+import { lineName, axesLabel } from '../data/products';
 import { photo } from '../data/photos';
 
 interface Props { product: Product; contact: string; tone: 'bird' | 'food' }
 const { product: p, contact, tone } = Astro.props;
 const img = photo(p.photo);
 const multi = p.variants.length > 1;
-const first = p.variants[0];
+const axes = p.axes ?? [];
+// with axes, the first option on each axis is picked to start with
+const first = axes.length ? { label: axesLabel(axes.map((a) => a.options[0])), gst: p.variants[0].gst } : p.variants[0];
 const brand = tone === 'food' ? 'Rithwik Industries' : 'Rithwik Bird Feeds';
 const wa = (line: string) => `https://wa.me/918309782770?text=${encodeURIComponent(`Hello ${brand}, I would like to order: ${line}. Please share the price and availability.`)}`;
 const swatch = `--c1:${p.swatch.c1};--c2:${p.swatch.c2};--g:${p.swatch.grain}px`;
 ---
-<article class:list={['pcard', `pcard--${tone}`]} data-group={p.group} data-card>
+<article class:list={['pcard', `pcard--${tone}`]} data-group={p.group} data-card data-name={axes.length ? p.name : undefined}>
   <div class="pcard__media">
     {img ? (
       <Photo name={p.photo!} class="pcard__img" alt={p.name} sizes="(max-width: 640px) 92vw, (max-width: 1100px) 46vw, 380px" />
@@ -24,7 +26,21 @@ const swatch = `--c1:${p.swatch.c1};--c2:${p.swatch.c2};--g:${p.swatch.grain}px`
   </div>
   <div class="pcard__body">
     <h3 class="pcard__name">{p.name}</h3>
-    {multi ? (
+    {axes.length ? (
+      <div class="axes">
+        {axes.map((a, ai) => (
+          <fieldset class="variants variants--axis" data-axis>
+            <legend class="axes__name">{a.name}</legend>
+            {a.options.map((o, i) => (
+              <label class="variant">
+                <input type="radio" name={`v-${p.id}-${ai}`} value={o} checked={i === 0} />
+                <span>{o}</span>
+              </label>
+            ))}
+          </fieldset>
+        ))}
+      </div>
+    ) : multi ? (
       <fieldset class="variants">
         <legend class="sr">{p.name} options</legend>
         {p.variants.map((v, i) => (

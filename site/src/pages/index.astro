@@ -35,7 +35,7 @@ const birdHeroPhoto = photo('bird-budgies');
 void photo;
 const birdAboutPhoto = photo('bird-on-millet');
 const birdFlightPhoto = photo('bird-parakeet-flight');
-const farmersPhoto = photo('farmers-millet');
+const fieldPhoto = photo('foxtail-field');
 const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab', spices: 'clove' };
 ---
 <!doctype html>
@@ -151,7 +151,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         <div class="bird__intro bird__intro--pack">
           <div class="bird__copy">
             <h1 class="display" id="bird-title" data-split><span class="display__a">Rithwik</span> <span class="display__b">Bird feeds</span></h1>
-            <p class="bird__lede" data-rise>{BIRD.length} feeds in {nBird} grades, sold raw or cleaned, from our office in Kurnool and our warehouse at Duvvur.</p>
+            <p class="bird__lede" data-rise>{BIRD.length} feeds in {nBird} grades, sold processed or unprocessed, from our office in Kurnool and our warehouse at Duvvur.</p>
             <div class="actions" data-rise>
               <a class="pill pill--gold" href="#b-feeds" data-jump data-magnetic>See the feeds</a>
               <a class="pill pill--line" href={`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent('Hello Rithwik Bird Feeds, I would like a price.')}`} target="_blank" rel="noopener">WhatsApp an order</a>
@@ -164,7 +164,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
 
       <div class="facts" aria-label="Rithwik Bird Feeds at a glance">
         <div class="fact"><b data-count={BIRD.length}>{BIRD.length}</b><span>feeds in {nBird} grades</span></div>
-        <div class="fact"><b>Summer &amp; winter</b><span>foxtail crops, raw or cleaned</span></div>
+        <div class="fact"><b>Summer &amp; winter</b><span>foxtail crops, processed or unprocessed</span></div>
         <div class="fact"><b>Since 1925</b><span>a family grain trade</span></div>
         <div class="fact fact--code"><b>{BRANDS.bird.gstin}</b><span>GSTIN</span></div>
       </div>
@@ -173,7 +173,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         <div class="about__copy">
           <h2 class="section-title" id="b-about-title" data-split>Who we are</h2>
           <p class="about__lead" data-reveal>Rithwik Bird Feeds carries forward a family grain trade that began in 1925.</p>
-          <p data-reveal>We bring in seven millets, five kinds of jowar, maize, sunflower and safflower, clean and sort them at our Duvvur warehouse, and supply them raw or cleaned to traders, pet shops and bird keepers. Foxtail comes from both the summer and winter crops.</p>
+          <p data-reveal>We bring in seven millets, five kinds of jowar, maize, sunflower and safflower, clean and sort them at our Duvvur warehouse, and supply them processed or unprocessed to traders, pet shops and bird keepers. Foxtail comes from both the summer and winter crops.</p>
         </div>
         <div class="about__media">
           {birdAboutPhoto && (
@@ -230,13 +230,13 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
       <Certifications id="b-certs" tone="bird" regs={held('bird')} photo="bird-plumhead" photoAlt="A plum-headed parakeet feeding" />
 
       <Steps id="b-order" tone="bird" steps={[
-        { title: 'Pick your feeds', body: 'Choose from the cards above. Say if you want it raw or cleaned, and which foxtail crop.' },
+        { title: 'Pick your feeds', body: 'Choose from the cards above. For foxtail, pick the summer or winter crop, processed or unprocessed.' },
         { title: 'Send it on WhatsApp', body: 'Use the form below or message 83097 82770 with the quantity and your town.' },
         { title: "Get today's price", body: 'We reply with the current rate and work out packing and delivery with you.' },
       ]} />
 
       <Contact id="b-contact" tone="bird" brand={BRANDS.bird.name} email={BRANDS.bird.email} options={birdOptions}
-        label="Feed" qtyHint="For example, 50 bags or 2 tonnes" msgHint="Delivery town, raw or cleaned, packing" />
+        label="Feed" qtyHint="For example, 50 bags or 2 tonnes" msgHint="Delivery town, processed or unprocessed, packing" />
     </main>
 
     <Footer logo={birdLogo} tone="bird" brand={BRANDS.bird.name} gstin={BRANDS.bird.gstin}
@@ -285,9 +285,9 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
           <p data-reveal>We work from our office in Kurnool and our warehouse at Duvvur, keeping eight millets, super foods like chia and five kinds of quinoa, oil seeds, pulses, whole spices, buckwheat and oats. Tell us the pack size you need and we'll quote for it.</p>
         </div>
         <div class="about__media">
-          {farmersPhoto && (
+          {fieldPhoto && (
             <figure class="about__photo about__photo--main" data-curtain>
-              <Photo name="farmers-millet" alt="Farmers standing in a tall pearl millet field" sizes="(max-width: 860px) 92vw, 46vw" />
+              <Photo name="foxtail-field" alt="A field of foxtail millet, the heavy green heads bending on their stalks" sizes="(max-width: 860px) 92vw, 46vw" />
             </figure>
           )}
         </div>
@@ -354,8 +354,8 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
   </div>
 
   <dialog class="credits" id="credits">
-    <h2>Photo credits</h2>
-    <p>Product and scene photos are from Wikimedia Commons, used under the licences below. Logos and catalogue belong to Rithwik.</p>
+    <h2>Photo and sound credits</h2>
+    <p>Product and scene photos, the birdsong and the flute are from Wikimedia Commons, used under the licences below. Logos and catalogue belong to Rithwik.</p>
     <ul>
       {credits.map((c) => <li><a href={c.source} target="_blank" rel="noopener">{c.title}</a>{c.author && `, ${c.author}`}, {c.license}</li>)}
     </ul>
