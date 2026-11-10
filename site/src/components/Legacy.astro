@@ -1,0 +1,28 @@
+---
+// The family line from 1925 to today. The rail draws itself as you scroll and
+// each generation stamps in; the latest step, Rithwik, is highlighted.
+import { LEGACY, SINCE } from '../data/legacy';
+interface Props { tone: 'bird' | 'food' }
+const { tone } = Astro.props;
+const years = new Date().getFullYear() - SINCE;
+---
+<div class:list={['legacy', `legacy--${tone}`]} data-legacy>
+  <div class="legacy__head">
+    <p class="legacy__since"><span>Since</span> <b data-count={SINCE} data-count-from="1900">{SINCE}</b></p>
+    <div>
+      <h3 class="legacy__title">A century in the grain trade</h3>
+      <p class="legacy__lede">The Bysani family has traded grain from this part of Andhra Pradesh for {years} years. Each generation built its own firm; Rithwik is the newest chapter.</p>
+    </div>
+  </div>
+  <ol class="legacy__rail">
+    <svg class="legacy__line" viewBox="0 0 1000 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0 10 H1000" /></svg>
+    {LEGACY.map((g, i) => (
+      <li class:list={['legacy__step', i === LEGACY.length - 1 && 'is-now']} data-legacy-step>
+        <span class="legacy__dot" aria-hidden="true"></span>
+        <span class="legacy__year">{g.year}</span>
+        <span class="legacy__person">{g.person}</span>
+        <span class="legacy__firm">{g.firm}</span>
+      </li>
+    ))}
+  </ol>
+</div>

@@ -22,6 +22,7 @@ import { BIRD_SEASONS, FOOD_SEASONS } from '../data/seasons';
 import { held } from '../data/registrations';
 import Certifications from '../components/Certifications.astro';
 import BirdsWeFeed from '../components/BirdsWeFeed.astro';
+import Legacy from '../components/Legacy.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const nBird = lineCount(BIRD);
@@ -101,6 +102,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
           <span class="cover__title">Rithwik</span>
           <span class="cover__sub">Bird Feeds &amp; Industries</span>
           <span class="cover__place">Kurnool, Andhra Pradesh</span>
+          <span class="cover__since">Trading grain since 1925</span>
           <span class="cover__open">Open the book</span>
         </button>
         <a class="cover__back page page--bird" href="#bird-feeds" data-enter="bird" tabindex="-1">
@@ -160,14 +162,14 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
       <div class="facts" aria-label="Rithwik Bird Feeds at a glance">
         <div class="fact"><b data-count={nBird}>{nBird}</b><span>feed lines</span></div>
         <div class="fact"><b>Summer &amp; winter</b><span>foxtail crops, raw or cleaned</span></div>
-        <div class="fact"><b>Sortex</b><span>cleaned white proso</span></div>
+        <div class="fact"><b>Since 1925</b><span>a family grain trade</span></div>
         <div class="fact fact--code"><b>{BRANDS.bird.gstin}</b><span>GSTIN</span></div>
       </div>
 
       <section class="about about--bird" id="b-about" aria-labelledby="b-about-title">
         <div class="about__copy">
           <h2 class="section-title" id="b-about-title" data-split>Who we are</h2>
-          <p class="about__lead" data-reveal>Rithwik Bird Feeds is the bird feed side of the Rithwik family business in Kurnool.</p>
+          <p class="about__lead" data-reveal>Rithwik Bird Feeds carries forward a family grain trade that began in 1925.</p>
           <p data-reveal>We bring in millets, sunflower, jowar, maize and horse gram, clean and sort them at our Duvvur warehouse, and supply them raw or cleaned to traders, pet shops and bird keepers. Foxtail comes from both the summer and winter crops, and white proso goes through a Sortex colour sorter.</p>
         </div>
         <div class="about__media">
@@ -183,6 +185,8 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
           )}
         </div>
       </section>
+
+      <Legacy tone="bird" />
 
       <PackStudio id="b-packs" kind="sack" tone="bird" logo={birdLogo.src} items={BIRD_PACKS} contact="b-contact"
         title="Our packs" lede="Every feed line in its own Rithwik sack. Pick a feed and the pack turns to show it." />
@@ -272,7 +276,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
       <section class="about about--food" id="f-about" aria-labelledby="f-about-title">
         <div class="about__copy">
           <h2 class="section-title section-title--food" id="f-about-title" data-split>Who we are</h2>
-          <p class="about__lead" data-reveal>Rithwik Industries brings millets, super seeds and pulses from Andhra Pradesh to homes, shops and bulk buyers.</p>
+          <p class="about__lead" data-reveal>Rithwik Industries carries forward a family grain trade that began in 1925, bringing millets, super seeds and pulses to homes, shops and bulk buyers.</p>
           <p data-reveal>We work from our office in Kurnool and our warehouse at Duvvur, keeping six millets, ten seeds and super foods, and a shelf of dals, pulses and whole spices. Tell us the pack size you need and we'll quote for it.</p>
         </div>
         <div class="about__media">
@@ -283,6 +287,8 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
           )}
         </div>
       </section>
+
+      <Legacy tone="food" />
 
       <PackStudio id="f-packs" kind="pouch" tone="food" logo={foodLogo.src} items={FOOD_PACKS} contact="f-contact"
         title="Our packs" lede="Kraft pouches with a clear window, so you can see the grain. Pick a product to turn the pack." />
@@ -309,7 +315,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
       <div class="facts facts--food" aria-label="Rithwik Industries at a glance">
         <div class="fact"><b data-count={nFood}>{nFood}</b><span>products on the list</span></div>
         <div class="fact"><b>Kurnool</b><span>office, near Nandyal Checkpost</span></div>
-        <div class="fact"><b>Duvvur, YSR</b><span>warehouse</span></div>
+        <div class="fact"><b>Since 1925</b><span>a family grain trade</span></div>
         <div class="fact fact--code"><b>{BRANDS.food.gstin}</b><span>GSTIN</span></div>
       </div>
 

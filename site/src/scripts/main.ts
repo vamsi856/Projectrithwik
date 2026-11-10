@@ -503,6 +503,17 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
 
   if (reduce) return;
 
+  // legacy: the rail draws across, each generation stamps in, the year counts up from 1900
+  $$('[data-legacy]', root).forEach((lg) => {
+    const line = $<SVGPathElement>('.legacy__line path', lg)!;
+    const steps = $$('[data-legacy-step]', lg);
+    const tl = gsap.timeline({ scrollTrigger: { trigger: lg, start: 'top 75%', once: true } })
+      .fromTo(line, { strokeDasharray: 1000, strokeDashoffset: 1000 }, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' }, 0)
+      .from(steps, { y: 40, opacity: 0, duration: 0.7, ease: 'power3.out', stagger: 0.25 }, 0.15)
+      .from($$('.legacy__dot', lg), { scale: 0, duration: 0.5, ease: 'back.out(3)', stagger: 0.25 }, 0.2);
+    tw(tl);
+  });
+
   // season dial: arcs draw themselves in
   $$('[data-seasons]', root).forEach((sec) => {
     const arcs = $$<SVGPathElement>('.seasons__arc', sec);
@@ -628,7 +639,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
 
   // counters
   $$('[data-count]', root).forEach((el) => {
-    const n = Number(el.dataset.count); const o = { v: 0 };
+    const n = Number(el.dataset.count); const o = { v: Number(el.dataset.countFrom || 0) };
     tw(gsap.to(o, { v: n, duration: 1.6, ease: 'power2.out', onUpdate: () => (el.textContent = String(Math.round(o.v))), scrollTrigger: { trigger: el, start: 'top 90%', once: true } }));
   });
   // facts pop
