@@ -37,9 +37,9 @@ export const BIRD: Product[] = [
       { name: 'Type', options: ['Processed', 'Unprocessed'] },
     ],
     variants: [
-      { label: 'Summer crop, processed', gst: '0%' },
+      { label: 'Summer crop, processed', gst: '0%', photo: 'foxtail-hulled' },
       { label: 'Summer crop, unprocessed', gst: '0%' },
-      { label: 'Winter crop, processed', gst: '0%' },
+      { label: 'Winter crop, processed', gst: '0%', photo: 'foxtail-hulled' },
       { label: 'Winter crop, unprocessed', gst: '0%' },
     ] },
   { id: 'b-barnyard', name: 'Barnyard millet', group: 'millets', photo: 'barnyard', swatch: s('#e8dcb8', '#c6b78a', 7), variants: [{ label: '', gst: '0%' }] },
