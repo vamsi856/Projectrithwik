@@ -245,7 +245,7 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 @media (max-width: 860px) { .steps__list { grid-template-columns: 1fr; } .steps__path { display: none; } }
 
 /* ---------- scroll bird ---------- */
-.scrollbird { position: fixed; z-index: 30; left: -60px; top: -30px; width: 120px; height: 66px; fill: var(--marigold); pointer-events: none; opacity: 0; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .4)); }
+.scrollbird { position: fixed; z-index: 30; left: -75px; top: -52px; width: 150px; height: 104px; pointer-events: none; opacity: 0; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .4)); }
 
 /* ---------- map lazy ---------- */
 .map iframe:not([src]) { visibility: hidden; }
@@ -820,3 +820,6 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
   .legacy__step.is-now .legacy__dot { left: -44px; top: 0; }
 }
 @media (max-width: 760px), (max-aspect-ratio: 4/5) { .cover__since { grid-column: 2; margin-top: 4px; } }
+
+/* real flying birds: a soft shadow lifts them off the scene */
+@media (min-width: 861px) { .realbird { filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .28)); } }

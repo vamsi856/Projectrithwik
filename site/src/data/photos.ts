@@ -1,4 +1,5 @@
 import commons from './commons.json';
+import FLIGHT from './flight.json';
 
 // Product and scene photos are served straight from Wikimedia Commons, which allows
 // hotlinking. We request Wikimedia's standard thumbnail widths so every size is cached
@@ -36,7 +37,11 @@ export function photo(key?: string): Photo | undefined {
   };
 }
 
-export const credits = Object.entries(DATA).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p }));
+// Flying birds in the Bird Feeds hero: cut out from these photos (background removed, some mirrored).
+export const credits = [
+  ...Object.entries(DATA).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
+  ...Object.entries(FLIGHT as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: `${r.t} (cut out, background removed)`, author: r.a, license: r.l, source: r.p })),
+];
 
 /** A ~500px version for painting onto 3D pack labels. */
 export function photoSmall(key?: string) {

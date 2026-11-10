@@ -164,90 +164,67 @@ if (fine && !reduce) {
 }
 
 /* ------------------------------------------------------------------ flocks */
-// Illustrated birds: rose-ringed parakeets, green and blue budgies, zebra finches.
-// Each flies a gentle path across the scene with both wings beating.
-const UP = 'M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z';
-const DOWN = 'M-30 11 Q-17 3 0 2 Q17 3 30 11 Q17 5 0 7 Q-17 5 -30 11Z';
-const WING_UP = 'M-6 -3 C-4 -22 6 -34 24 -40 C14 -27 10 -15 6 -1Z';
-const WING_DOWN = 'M-6 -1 C-4 14 6 26 22 31 C12 19 9 9 6 1Z';
 const NS = 'http://www.w3.org/2000/svg';
-type Species = { id: string; body: [string, string]; head: string; wing: [string, string]; tail: [string, string]; beak: string; tailLen: number; size: number; face?: string; cheek?: string; crest?: string };
-// premium breeds, drawn in their real colours
-const SPECIES: Species[] = [
-  { id: 'scarlet', body: ['#ef2b1f', '#a8150e'], head: '#ef2b1f', wing: ['#f7c533', '#1f5fbf'], tail: ['#e0261b', '#2a63c4'], beak: '#f1ece2', tailLen: 74, size: 1.25, face: '#f7f1e8' },
-  { id: 'bluegold', body: ['#2f8de0', '#f2b61f'], head: '#2a7fd4', wing: ['#2f8de0', '#173f87'], tail: ['#2a7fd4', '#173f87'], beak: '#1d1d1d', tailLen: 72, size: 1.22, face: '#f7f1e8' },
-  { id: 'conure', body: ['#ffc21a', '#ff6a1a'], head: '#ffd02e', wing: ['#46b14f', '#1f5fbf'], tail: ['#3c9a45', '#1f5fbf'], beak: '#262626', tailLen: 46, size: 0.86 },
-  { id: 'lovebird', body: ['#79d35a', '#3e9a3a'], head: '#ff8a3d', wing: ['#5fc04a', '#2e7a2e'], tail: ['#3f7fbf', '#2b5a94'], beak: '#e8463b', tailLen: 22, size: 0.7, face: '#ffffff' },
-  { id: 'cockatiel', body: ['#c9c9c6', '#7f7f7c'], head: '#f6d64b', wing: ['#a9a9a5', '#f2f2ee'], tail: ['#8a8a86', '#5e5e5a'], beak: '#9a9a96', tailLen: 50, size: 0.82, cheek: '#f28a3a', crest: '#f6d64b' },
+// Real birds: flight photos cut out of their backgrounds (credits in the Photo credits
+// dialog). All face right; each glides with a soft bob and bank, nearer birds bigger.
+const BIRD_BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'birds/';
+const REAL = [
+  { f: 'scarlet-sky-b-1', w: 571, h: 397, size: 1 },
+  { f: 'bluegold', w: 720, h: 604, size: 1.25 },
+  { f: 'macaw-pair-1', w: 702, h: 293, size: 1.15 },
+  { f: 'scarlet-sky-a-2', w: 519, h: 369, size: 0.95 },
+  { f: 'hyacinth', w: 720, h: 560, size: 1.25 },
+  { f: 'parakeet-side', w: 720, h: 212, size: 0.75 },
+  { f: 'scarlet-sky-b-2', w: 590, h: 322, size: 1 },
+  { f: 'macaw-pair-2', w: 662, h: 285, size: 1.1 },
+  { f: 'scarlet-sky-a-1', w: 483, h: 368, size: 0.9 },
 ];
-let defsSeq = 0;
-function speciesDefs(svg: SVGSVGElement) {
-  if (svg.dataset.birdPrefix) return svg.dataset.birdPrefix;
-  const pre = `bd${++defsSeq}`; svg.dataset.birdPrefix = pre;
-  const d = document.createElementNS(NS, 'defs'); d.setAttribute('data-birds', '');
-  d.innerHTML = SPECIES.map((s) => `
-    <linearGradient id="${pre}bb-${s.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.body[0]}"/><stop offset="1" stop-color="${s.body[1]}"/></linearGradient>
-    <linearGradient id="${pre}bw-${s.id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${s.wing[0]}"/><stop offset="1" stop-color="${s.wing[1]}"/></linearGradient>
-    <linearGradient id="${pre}bt-${s.id}" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="${s.tail[0]}"/><stop offset="1" stop-color="${s.tail[1]}"/></linearGradient>`).join('') +
-    `<filter id="${pre}shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-opacity=".35"/></filter>`;
-  svg.prepend(d);
-  return pre;
-}
-function drawBird(sp: Species, pre: string) {
-  const t = sp.tailLen;
-  return `
-    <path class="b-wingback" d="${WING_UP}" fill="url(#${pre}bw-${sp.id})" opacity=".55" transform="translate(-4 1)"/>
-    <path d="M-16 0 C${-16 - t * 0.5} ${3 + t * 0.06} ${-16 - t * 0.9} ${6 + t * 0.1} ${-16 - t} ${8 + t * 0.12} L${-14 - t} ${11 + t * 0.12} C${-14 - t * 0.6} ${10 + t * 0.08} -20 8 -14 5Z" fill="url(#${pre}bt-${sp.id})"/>
-    <path d="M-20 2 C-14 -9 6 -11 18 -7 C25 -4 27 2 23 6 C10 11 -10 10 -20 2Z" fill="url(#${pre}bb-${sp.id})"/>
-    ${sp.crest ? `<path d="M18 -10 C14 -22 20 -30 26 -32 C22 -26 22 -18 24 -11Z" fill="${sp.crest}"/>` : ''}
-    <circle cx="22" cy="-5" r="7.5" fill="${sp.head}"/>
-    ${sp.face ? `<ellipse cx="25.5" cy="-4" rx="4" ry="3.2" fill="${sp.face}"/>` : ''}
-    ${sp.cheek ? `<circle cx="23" cy="-2" r="3" fill="${sp.cheek}"/>` : ''}
-    <path d="M28 -8 q8 0 7 8 q-5 -1 -8 -3z" fill="${sp.beak}"/>
-    <circle cx="25" cy="-7" r="1.4" fill="#111"/><circle cx="25.4" cy="-7.4" r=".45" fill="#fff"/>
-    <g class="b-wingfront"><path d="${WING_UP}" fill="url(#${pre}bw-${sp.id})"/><path d="M0 -4 C6 -14 12 -22 20 -28" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="1.4"/></g>`;
+function realBird(i: number, unit: number) {
+  const b = REAL[i % REAL.length];
+  const w = unit * b.size, h = (w * b.h) / b.w;
+  const img = document.createElementNS(NS, 'image');
+  img.setAttribute('href', `${BIRD_BASE}${b.f}.webp`);
+  img.setAttribute('width', w.toFixed(1)); img.setAttribute('height', h.toFixed(1));
+  img.setAttribute('x', (-w / 2).toFixed(1)); img.setAttribute('y', (-h / 2).toFixed(1));
+  img.setAttribute('decoding', 'async');
+  return img;
 }
 const flockTweens = new WeakMap<SVGSVGElement, gsap.core.Tween[]>();
 const birdsOf = new WeakMap<SVGSVGElement, { g: SVGGElement; dodge: SVGGElement; flap: gsap.core.Tween }[]>();
 function buildFlock(svg: SVGSVGElement) {
   if (flockTweens.has(svg)) return flockTweens.get(svg)!;
-  const pre = speciesDefs(svg)!;
+  const big = svg.classList.contains('bird__flock');
+  // on a portrait phone the hero sky is tall, so give the birds a tall sky to fly in
+  if (big && innerWidth < innerHeight) svg.setAttribute('viewBox', '0 0 560 1000');
   const [, , w, h] = svg.getAttribute('viewBox')!.split(' ').map(Number);
-  const n = Number(svg.dataset.flock);
+  const n = Number(svg.dataset.flock) - (big && w < h ? 2 : 0);
   const tweens: gsap.core.Tween[] = [];
   birdsOf.set(svg, []);
-  const big = w > 600;
+  // nearer birds are drawn last so they pass in front
   for (let i = 0; i < n; i++) {
-    const sp = SPECIES[i % SPECIES.length];
+    const depth = (big ? 0.55 : 0.6) + (i / Math.max(1, n - 1)) * 0.7 + Math.random() * 0.08;
     const g = document.createElementNS(NS, 'g');
     const dodge = document.createElementNS(NS, 'g');
     const body = document.createElementNS(NS, 'g');
-    const s = (big ? 0.5 + Math.random() * 0.75 : 0.35 + Math.random() * 0.3) * sp.size;
-    body.setAttribute('transform', `scale(${s.toFixed(2)})`);
-    body.setAttribute('filter', `url(#${pre}shadow)`);
-    body.innerHTML = drawBird(sp, pre);
-    // farther birds are a little paler, like haze
-    body.setAttribute('opacity', (0.7 + s * 0.3).toFixed(2));
+    body.appendChild(realBird(i * 2 + (big ? 0 : 1), (big ? 150 : 70) * depth));
+    body.setAttribute('class', 'realbird');
+    body.style.opacity = (0.72 + depth * 0.22).toFixed(2);
     dodge.appendChild(body); g.appendChild(dodge); svg.appendChild(g);
-    const y = h * (0.12 + Math.random() * 0.6);
-    if (reduce) { g.setAttribute('transform', `translate(${(w * (0.15 + Math.random() * 0.7)).toFixed(0)} ${y.toFixed(0)})`); continue; }
-    const front = body.querySelector('.b-wingfront path') as SVGPathElement;
-    const streak = body.querySelector('.b-wingfront path:last-child') as SVGPathElement;
-    const back = body.querySelector('.b-wingback') as SVGPathElement;
-    const beat = (sp.size > 1 ? 0.2 : 0.13) + Math.random() * 0.06;
+    const y = h * (0.14 + Math.random() * 0.56);
+    if (reduce) { g.setAttribute('transform', `translate(${(w * (0.12 + (i / n) * 0.76)).toFixed(0)} ${y.toFixed(0)})`); continue; }
+    const off = (big ? 160 : 70) * depth;
     tweens.push(
       gsap.to(g, {
-        motionPath: { path: [{ x: -80, y }, { x: w * 0.3, y: y - h * 0.08 * Math.random() - 10 }, { x: w * 0.65, y: y + h * 0.1 * Math.random() }, { x: w + 80, y: y - h * 0.12 }], curviness: 1.3, autoRotate: true },
-        duration: 10 + Math.random() * 9 - s * 3, ease: 'none', repeat: -1, delay: -Math.random() * 14, paused: true,
+        motionPath: { path: [{ x: -off, y }, { x: w * 0.3, y: y - h * 0.06 * Math.random() - 8 }, { x: w * 0.66, y: y + h * 0.08 * Math.random() }, { x: w + off, y: y - h * 0.1 }], curviness: 1.25 },
+        // nearer birds cross faster, like real parallax
+        duration: ((big ? 26 : 16) - depth * (big ? 9 : 5) + Math.random() * 5) * (w < h ? 0.7 : 1), ease: 'none', repeat: -1, delay: -Math.random() * 24, paused: true,
       }),
     );
-    const flap = gsap.timeline({ repeat: -1, yoyo: true, paused: true, defaults: { duration: beat, ease: 'sine.inOut' } })
-      .to(front, { attr: { d: WING_DOWN } }, 0)
-      .to(streak, { opacity: 0 }, 0)
-      .to(back, { attr: { d: WING_DOWN } }, beat * 0.15)
-      .to(body, { y: 2, duration: beat }, 0);
-    tweens.push(flap as unknown as gsap.core.Tween);
-    birdsOf.get(svg)!.push({ g, dodge, flap: flap as unknown as gsap.core.Tween });
+    // a glide: lift and dip on the air with a slight bank
+    const glide = gsap.timeline({ repeat: -1, yoyo: true, paused: true, defaults: { ease: 'sine.inOut' } })
+      .fromTo(body, { y: -5 * depth, rotation: -3 }, { y: 6 * depth, rotation: 3.5, duration: 1.6 + Math.random() * 1.2, svgOrigin: '0 0' });
+    tweens.push(glide as unknown as gsap.core.Tween);
+    birdsOf.get(svg)!.push({ g, dodge, flap: glide as unknown as gsap.core.Tween });
   }
   flockTweens.set(svg, tweens);
   return tweens;
@@ -672,13 +649,11 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   // bird site: a scarlet macaw flies down the page with your scroll
   const sb = $<SVGSVGElement>('.scrollbird', root);
   if (sb) {
-    sb.setAttribute('viewBox', '-140 -60 200 110');
+    sb.setAttribute('viewBox', '-90 -62 180 124');
     sb.innerHTML = '';
-    const pre = speciesDefs(sb)!;
-    const body = document.createElementNS(NS, 'g'); body.innerHTML = drawBird(SPECIES[0], pre); body.setAttribute('filter', `url(#${pre}shadow)`); sb.appendChild(body);
-    const front = body.querySelector('.b-wingfront path') as SVGPathElement, back = body.querySelector('.b-wingback') as SVGPathElement;
-    const flap = gsap.timeline({ repeat: -1, yoyo: true, paused: true, defaults: { duration: 0.2, ease: 'sine.inOut' } })
-      .to(front, { attr: { d: WING_DOWN } }, 0).to(back, { attr: { d: WING_DOWN } }, 0.03);
+    const body = document.createElementNS(NS, 'g'); body.appendChild(realBird(0, 170)); sb.appendChild(body);
+    const flap = gsap.timeline({ repeat: -1, yoyo: true, paused: true, defaults: { duration: 0.9, ease: 'sine.inOut' } })
+      .fromTo(body, { y: -4, rotation: -2 }, { y: 4, rotation: 2.5, svgOrigin: '0 0' });
     let idle: number, lastX = innerWidth / 2;
     st({
       trigger: root, start: 'top top', end: 'bottom bottom',
