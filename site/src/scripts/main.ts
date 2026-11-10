@@ -630,38 +630,21 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     b.addEventListener('pointerleave', () => gsap.to(b, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' }));
   });
 
-  // bird site: a macaw keeps you company down the page. It flies only in the side
-  // margins, so it never covers a card, a price button or the form; when it changes sides
-  // it slips away and comes back on the other side. Hidden where the margins are too narrow.
+  // bird site: real macaws fly across the screen as you scroll down the page, past the
+  // millets, the packs and everything else. They only set off while the page is moving and
+  // ride up with it a little slower than the content (so they read as further away); when
+  // scrolling stops they fly on out of the screen and no new ones come until you scroll.
   const sb = $<HTMLCanvasElement>('.scrollbird', root);
-  if (sb) {
-    const f = createFlock(sb, { sheets: [MACAW], count: 1, near: (w) => w * 0.9, far: (w) => w * 0.9, pinned: true });
-    const my = gsap.quickTo(sb, 'y', { duration: 0.7, ease: 'power2.out' });
-    const mr = gsap.quickTo(sb, 'rotation', { duration: 0.7, ease: 'power2.out' });
-    let side = -1, shown = false, swap: gsap.core.Timeline | null = null;
-    const xFor = (sd: number) => { const m = Math.max(0, (innerWidth - 1240) / 2); return sd === 0 ? m / 2 : innerWidth - m / 2; };
-    f.play();
-    addEventListener('resize', () => { if (side >= 0) gsap.set(sb, { x: xFor(side) }); });
-    st({
-      trigger: root, start: 'top top', end: 'bottom bottom',
-      onUpdate: (s) => {
-        const p = s.progress, h = innerHeight;
-        const sd = Math.floor(p * 6) % 2;
-        if (sd !== side) {
-          const first = side < 0; side = sd;
-          swap?.kill();
-          swap = gsap.timeline()
-            .to(sb, { autoAlpha: 0, duration: first ? 0 : 0.25 })
-            .set(sb, { x: xFor(sd), scaleX: sd === 0 ? 1 : -1 })
-            .to(sb, { autoAlpha: shown ? 1 : 0, duration: 0.35 });
-        }
-        my(h * (0.3 + 0.45 * ((p * 6) % 1)) + Math.sin(p * 40) * 12);
-        mr(Math.sin(p * 30) * 5);
-        const on = p > 0.04 && p < 0.97;
-        if (on !== shown) { shown = on; gsap.to(sb, { autoAlpha: on ? 1 : 0, duration: 0.4 }); }
-      },
-    });
+  if (sb && !reduce) {
+    const near = (w: number, h: number) => (w < h ? Math.min(w * 0.6, h * 0.36, 420) : Math.min(w * 0.24, h * 0.5, 460));
+    const f = createFlock(sb, { sheets: [MACAW], count: innerWidth < innerHeight ? 2 : 3, near, far: (w, h) => near(w, h) * 0.5, stream: { parallax: 0.4 } });
+    f.setActive(false); f.play();
+    // the hero has its own flock: these take over once it is scrolled past
+    const hero = $<HTMLElement>('.bird__hero', root);
+    if (hero) st({ trigger: hero, start: 'bottom 55%', endTrigger: root, end: 'bottom bottom', onToggle: (s) => f.setActive(s.isActive) });
+    else f.setActive(true);
   }
+
 }
 
 /* ------------------------------------------------------------------ forms */

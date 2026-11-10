@@ -256,7 +256,8 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 @media (max-width: 860px) { .steps__list { grid-template-columns: 1fr; } .steps__path { display: none; } }
 
 /* ---------- scroll bird ---------- */
-.scrollbird { position: fixed; z-index: 30; --sbw: clamp(140px, calc((100vw - 1240px) / 2 - 16px), 240px); width: var(--sbw); height: calc(var(--sbw) * .78); left: calc(var(--sbw) / -2); top: calc(var(--sbw) * -.39); pointer-events: none; opacity: 0; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .4)); }
+/* the scroll flock: a sky over the whole screen that never takes a tap (under the header) */
+.scrollbird { position: fixed; z-index: 30; left: 0; top: 0; width: 100%; height: 100vh; height: 100lvh; pointer-events: none; }
 
 /* ---------- map lazy ---------- */
 .map iframe:not([src]) { visibility: hidden; }
@@ -861,7 +862,7 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 @media (max-width: 760px), (max-aspect-ratio: 4/5) { .stage__direct { display: none; } }
 
 /* the scroll macaw lives in the side margins; below this width there are none */
-@media (max-width: 1359px), (pointer: coarse) { .scrollbird { display: none; } }
+
 
 /* =========================================================
    HUMAN FOOD: forest & turmeric

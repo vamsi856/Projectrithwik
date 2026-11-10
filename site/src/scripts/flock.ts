@@ -19,10 +19,10 @@ export type Sheet = {
 };
 
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-/** Blue-and-gold macaw, one full wingbeat cut from the 4K version of free slow-motion
- * footage (Christopher Borges on Pexels, Pexels licence), colour-corrected to the
- * bird's true gold and turquoise. */
-export const MACAW: Sheet = { src: [`${BASE}birds/macaw-4k-0.webp`, `${BASE}birds/macaw-4k-1.webp`], per: 20, fw: 947, fh: 651, cols: 4, frames: 27, fps: 30, ax: 0.711, ay: 0.71, rot: -0.1 };
+/** Blue-and-gold macaw, one full wingbeat cut at full resolution from the 4K version of
+ * free slow-motion footage (Christopher Borges on Pexels, Pexels licence), colour-corrected
+ * to the bird's true gold and turquoise. Sheets stay under 4096 px for phone GPUs. */
+export const MACAW: Sheet = { src: [0, 1, 2].map((k) => `${BASE}birds/macaw-hq-${k}.webp`), per: 12, fw: 1052, fh: 723, cols: 3, frames: 27, fps: 30, ax: 0.711, ay: 0.71, rot: -0.1 };
 
 type Bird = {
   sheet: Sheet; img: Mip[];
@@ -41,6 +41,10 @@ export type FlockOptions = {
   /** reduced motion: draw one still frame */ still?: boolean;
   /** called when a bird is startled */ onScare?: () => void;
   /** one bird held in the middle of the canvas (the scroll companion) */ pinned?: boolean;
+  /** birds that come with the page as it scrolls: they only set off while the visitor is
+   * scrolling, ride up the screen with the page (at `parallax` of its speed, so they read
+   * as further away), speed up with it, and are gone soon after it stops */
+  stream?: { parallax: number };
 };
 
 // one decoded bitmap per sheet, shared by every flock on the page
@@ -65,11 +69,15 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
   const ctx = canvas.getContext('2d', { alpha: true })!;
   const band = o.band ?? [0.08, 0.72];
   let W = 0, H = 0, dpr = 1, running = false, visible = false, wanted = false, last = 0;
+  // stream mode: page scroll since the last frame, how stirred the sky is, and whether new
+  // birds may set off at all
+  let lastSY = scrollY, stir = 0, sinceSpawn = 9, active = true, idle = false;
   const birds: Bird[] = [];
   const imgs = new Map<Sheet, Mip[]>();
 
   const size = () => {
-    dpr = Math.min(devicePixelRatio || 1, 1.5);
+    // phones are 2-3x: draw at up to 2x so the feathers stay crisp (1.5x looked soft)
+    dpr = Math.min(devicePixelRatio || 1, 2);
     W = canvas.clientWidth; H = canvas.clientHeight;
     canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(H * dpr));
     ctx.imageSmoothingQuality = 'high';
@@ -94,7 +102,35 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
     };
   };
 
+  const streamBird = (down: boolean): Bird => {
+    const sheet = o.sheets[(Math.random() * o.sheets.length) | 0];
+    const depth = 0.35 + Math.random() * 0.65, size = sizeAt(depth);
+    // scrolling down, the page carries birds upward, so they set off low (and the reverse)
+    const y0 = H * (down ? 0.42 + Math.random() * 0.4 : 0.12 + Math.random() * 0.4);
+    return {
+      sheet, img: imgs.get(sheet)!, depth, size, lane: 0, x: -size * 0.75, y: y0, y0,
+      vx: (W * 0.16 + 80) * (0.7 + depth * 0.6), t: Math.random() * 10, rate: 0.9 + Math.random() * 0.2, wob: Math.random() * 6.28,
+      dx: 0, dy: 0, vdx: 0, vdy: 0, panic: 0, flip: false,
+    };
+  };
+  function flow(dt: number) {
+    const sy = scrollY, d = sy - lastSY; lastSY = sy;
+    // stir rises with scroll speed and dies away within about a second of stopping
+    stir = Math.max(stir * Math.pow(0.03, dt), Math.min(1, Math.abs(d) / (240 * dt + 1e-3)));
+    sinceSpawn += dt;
+    if (active && stir > 0.12 && birds.length < o.count && sinceSpawn > 1.1 && imgs.size) {
+      birds.push(streamBird(d >= 0)); birds.sort((a, b) => a.depth - b.depth); sinceSpawn = 0;
+    }
+    for (let i = birds.length - 1; i >= 0; i--) {
+      const b = birds[i];
+      b.y0 -= d * o.stream!.parallax * (0.55 + 0.45 * b.depth);
+      b.x += Math.abs(d) * 0.18 * b.depth; // the scroll gives them a push
+      if (b.x - b.size * 0.3 > W + 40 || b.y0 < -b.size * 0.8 || b.y0 > H + b.size * 0.8) birds.splice(i, 1);
+    }
+  }
+
   function draw(dt: number) {
+    if (o.stream && dt) flow(dt);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     for (const b of birds) {
@@ -107,7 +143,7 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
         b.vdx += (-b.dx * 2.2 - b.vdx * 2.4) * dt; b.vdy += (-b.dy * 2.2 - b.vdy * 2.4) * dt;
         b.dx += b.vdx * dt; b.dy += b.vdy * dt;
         b.panic = Math.max(0, b.panic - dt * 0.6);
-        if (b.x - b.size > W + 40) Object.assign(b, spawn(b, false));
+        if (!o.stream && b.x - b.size > W + 40) Object.assign(b, spawn(b, false));
         if (o.pinned) b.x = W / 2;
       }
       const f = Math.floor(b.t * s.fps) % s.frames, part = Math.floor(f / s.per), lf = f % s.per;
@@ -119,7 +155,9 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
       const bank = (s.rot ?? 0) + Math.cos(b.wob) * 0.05 + gsap.utils.clamp(-0.35, 0.35, b.vdy * 0.0015);
       ctx.save();
       ctx.translate(x, y); ctx.rotate(bank);
-      const mip = b.img[part], small = mip.half && w * dpr < s.fw * 0.6;
+      // the half-size copy only when it is still at least as big as the bird on screen:
+      // stretching it up (even a little) is what made the birds look soft on phones
+      const mip = b.img[part], small = mip.half && w * dpr <= s.fw * 0.5;
       if (small) ctx.drawImage(mip.half!, sx / 2, sy / 2, s.fw / 2, s.fh / 2, -w * s.ax, -h * s.ay, w, h);
       else ctx.drawImage(mip.full, sx, sy, s.fw, s.fh, -w * s.ax, -h * s.ay, w, h);
       ctx.restore();
@@ -130,9 +168,15 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
     const now = performance.now() / 1000;
     const dt = Math.min(0.05, now - (last || now)); last = now;
     draw(dt);
+    // an empty, still sky costs nothing: sleep until the page scrolls again (never on the
+    // first frame after waking, which has no time step yet)
+    if (o.stream && dt && !birds.length && stir < 0.05) { idle = true; sync(); }
   };
+  // a scroll wakes the sky already stirred, so the first bird can set off straight away
+  const wakeOnScroll = () => { if (idle && active) { idle = false; stir = Math.max(stir, 0.5); lastSY = scrollY; sync(); } };
+  if (o.stream) addEventListener('scroll', wakeOnScroll, { passive: true });
   const sync = () => {
-    const go = wanted && visible && !document.hidden && birds.length > 0 && !o.still;
+    const go = wanted && visible && !document.hidden && (birds.length > 0 || (!!o.stream && !idle)) && !o.still;
     if (go && !running) { last = 0; gsap.ticker.add(tick); running = true; }
     if (!go && running) { gsap.ticker.remove(tick); running = false; }
   };
@@ -141,7 +185,7 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
     // decoded once into a bitmap so drawing never stalls on decode
     await Promise.all(o.sheets.map(async (s) => imgs.set(s, await Promise.all(s.src.map(bitmap)))));
     size();
-    for (let i = 0; i < o.count; i++) {
+    for (let i = 0; i < (o.stream ? 0 : o.count); i++) {
       const sheet = o.sheets[i % o.sheets.length];
       // spread depths so the flock reads as near and far; draw far first
       const depth = o.count === 1 ? 1 : i / (o.count - 1);
@@ -155,7 +199,7 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
 
   new ResizeObserver(() => {
     const ow = W, oh = H; size();
-    if (ow && W) birds.forEach((b) => { b.x *= W / ow; b.y0 *= H / (oh || H); b.size = sizeAt(b.depth); if (o.pinned) b.y0 = H / 2; });
+    if (ow && W && !o.stream) birds.forEach((b) => { b.x *= W / ow; b.y0 *= H / (oh || H); b.size = sizeAt(b.depth); if (o.pinned) b.y0 = H / 2; });
     if (!running) draw(0);
   }).observe(canvas);
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); }).observe(canvas);
@@ -163,7 +207,9 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
 
   return {
     ready,
-    play() { wanted = true; sync(); },
+    play() { wanted = true; lastSY = scrollY; sync(); },
+    /** stream mode: whether new birds may set off (the ones in the air finish their flight) */
+    setActive(on: boolean) { active = on; if (on && idle) { idle = false; stir = Math.max(stir, 0.5); lastSY = scrollY; sync(); } },
     pause() { wanted = false; sync(); },
     /** startle the birds near a point (CSS px inside the canvas) */
     scare(px: number, py: number) {
