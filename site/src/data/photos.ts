@@ -37,3 +37,10 @@ export function photo(key?: string): Photo | undefined {
 }
 
 export const credits = Object.entries(DATA).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p }));
+
+/** A ~500px version for painting onto 3D pack labels. */
+export function photoSmall(key?: string) {
+  if (!key || !DATA[key]) return undefined;
+  const r = DATA[key];
+  return r.w > 500 ? thumb(r.u, 500) : r.u;
+}

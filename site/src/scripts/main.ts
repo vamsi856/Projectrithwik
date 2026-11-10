@@ -196,18 +196,19 @@ function particleCanvas(c: HTMLCanvasElement, mode: 'fall' | 'pour') {
   let W = 0, H = 0, raf = 0, parts: any[] = [];
   const spawn = (any: boolean) => mode === 'fall'
     ? { x: Math.random() * W, y: any ? Math.random() * H : -10, vy: 0.25 + Math.random() * 0.6, vx: (Math.random() - 0.5) * 0.25, r: Math.random() * 3, vr: (Math.random() - 0.5) * 0.03, s: 1.4 + Math.random() * 2.4, c: colours[(Math.random() * colours.length) | 0], a: 0.25 + Math.random() * 0.45 }
-    : { x: W * (0.6 + (Math.random() - 0.5) * 0.04), y: any ? Math.random() * H * 0.7 : -10, vy: 1.5 + Math.random() * 2, vx: (Math.random() - 0.5) * 0.3, r: Math.random() * 3, vr: (Math.random() - 0.5) * 0.1, s: 1.6 + Math.random() * 1.6, c: colours[(Math.random() * colours.length) | 0], a: 0.9 };
+    : { x: W * (0.5 + (Math.random() - 0.5) * 0.05), y: any ? Math.random() * H * 0.3 : -10, vy: 1.5 + Math.random() * 2, vx: (Math.random() - 0.5) * 0.3, r: Math.random() * 3, vr: (Math.random() - 0.5) * 0.1, s: 1.6 + Math.random() * 1.6, c: colours[(Math.random() * colours.length) | 0], a: 0.9 };
   const size = () => {
     const d = Math.min(devicePixelRatio, 2); W = c.clientWidth; H = c.clientHeight; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
     parts = Array.from({ length: mode === 'fall' ? Math.round(Math.min(90, W / 16)) : 70 }, () => spawn(true));
   };
-  const floor = () => H * 0.74; // the bowl in the emblem
+  const floor = () => H * 0.36; // lands on the top seal of the pouch
   const tick = () => {
     ctx.clearRect(0, 0, W, H);
     for (const p of parts) {
       p.y += p.vy; p.x += p.vx; p.r += p.vr;
       if (mode === 'pour') { p.vy += 0.05; if (p.y > floor()) Object.assign(p, spawn(false)); }
-      else if (p.y > H + 10) Object.assign(p, spawn(false));
+      else if (p.y > H + 10) { if (p.trail) { parts.splice(parts.indexOf(p), 1); continue; } Object.assign(p, spawn(false)); }
+      if (p.trail) p.vy += 0.04;
       ctx.save(); ctx.globalAlpha = p.a; ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
       ctx.beginPath(); ctx.ellipse(0, 0, p.s * 1.25, p.s * 0.8, 0, 0, 6.283); ctx.fill(); ctx.restore();
     }
@@ -215,6 +216,12 @@ function particleCanvas(c: HTMLCanvasElement, mode: 'fall' | 'pour') {
   };
   size(); addEventListener('resize', size);
   new IntersectionObserver(([en]) => { cancelAnimationFrame(raf); if (en.isIntersecting && c.offsetParent) { size(); raf = requestAnimationFrame(tick); } }).observe(c);
+  // a few seeds tumble from the pointer as it moves over the hero
+  if (mode === 'fall' && fine) c.parentElement!.addEventListener('pointermove', (e) => {
+    const r = c.getBoundingClientRect();
+    if (Math.random() > 0.45 || parts.length > 160) return;
+    parts.push({ x: e.clientX - r.left, y: e.clientY - r.top, vy: 0.6 + Math.random(), vx: (Math.random() - 0.5) * 1.2, r: 0, vr: (Math.random() - 0.5) * 0.2, s: 2 + Math.random() * 2.5, c: colours[(Math.random() * colours.length) | 0], a: 0.9, trail: true });
+  });
 }
 
 /* ------------------------------------------------------------------ globe */
@@ -317,7 +324,58 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   }));
   wireForm(form);
 
+  // 3D packs load when they come near the screen
+  $$<HTMLCanvasElement>('canvas[data-pack]', root).forEach((c) => {
+    const io = new IntersectionObserver(async ([en]) => {
+      if (!en.isIntersecting || !c.offsetWidth) return;
+      io.disconnect();
+      const { mountPack } = await import('./pack3d');
+      const items = JSON.parse(c.dataset.items!);
+      const hero = c.closest<HTMLElement>('[data-hero-pack]');
+      const studio = c.closest<HTMLElement>('[data-studio]');
+      const ctl = await mountPack(c, {
+        kind: c.dataset.pack as 'sack' | 'pouch', logo: c.dataset.logo!, items, auto: hero ? Number(c.dataset.auto) : 0,
+        onChange: (i) => {
+          if (hero) {
+            $('[data-pack-index]', hero)!.textContent = String(i + 1).padStart(2, '0');
+            const nm = $('[data-pack-name]', hero)!;
+            if (!reduce) gsap.fromTo(nm, { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.6, ease: 'power3.out' });
+            nm.textContent = items[i].name;
+          }
+          if (studio) {
+            $$('[data-pick]', studio).forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.pick) === i)));
+            $('[data-studio-name]', studio)!.textContent = items[i].name;
+            $('[data-studio-variant]', studio)!.textContent = items[i].variant;
+            $('[data-studio-gst]', studio)!.textContent = items[i].gst;
+            $('[data-studio-ask]', studio)!.dataset.product = items[i].ask;
+            if (!reduce) gsap.from($$('.studio__detail > *', studio), { y: 14, opacity: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' });
+          }
+        },
+      });
+      if (hero) {
+        $('[data-pack-prev]', hero)!.addEventListener('click', () => { ctl.stopAuto(); ctl.prev(); });
+        $('[data-pack-next]', hero)!.addEventListener('click', () => { ctl.stopAuto(); ctl.next(); });
+        if (!reduce) st({ trigger: hero.closest('section')!, start: 'top top', end: 'bottom top', scrub: true, onUpdate: (s) => ctl.setScrollSpin(s.progress * Math.PI * 1.2) });
+      }
+      if (studio) $$('[data-pick]', studio).forEach((b) => b.addEventListener('click', () => ctl.show(Number(b.dataset.pick))));
+    }, { rootMargin: '300px' });
+    io.observe(c);
+  });
+
   if (reduce) return;
+
+  // marquees: GSAP loop that speeds up and leans with scroll velocity
+  $$('.marquee__track', root).forEach((track) => {
+    track.style.animation = 'none';
+    const loop = gsap.to(track, { xPercent: -50, duration: 40, ease: 'none', repeat: -1 });
+    const lean = gsap.quickTo(track, 'skewX', { duration: 0.5, ease: 'power3.out' });
+    st({ trigger: track, start: 'top bottom', end: 'bottom top', onUpdate: (s) => {
+      const v = s.getVelocity();
+      loop.timeScale(1 + Math.min(Math.abs(v) / 300, 6) * (v < 0 ? -1 : 1));
+      lean(gsap.utils.clamp(-12, 12, v / -160));
+      gsap.delayedCall(0.2, () => { loop.timeScale(1); lean(0); });
+    } });
+  });
 
   // headline splits
   $$('[data-split]', root).forEach((el) => {

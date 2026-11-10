@@ -1,0 +1,21 @@
+---
+// The floating pack in each hero. It cycles through the range like a slider.
+interface Props { kind: 'sack' | 'pouch'; logo: string; items: { name: string; variant: string; photo?: string; c1: string; c2: string }[] }
+const { kind, logo, items } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<div class:list={['hpack', `hpack--${kind}`]} data-hero-pack>
+  <canvas class="hpack__canvas" data-pack={kind} data-logo={logo} data-items={JSON.stringify(items)} data-auto="4200" aria-label="Rotating product pack, drag to turn" role="img"></canvas>
+  <div class="hpack__bar">
+    <button class="hpack__btn" type="button" data-pack-prev aria-label="Previous product">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
+    <div class="hpack__now" aria-live="polite">
+      <span class="hpack__count"><b data-pack-index>01</b> / {pad(items.length)}</span>
+      <span class="hpack__name" data-pack-name>{items[0].name}</span>
+    </div>
+    <button class="hpack__btn" type="button" data-pack-next aria-label="Next product">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
+  </div>
+</div>

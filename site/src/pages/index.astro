@@ -18,6 +18,9 @@ import Footer from '../components/Footer.astro';
 import { BIRD, FOOD, BIRD_GROUPS, FOOD_GROUPS, BRANDS, CONTACT, lineCount, lineName } from '../data/products';
 import { photo, credits } from '../data/photos';
 import Photo from '../components/Photo.astro';
+import HeroPack from '../components/HeroPack.astro';
+import PackStudio from '../components/PackStudio.astro';
+import { BIRD_PACKS, FOOD_PACKS } from '../data/packs';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const nBird = lineCount(BIRD);
@@ -106,7 +109,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
   <div class="site site--bird" id="bird-feeds" data-site="bird" hidden>
     <SiteHeader logo={birdLogo} first="Rithwik" second="Bird Feeds" top="b-top" email={BRANDS.bird.email}
       phones={[CONTACT.phones[1], CONTACT.phones[2]]}
-      links={[{ href: 'b-about', label: 'About' }, { href: 'b-feeds', label: 'Feeds' }, { href: 'b-vision', label: 'Vision' }, { href: 'b-contact', label: 'Contact' }]} />
+      links={[{ href: 'b-about', label: 'About' }, { href: 'b-packs', label: 'Packs' }, { href: 'b-feeds', label: 'Feeds' }, { href: 'b-vision', label: 'Vision' }, { href: 'b-contact', label: 'Contact' }]} />
 
     <main>
       <section class="bird__hero" id="b-top" aria-labelledby="bird-title">
@@ -118,9 +121,9 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
         <canvas class="seedfall" aria-hidden="true"></canvas>
         <svg class="bird__flock" data-flock="11" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
         <span class="ghost ghost--bird" aria-hidden="true">Feeds</span>
-        <div class="bird__intro">
-          <Image class="bird__badge" src={birdLogo} alt="Rithwik Bird Feeds emblem" width={420} loading="eager" />
-          <div>
+        <div class="bird__intro bird__intro--pack">
+          <div class="bird__copy">
+            <Image class="bird__badge bird__badge--sm" src={birdLogo} alt="Rithwik Bird Feeds emblem" width={220} loading="eager" />
             <h1 class="display" id="bird-title" data-split><span class="display__a">Rithwik</span> <span class="display__b">Bird feeds</span></h1>
             <p class="bird__lede" data-rise>Seventeen feed grains, sold raw or cleaned, from our office in Kurnool and our warehouse at Duvvur.</p>
             <div class="actions" data-rise>
@@ -128,6 +131,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
               <a class="pill pill--line" href={`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent('Hello Rithwik Bird Feeds, I would like a price.')}`} target="_blank" rel="noopener">WhatsApp an order</a>
             </div>
           </div>
+          <HeroPack kind="sack" logo={birdLogo.src} items={BIRD_PACKS} />
         </div>
         <span class="scrollcue" aria-hidden="true"></span>
       </section>
@@ -158,6 +162,9 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
           )}
         </div>
       </section>
+
+      <PackStudio id="b-packs" kind="sack" tone="bird" logo={birdLogo.src} items={BIRD_PACKS} contact="b-contact"
+        title="Our packs" lede="Every feed line in its own Rithwik sack. Pick a feed and the pack turns to show it." />
 
       <div class="marquee marquee--bird" aria-hidden="true"><div class="marquee__track">
         {[0, 1].map(() => marquee(BIRD.map((b) => b.name)).map((n) => <span>{n}</span>))}
@@ -202,7 +209,7 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
   <div class="site site--food" id="human-food" data-site="food" hidden>
     <SiteHeader logo={foodLogo} first="Rithwik" second="Industries" top="f-top" email={BRANDS.food.email}
       phones={[CONTACT.phones[0], CONTACT.phones[3]]}
-      links={[{ href: 'f-about', label: 'About' }, { href: 'f-range', label: 'Products' }, { href: 'f-vision', label: 'Vision' }, { href: 'f-contact', label: 'Contact' }]} />
+      links={[{ href: 'f-about', label: 'About' }, { href: 'f-packs', label: 'Packs' }, { href: 'f-range', label: 'Products' }, { href: 'f-vision', label: 'Vision' }, { href: 'f-contact', label: 'Contact' }]} />
 
     <main>
       <section class="food-hero" id="f-top" aria-labelledby="food-title">
@@ -216,10 +223,10 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
             <a class="pill pill--line-ink" href={`${base}Rithwik-Catalogue.pdf`} download>Download catalogue (PDF)</a>
           </div>
         </div>
-        <figure class="food-hero__art">
+        <div class="food-hero__art food-hero__art--pack">
           <canvas class="grainpour" aria-hidden="true"></canvas>
-          <Image src={foodLogo} alt="Rithwik Industries emblem: a mother and child beside a millet stalk and a bowl of grain" width={560} loading="eager" />
-        </figure>
+          <HeroPack kind="pouch" logo={foodLogo.src} items={FOOD_PACKS} />
+        </div>
       </section>
 
       <div class="marquee marquee--food" aria-hidden="true"><div class="marquee__track">
@@ -240,6 +247,9 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
           )}
         </div>
       </section>
+
+      <PackStudio id="f-packs" kind="pouch" tone="food" logo={foodLogo.src} items={FOOD_PACKS} contact="f-contact"
+        title="Our packs" lede="Kraft pouches with a clear window, so you can see the grain. Pick a product to turn the pack." />
 
       <div id="f-range">
         {FOOD_GROUPS.map((g) => (
