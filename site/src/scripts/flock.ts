@@ -24,7 +24,7 @@ const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 export const MACAW: Sheet = { src: [`${BASE}birds/bgmacaw-0.webp`, `${BASE}birds/bgmacaw-1.webp`], per: 20, fw: 911, fh: 627, cols: 4, frames: 29, fps: 30, ax: 0.713, ay: 0.706, rot: -0.1 };
 
 type Bird = {
-  sheet: Sheet; img: CanvasImageSource[];
+  sheet: Sheet; img: Mip[];
   x: number; y: number; y0: number; vx: number; size: number; depth: number;
   t: number; rate: number; wob: number; dx: number; dy: number; vdx: number; vdy: number; panic: number;
   flip: boolean;
@@ -43,9 +43,19 @@ export type FlockOptions = {
 };
 
 // one decoded bitmap per sheet, shared by every flock on the page
-const bitmaps = new Map<string, Promise<CanvasImageSource>>();
+// Each sheet is also decoded at half size with high-quality resampling, and small birds
+// are drawn from that copy: shrinking a big frame by 2-3x in one step on the GPU looks soft
+// and shimmery, while a pre-shrunk copy stays crisp.
+type Mip = { full: CanvasImageSource; half: CanvasImageSource | null };
+const bitmaps = new Map<string, Promise<Mip>>();
 const bitmap = (src: string) => {
-  if (!bitmaps.has(src)) bitmaps.set(src, loadImg(src).then((im): Promise<CanvasImageSource> | CanvasImageSource => ('createImageBitmap' in window ? createImageBitmap(im) : im)));
+  if (!bitmaps.has(src)) bitmaps.set(src, loadImg(src).then(async (im): Promise<Mip> => {
+    if (!('createImageBitmap' in window)) return { full: im, half: null };
+    const full = await createImageBitmap(im);
+    let half: ImageBitmap | null = null;
+    try { half = await createImageBitmap(im, { resizeWidth: Math.round(im.naturalWidth / 2), resizeHeight: Math.round(im.naturalHeight / 2), resizeQuality: 'high' }); } catch { /* full only */ }
+    return { full, half };
+  }));
   return bitmaps.get(src)!;
 };
 const loadImg = (src: string) => new Promise<HTMLImageElement>((ok, no) => { const i = new Image(); i.decoding = 'async'; i.onload = () => ok(i); i.onerror = no; i.src = src; });
@@ -55,7 +65,7 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
   const band = o.band ?? [0.08, 0.72];
   let W = 0, H = 0, dpr = 1, running = false, visible = false, wanted = false, last = 0;
   const birds: Bird[] = [];
-  const imgs = new Map<Sheet, CanvasImageSource[]>();
+  const imgs = new Map<Sheet, Mip[]>();
 
   const size = () => {
     dpr = Math.min(devicePixelRatio || 1, 1.5);
@@ -67,7 +77,7 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
 
   const px = (v: FlockOptions['near']) => (typeof v === 'function' ? v(W, H) : v);
   const sizeAt = (depth: number) => px(o.far) + (px(o.near) - px(o.far)) * depth;
-  const spawn = (b: Partial<Bird> & { sheet: Sheet; img: CanvasImageSource[]; depth: number }, anywhere: boolean): Bird => {
+  const spawn = (b: Partial<Bird> & { sheet: Sheet; img: Mip[]; depth: number }, anywhere: boolean): Bird => {
     const size = sizeAt(b.depth);
     if (o.pinned) return { sheet: b.sheet, img: b.img, depth: 1, size, x: W / 2, y: H / 2, y0: H / 2, vx: 0, t: 0, rate: 1, wob: 0, dx: 0, dy: 0, vdx: 0, vdy: 0, panic: 0, flip: false };
     const y0 = H * (band[0] + Math.random() * (band[1] - band[0]));
@@ -104,13 +114,13 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
       const x = b.x + b.dx;
       const w = b.size, h = (w * s.fh) / s.fw;
       const bank = (s.rot ?? 0) + Math.cos(b.wob) * 0.05 + gsap.utils.clamp(-0.35, 0.35, b.vdy * 0.0015);
-      ctx.globalAlpha = 0.78 + b.depth * 0.22;
       ctx.save();
       ctx.translate(x, y); ctx.rotate(bank);
-      ctx.drawImage(b.img[part], sx, sy, s.fw, s.fh, -w * s.ax, -h * s.ay, w, h);
+      const mip = b.img[part], small = mip.half && w * dpr < s.fw * 0.6;
+      if (small) ctx.drawImage(mip.half!, sx / 2, sy / 2, s.fw / 2, s.fh / 2, -w * s.ax, -h * s.ay, w, h);
+      else ctx.drawImage(mip.full, sx, sy, s.fw, s.fh, -w * s.ax, -h * s.ay, w, h);
       ctx.restore();
     }
-    ctx.globalAlpha = 1;
   }
 
   const tick = () => {
