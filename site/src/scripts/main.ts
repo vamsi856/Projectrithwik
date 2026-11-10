@@ -4,6 +4,8 @@ import { SplitText } from 'gsap/SplitText';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import Lenis from 'lenis';
 import { sfx, setMode, setEnabled, isEnabled, wantedBefore } from './sound';
+import { applyFestive } from './festive';
+import { MONTHS_LONG } from '../data/seasons';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin);
 
@@ -167,11 +169,13 @@ const DOWN = 'M-30 11 Q-17 3 0 2 Q17 3 30 11 Q17 5 0 7 Q-17 5 -30 11Z';
 const NS = 'http://www.w3.org/2000/svg';
 const flockColours = ['#f2b21b', '#7cc4ea', '#e4dfc1'];
 const flockTweens = new WeakMap<SVGSVGElement, gsap.core.Tween[]>();
+const birdsOf = new WeakMap<SVGSVGElement, { g: SVGGElement; dodge: SVGGElement; flap: gsap.core.Tween }[]>();
 function buildFlock(svg: SVGSVGElement) {
   if (flockTweens.has(svg)) return flockTweens.get(svg)!;
   const [, , w, h] = svg.getAttribute('viewBox')!.split(' ').map(Number);
   const n = Number(svg.dataset.flock);
   const tweens: gsap.core.Tween[] = [];
+  birdsOf.set(svg, []);
   for (let i = 0; i < n; i++) {
     const g = document.createElementNS(NS, 'g');
     const p = document.createElementNS(NS, 'path');
@@ -180,7 +184,8 @@ function buildFlock(svg: SVGSVGElement) {
     p.setAttribute('fill', flockColours[i % flockColours.length]);
     p.setAttribute('opacity', (0.55 + s * 0.4).toFixed(2));
     p.setAttribute('transform', `scale(${s.toFixed(2)})`);
-    g.appendChild(p); svg.appendChild(g);
+    const dodge = document.createElementNS(NS, 'g');
+    dodge.appendChild(p); g.appendChild(dodge); svg.appendChild(g);
     const y = h * (0.12 + Math.random() * 0.6);
     if (reduce) { g.setAttribute('transform', `translate(${(w * (0.15 + Math.random() * 0.7)).toFixed(0)} ${y.toFixed(0)})`); continue; }
     tweens.push(
@@ -190,6 +195,7 @@ function buildFlock(svg: SVGSVGElement) {
       }),
       gsap.to(p, { attr: { d: DOWN }, duration: 0.16 + Math.random() * 0.14, repeat: -1, yoyo: true, ease: 'sine.inOut', paused: true }),
     );
+    birdsOf.get(svg)!.push({ g, dodge, flap: tweens[tweens.length - 1] });
   }
   flockTweens.set(svg, tweens);
   return tweens;
@@ -388,7 +394,113 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     io.observe(c);
   });
 
+  // season clock
+  $$('[data-seasons]', root).forEach((sec) => {
+    const crops: { name: string; months: number[]; c1: string; c2: string }[] = JSON.parse(sec.dataset.seasons!);
+    const now = new Date().getMonth() + 1;
+    let month = now;
+    const hand = $('[data-hand]', sec)!, hub = $('[data-hub-month]', sec)!, label = $('[data-season-label]', sec)!;
+    const nowList = $('[data-season-now]', sec)!, nextList = $('[data-season-next-list]', sec)!;
+    const rings = $$('[data-ring]', sec), labels = $$<SVGTextElement>('[data-month]', sec);
+    let turns = 0, last = month;
+    const chip = (c: typeof crops[number], i: number) => `<li data-crop="${i}"><span class="seed" aria-hidden="true" style="--c1:${c.c1};--c2:${c.c2};--g:6px"></span>${c.name}</li>`;
+    const render = () => {
+      // keep the hand turning forwards through December into January
+      if (last === 12 && month === 1) turns++; else if (last === 1 && month === 12) turns--;
+      last = month;
+      hand.style.transform = `rotate(${(turns * 12 + month - 0.5) * 30}deg)`;
+      hub.textContent = MONTHS_LONG[month - 1].slice(0, 3);
+      label.textContent = month === now ? `${MONTHS_LONG[month - 1]} (now)` : MONTHS_LONG[month - 1];
+      labels.forEach((t) => t.classList.toggle('is-now', Number(t.dataset.month) === month));
+      const nm = month === 12 ? 1 : month + 1;
+      const inNow = crops.map((c, i) => [c, i] as const).filter(([c]) => c.months.includes(month));
+      const inNext = crops.map((c, i) => [c, i] as const).filter(([c]) => c.months.includes(nm) && !c.months.includes(month));
+      nowList.innerHTML = inNow.length ? inNow.map(([c, i]) => chip(c, i)).join('') : '<li class="is-empty">A quiet month for harvests. Stocks from last season are available.</li>';
+      nextList.innerHTML = inNext.length ? inNext.map(([c, i]) => chip(c, i)).join('') : '<li class="is-empty">Nothing new next month</li>';
+      rings.forEach((r, i) => { const on = crops[i].months.includes(month); r.classList.toggle('is-lit', on); r.classList.toggle('is-dim', !on); });
+      if (!reduce) gsap.from($$('li', nowList), { y: 10, opacity: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out' });
+    };
+    const step = (d: number) => { month = ((month - 1 + d + 12) % 12) + 1; sfx('tick'); render(); };
+    $('[data-season-prev]', sec)!.addEventListener('click', () => step(-1));
+    $('[data-season-next]', sec)!.addEventListener('click', () => step(1));
+    // point at the dial to pick a month
+    const svg = $('svg', sec)!;
+    const pick = (e: PointerEvent) => {
+      const r = svg.getBoundingClientRect(); const x = e.clientX - (r.left + r.width / 2), y = e.clientY - (r.top + r.height / 2);
+      if (Math.hypot(x, y) < r.width * 0.16) return;
+      const deg = (Math.atan2(y, x) * 180) / Math.PI + 90;
+      const m = Math.floor((((deg % 360) + 360) % 360) / 30) + 1;
+      if (m !== month) { month = m; sfx('tick'); render(); }
+    };
+    svg.addEventListener('click', pick);
+    // hover a crop to light up its ring
+    sec.addEventListener('pointerover', (e) => {
+      const li = (e.target as Element).closest<HTMLElement>('[data-crop]'); if (!li) return;
+      const k = Number(li.dataset.crop); rings.forEach((r, i) => { r.classList.toggle('is-dim', i !== k); r.classList.toggle('is-lit', i === k); });
+    });
+    sec.addEventListener('pointerout', (e) => { if ((e.target as Element).closest('[data-crop]')) render(); });
+    render();
+  });
+
   if (reduce) return;
+
+  // season dial: arcs draw themselves in
+  $$('[data-seasons]', root).forEach((sec) => {
+    const arcs = $$<SVGPathElement>('.seasons__arc', sec);
+    arcs.forEach((a) => { const L = a.getTotalLength(); a.style.strokeDasharray = `${L}`; a.style.strokeDashoffset = `${L}`; });
+    tw(gsap.to(arcs, { strokeDashoffset: 0, duration: 1.2, ease: 'power3.out', stagger: 0.04, scrollTrigger: { trigger: sec, start: 'top 70%', once: true } }));
+  });
+
+  // seed-to-sack: pin and scroll sideways on wide screens
+  $$('[data-story]', root).forEach((sec) => {
+    const pin = $('.story__pin', sec)!, track = $('[data-story-track]', sec)!, bar = $('[data-story-bar]', sec)!;
+    if (innerWidth > 860) {
+      const dist = () => Math.max(0, track.scrollWidth - innerWidth);
+      const t = gsap.to(track, {
+        x: () => -dist(), ease: 'none',
+        scrollTrigger: { trigger: pin, start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1, onUpdate: (s) => gsap.set(bar, { scaleX: s.progress }) },
+      });
+      tw(t);
+      $$('.story__panel', sec).forEach((panel) => {
+        tw(gsap.from($$('.story__copy > *', panel), { y: 40, opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: panel, containerAnimation: t, start: 'left 75%', once: true } }));
+        tw(gsap.from($('.story__art', panel), { scale: 0.85, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: panel, containerAnimation: t, start: 'left 85%', once: true } }));
+      });
+    } else {
+      $$('.story__panel', sec).forEach((panel) => tw(gsap.from(panel, { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: panel, start: 'top 85%', once: true } })));
+    }
+  });
+
+  // registration seals stamp down
+  $$('.regs', root).forEach((r) => tw(gsap.from($$('[data-seal]', r), {
+    scale: 1.9, rotate: -24, opacity: 0, duration: 0.7, ease: 'back.out(2.2)', stagger: 0.15,
+    scrollTrigger: { trigger: r, start: 'top 85%', once: true, onEnter: () => setTimeout(() => sfx('tick'), 450) },
+  })));
+
+  // hero birds scatter from the pointer or a finger, then settle back
+  $$<SVGSVGElement>('.bird__flock', root).forEach((svg) => {
+    const hero = svg.closest('section')!;
+    let lastChirp = 0;
+    const scare = (e: PointerEvent) => {
+      const ctm = svg.getScreenCTM(); if (!ctm) return;
+      const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+      let scared = false;
+      (birdsOf.get(svg) || []).forEach((b) => {
+        const bx = Number(gsap.getProperty(b.g, 'x')) + Number(gsap.getProperty(b.dodge, 'x'));
+        const by = Number(gsap.getProperty(b.g, 'y')) + Number(gsap.getProperty(b.dodge, 'y'));
+        const dx = bx - pt.x, dy = by - pt.y, d = Math.hypot(dx, dy);
+        if (d > 170) return;
+        scared = true;
+        const push = ((170 - d) / 170) * 150 + 30;
+        gsap.to(b.dodge, { x: `+=${(dx / (d || 1)) * push}`, y: `+=${(dy / (d || 1)) * push - 40}`, duration: 0.55, ease: 'power3.out', overwrite: true });
+        b.flap.timeScale(3);
+        clearTimeout((b as any).t);
+        (b as any).t = setTimeout(() => { gsap.to(b.dodge, { x: 0, y: 0, duration: 2.4, ease: 'sine.inOut' }); b.flap.timeScale(1); }, 1100);
+      });
+      if (scared && performance.now() - lastChirp > 1600) { lastChirp = performance.now(); sfx('chirp'); }
+    };
+    hero.addEventListener('pointermove', scare);
+    hero.addEventListener('pointerdown', scare);
+  });
 
   // marquees: GSAP loop that speeds up and leans with scroll velocity
   $$('.marquee__track', root).forEach((track) => {
@@ -555,6 +667,7 @@ document.addEventListener('click', (e) => { if ((e.target as Element).closest('[
 $$('[data-year]').forEach((y) => (y.textContent = String(new Date().getFullYear())));
 
 /* ------------------------------------------------------------------ start */
+applyFestive(reduce);
 const first = viewFromHash();
 if (first === 'book') {
   show('book');

@@ -1,0 +1,78 @@
+---
+// A twelve-month dial: each ring is a crop, its arc covers the months it is
+// usually harvested. The hand points at today; step through the year to see
+// what comes in when.
+import type { Crop } from '../data/seasons';
+import { MONTHS } from '../data/seasons';
+interface Props { id: string; tone: 'bird' | 'food'; crops: Crop[]; title: string; lede: string }
+const { id, tone, crops, title, lede } = Astro.props;
+
+const C = 200;
+const inner = 62, outer = 168;
+const gap = (outer - inner) / crops.length;
+const rad = (deg: number) => ((deg - 90) * Math.PI) / 180;
+const pt = (r: number, deg: number) => `${(C + r * Math.cos(rad(deg))).toFixed(2)} ${(C + r * Math.sin(rad(deg))).toFixed(2)}`;
+// group months into runs, joining December to January
+const prev = (m: number) => (m === 1 ? 12 : m - 1);
+const next = (m: number) => (m === 12 ? 1 : m + 1);
+function runs(months: number[]) {
+  const set = new Set(months); const out: [number, number][] = [];
+  for (const m of set) {
+    if (set.has(prev(m))) continue; // not the start of a run
+    let end = m; while (set.has(next(end))) end = next(end);
+    out.push([m, end]);
+  }
+  if (!out.length && set.size === 12) out.push([1, 12]);
+  return out;
+}
+function arc(r: number, m0: number, m1: number) {
+  const a0 = (m0 - 1) * 30 + 2, span = ((m1 - m0 + 12) % 12 + 1) * 30 - 4, a1 = a0 + span;
+  return `M ${pt(r, a0)} A ${r} ${r} 0 ${span > 180 ? 1 : 0} 1 ${pt(r, a1)}`;
+}
+const rings = crops.map((c, i) => ({ ...c, r: inner + gap * (i + 0.5), w: Math.max(4, gap * 0.62), arcs: runs(c.months).map(([a, b]) => arc(inner + gap * (i + 0.5), a, b)) }));
+const now = new Date().getMonth() + 1;
+---
+<section class:list={['seasons', `seasons--${tone}`]} id={id} aria-labelledby={`${id}-title`} data-seasons={JSON.stringify(crops.map((c) => ({ name: c.name, months: c.months, c1: c.c1, c2: c.c2 })))}>
+  <div class="seasons__dial">
+    <svg viewBox="0 0 400 400" role="img" aria-label="Twelve-month dial of typical harvest months for each crop">
+      <circle class="seasons__face" cx="200" cy="200" r="196" />
+      {MONTHS.map((m, i) => (
+        <g>
+          <line class="seasons__tick" x1={C + 172 * Math.cos(rad(i * 30))} y1={C + 172 * Math.sin(rad(i * 30))} x2={C + 196 * Math.cos(rad(i * 30))} y2={C + 196 * Math.sin(rad(i * 30))} />
+          <text class="seasons__month" data-month={i + 1} x={C + 184 * Math.cos(rad(i * 30 + 15))} y={C + 184 * Math.sin(rad(i * 30 + 15)) + 4} text-anchor="middle">{m}</text>
+        </g>
+      ))}
+      {rings.map((r, i) => (
+        <g class="seasons__ring" data-ring={i}>
+          <circle class="seasons__track" cx="200" cy="200" r={r.r} stroke-width={r.w} />
+          {r.arcs.map((d) => <path class="seasons__arc" d={d} stroke={r.c1} stroke-width={r.w} />)}
+        </g>
+      ))}
+      <g class="seasons__hand" data-hand style={`transform: rotate(${(now - 0.5) * 30}deg)`}>
+        <line x1="200" y1="200" x2="200" y2="22" />
+        <circle cx="200" cy="22" r="6" />
+      </g>
+      <circle class="seasons__hub" cx="200" cy="200" r="54" />
+      <text class="seasons__now" x="200" y="196" text-anchor="middle" data-hub-month>{MONTHS[now - 1]}</text>
+      <text class="seasons__nowlabel" x="200" y="218" text-anchor="middle">harvest</text>
+    </svg>
+  </div>
+  <div class="seasons__panel">
+    <h2 class:list={['section-title', tone === 'food' && 'section-title--food']} id={`${id}-title`} data-split>{title}</h2>
+    <p class="seasons__lede">{lede}</p>
+    <div class="seasons__step">
+      <button type="button" class="seasons__btn" data-season-prev aria-label="Previous month">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </button>
+      <p class="seasons__month-name" aria-live="polite"><span data-season-label>This month</span></p>
+      <button type="button" class="seasons__btn" data-season-next aria-label="Next month">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </button>
+    </div>
+    <h3 class="seasons__h">Coming in now</h3>
+    <ul class="seasons__list" data-season-now></ul>
+    <h3 class="seasons__h">Next month</h3>
+    <ul class="seasons__list seasons__list--next" data-season-next-list></ul>
+    <p class="seasons__note">Typical harvest months in Andhra Pradesh. Ask us for this season's stock.</p>
+  </div>
+</section>

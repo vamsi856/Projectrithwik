@@ -1,0 +1,102 @@
+---
+// Field to warehouse to truck, told as a horizontal scroll. Each step has a small
+// working illustration; the Sortex panel shows how a colour sorter picks out bad grain.
+interface Props { id: string; tone: 'bird' | 'food'; title: string; lede: string; packWord: string }
+const { id, tone, title, lede, packWord } = Astro.props;
+const steps = [
+  { key: 'field', title: 'From the field', body: 'Grain comes in from farms across Andhra Pradesh after each harvest.' },
+  { key: 'clean', title: 'Cleaning', body: 'Vibrating sieves shake out dust, straw, small stones and broken grain.' },
+  { key: 'sort', title: 'Sortex sorting', body: 'A colour sorter watches every falling grain with cameras. Any discoloured grain or stone gets a puff of air that knocks it out of the stream. Our white proso goes through it.' },
+  { key: 'bag', title: 'Bagging', body: `Clean grain is weighed into ${packWord} and sealed, ready to load.` },
+  { key: 'road', title: 'On the road', body: 'Loaded at our Duvvur warehouse and on its way to you.' },
+];
+const dots = (n: number, seed: number) => Array.from({ length: n }, (_, i) => ({ i, x: ((i * 37 + seed * 13) % 23) - 11, d: ((i * 0.23 + seed * 0.11) % 1.6).toFixed(2) }));
+---
+<section class:list={['story', `story--${tone}`]} id={id} aria-labelledby={`${id}-title`} data-story>
+  <div class="story__head">
+    <h2 class:list={['section-title', tone === 'food' && 'section-title--food']} id={`${id}-title`} data-split>{title}</h2>
+    <p>{lede}</p>
+  </div>
+  <div class="story__pin">
+    <div class="story__progress" aria-hidden="true"><span data-story-bar></span></div>
+    <ol class="story__track" data-story-track>
+      {steps.map((s, i) => (
+        <li class:list={['story__panel', `story__panel--${s.key}`]}>
+          <div class="story__art" aria-hidden="true">
+            {s.key === 'field' && (
+              <svg viewBox="0 0 300 220">
+                <circle class="st-sun" cx="236" cy="54" r="26" />
+                <path class="st-ground" d="M0 190 Q150 176 300 190 L300 220 L0 220Z" />
+                {[30, 58, 86, 114, 142, 170, 198, 226, 254, 280].map((x, k) => (
+                  <g class="st-stalk" style={`--d:${(k % 4) * 0.35}s; transform-origin:${x}px 192px`}>
+                    <path d={`M${x} 192 Q${x + 4} 150 ${x + 2} ${112 + (k % 3) * 8}`} />
+                    <path class="st-head" d={`M${x + 2} ${112 + (k % 3) * 8} q8 -10 6 -34 q-1 -8 -6 -12`} />
+                    <path class="st-leaf" d={`M${x + 1} 160 q-16 -6 -22 -18 q14 4 22 12`} />
+                  </g>
+                ))}
+              </svg>
+            )}
+            {s.key === 'clean' && (
+              <svg viewBox="0 0 300 220">
+                <path class="st-hopper" d="M108 14 H192 L170 52 H130Z" />
+                <g class="st-shake">
+                  <rect class="st-body" x="60" y="58" width="180" height="110" rx="10" />
+                  {[82, 108, 134].map((y) => <line class="st-deck" x1="72" y1={y} x2="228" y2={y + 12} />)}
+                </g>
+                {dots(14, 1).map((p) => <circle class="st-grain st-fall" cx={150 + p.x * 3} cy="56" r="3.2" style={`--d:${p.d}s`} />)}
+                {dots(6, 3).map((p) => <circle class="st-chaff" cx="238" cy={92 + (p.i % 3) * 22} r="2.4" style={`--d:${p.d}s`} />)}
+                <path class="st-ground" d="M40 196 H260" />
+              </svg>
+            )}
+            {s.key === 'sort' && (
+              <svg viewBox="0 0 300 220">
+                <path class="st-hopper" d="M118 6 H182 L162 36 H138Z" />
+                <rect class="st-chute" x="141" y="36" width="18" height="24" rx="3" />
+                <rect class="st-cam" x="62" y="96" width="34" height="22" rx="4" /><circle class="st-lens" cx="96" cy="107" r="5" />
+                <rect class="st-cam" x="204" y="96" width="34" height="22" rx="4" /><circle class="st-lens" cx="204" cy="107" r="5" />
+                <line class="st-beam" x1="101" y1="107" x2="199" y2="107" />
+                <path class="st-nozzle" d="M196 134 h22 v10 h-22z" />
+                {dots(12, 2).map((p) => <circle class="st-grain st-drop" cx={150 + (p.x % 4)} cy="62" r="3.4" style={`--d:${p.d}s`} />)}
+                <circle class="st-bad" cx="150" cy="62" r="3.6" />
+                <path class="st-puff" d="M194 139 q-10 -6 -16 0 q-8 6 -14 0" />
+                <path class="st-bin" d="M118 176 h64 v34 h-64z" /><text class="st-label" x="150" y="198" text-anchor="middle">clean</text>
+                <path class="st-bin st-bin--reject" d="M38 176 h50 v34 h-50z" /><text class="st-label" x="63" y="198" text-anchor="middle">out</text>
+              </svg>
+            )}
+            {s.key === 'bag' && (
+              <svg viewBox="0 0 300 220">
+                <path class="st-hopper" d="M118 6 H182 L166 34 H134Z" />
+                <rect class="st-chute" x="142" y="34" width="16" height="30" rx="3" />
+                {dots(10, 4).map((p) => <circle class="st-grain st-pour" cx={150 + (p.x % 3)} cy="66" r="3" style={`--d:${p.d}s`} />)}
+                <clipPath id={`${id}-sack`}><path d="M96 98 Q150 88 204 98 L212 204 Q150 214 88 204Z" /></clipPath>
+                <path class="st-sack" d="M96 98 Q150 88 204 98 L212 204 Q150 214 88 204Z" />
+                <rect class="st-fill" x="80" y="100" width="140" height="120" clip-path={`url(#${id}-sack)`} />
+                <path class="st-stitch" d="M98 104 Q150 94 202 104" />
+                <text class="st-word" x="150" y="166" text-anchor="middle">RITHWIK</text>
+              </svg>
+            )}
+            {s.key === 'road' && (
+              <svg viewBox="0 0 300 220">
+                <path class="st-ground" d="M0 182 H300" />
+                <g class="st-dashes">{[0, 1, 2, 3, 4, 5, 6, 7].map((k) => <rect x={k * 50 - 30} y="196" width="26" height="4" rx="2" />)}</g>
+                <g class="st-truck">
+                  <rect class="st-cargo" x="40" y="96" width="150" height="74" rx="6" />
+                  {[0, 1, 2].map((r) => [0, 1, 2, 3].map((c) => <rect class="st-bagbox" x={50 + c * 34} y={104 + r * 21} width="30" height="17" rx="5" />))}
+                  <path class="st-cab" d="M190 116 h40 l24 26 v28 h-64z" />
+                  <path class="st-window" d="M200 124 h26 l16 18 h-42z" />
+                  <g class="st-wheel" style="transform-origin:82px 172px"><circle cx="82" cy="172" r="15" /><line x1="72" y1="172" x2="92" y2="172" /></g>
+                  <g class="st-wheel" style="transform-origin:222px 172px"><circle cx="222" cy="172" r="15" /><line x1="212" y1="172" x2="232" y2="172" /></g>
+                </g>
+              </svg>
+            )}
+          </div>
+          <div class="story__copy">
+            <span class="story__num">{i + 1}</span>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

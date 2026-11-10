@@ -16,6 +16,10 @@ import Photo from '../components/Photo.astro';
 import HeroPack from '../components/HeroPack.astro';
 import PackStudio from '../components/PackStudio.astro';
 import { BIRD_PACKS, FOOD_PACKS } from '../data/packs';
+import SeasonClock from '../components/SeasonClock.astro';
+import SeedToSack from '../components/SeedToSack.astro';
+import { BIRD_SEASONS, FOOD_SEASONS } from '../data/seasons';
+import { held } from '../data/registrations';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const nBird = lineCount(BIRD);
@@ -199,7 +203,13 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
         </div>
       </section>
 
-      <Vision id="b-vision" tone="bird"
+      <SeasonClock id="b-seasons" tone="bird" crops={BIRD_SEASONS} title="Season clock"
+        lede="Each ring is a feed grain; its arc shows the months it usually comes in. The hand points at today. Step through the year to plan your buying." />
+
+      <SeedToSack id="b-story" tone="bird" title="Seed to sack" packWord="sacks"
+        lede="What happens between the farm and your shop. Scroll to follow the grain." />
+
+      <Vision id="b-vision" tone="bird" regs={held('bird')}
         vision="Kurnool's bird feed in aviaries and pet stores around the world."
         mission="Clean, sort and pack every feed line to one standard, keep prices fair through the seasons, and build the certifications and shipping partners we need to export."
         image="port-ship" imageAlt="A container ship leaving port" />
@@ -292,7 +302,13 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
         <div class="fact fact--code"><b>{BRANDS.food.gstin}</b><span>GSTIN</span></div>
       </div>
 
-      <Vision id="f-vision" tone="food"
+      <SeedToSack id="f-story" tone="food" title="Field to pack" packWord="bags and pouches"
+        lede="What happens between the farm and your kitchen. Scroll to follow the grain." />
+
+      <SeasonClock id="f-seasons" tone="food" crops={FOOD_SEASONS} title="Season clock"
+        lede="Each ring is a crop; its arc shows the months it usually comes in. The hand points at today. Step through the year to see what's fresh." />
+
+      <Vision id="f-vision" tone="food" regs={held('food')}
         vision="Indian millets and super seeds on kitchen shelves across the world."
         mission="Source directly from Andhra Pradesh farmers, clean and pack with care, and meet the food-safety and export standards that overseas buyers expect."
         image="port-ship" imageAlt="A container ship leaving port" />
