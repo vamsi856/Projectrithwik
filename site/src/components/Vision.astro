@@ -1,9 +1,8 @@
 ---
 import Photo from './Photo.astro';
 import { photo } from '../data/photos';
-import type { Registration } from '../data/registrations';
-interface Props { id: string; tone: 'bird' | 'food'; vision: string; mission: string; image?: string; imageAlt?: string; regs?: Registration[] }
-const { id, tone, vision, mission, image, imageAlt = '', regs = [] } = Astro.props;
+interface Props { id: string; tone: 'bird' | 'food'; vision: string; mission: string; image?: string; imageAlt?: string }
+const { id, tone, vision, mission, image, imageAlt = '' } = Astro.props;
 const img = photo(image);
 ---
 <section class:list={['vision', `vision--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
@@ -32,20 +31,6 @@ const img = photo(image);
       </div>
     </div>
     <p class="vision__where" data-reveal>Where we're heading next: the Gulf, Europe, East and Southeast Asia, and North America.</p>
-    {regs.length > 0 && (
-      <div class="regs">
-        <h3 class="regs__h">Registered to trade</h3>
-        <ul class="regs__list">
-          {regs.map((r) => (
-            <li class="seal" data-seal>
-              <span class="seal__name">{r.name}</span>
-              <b class="seal__no">{r.number}</b>
-              <span class="seal__body">{r.body}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
     {img && (
       <figure class="vision__photo" data-curtain>
         <Photo name={image!} alt={imageAlt} sizes="(max-width: 860px) 92vw, 560px" />

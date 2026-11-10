@@ -1,0 +1,75 @@
+---
+// Certifications and registrations as seals. Tap a seal for the details and, once
+// the client sends it, a photo of the certificate itself.
+import Photo from './Photo.astro';
+import type { Registration } from '../data/registrations';
+interface Props { id: string; tone: 'bird' | 'food'; regs: Registration[]; photo?: string; photoAlt?: string }
+const { id, tone, regs, photo, photoAlt = '' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const certs = regs.filter((r) => r.mark !== 'GST');
+const title = certs.length ? 'Certifications & standards' : 'Registered business';
+const lede = certs.length
+  ? 'Our food safety, export and organic credentials. Tap a seal for the details; a copy of any certificate is available on request.'
+  : 'Rithwik Bird Feeds is a GST-registered business. Every order comes with a proper GST invoice.';
+---
+<section class:list={['certs', `certs--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
+  {photo && (
+    <figure class="certs__photo" data-curtain>
+      <Photo name={photo} alt={photoAlt} sizes="(max-width: 860px) 92vw, 40vw" />
+      <figcaption>{certs.length ? `${certs.length} certifications` : 'GST registered'}<span>Rithwik {tone === 'food' ? 'Industries' : 'Bird Feeds'}, Kurnool</span></figcaption>
+    </figure>
+  )}
+  <div class="certs__body">
+    <h2 class:list={['section-title', tone === 'food' && 'section-title--food']} id={`${id}-title`} data-split>{title}</h2>
+    <p class="certs__lede">{lede}</p>
+    <ul class="certs__grid">
+      {regs.map((r, i) => (
+        <li>
+          <button class="cert" type="button" data-cert={r.id} aria-haspopup="dialog">
+            <span class="cert__seal" aria-hidden="true">
+              {r.logo ? (
+                <img src={`${base}certs/${r.logo}`} alt="" loading="lazy" />
+              ) : (
+                <svg viewBox="0 0 200 200">
+                  <defs><path id={`${id}-ring-${i}`} d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0" /></defs>
+                  <g class="cert__teeth">{Array.from({ length: 36 }, (_, k) => <circle cx={100 + 94 * Math.cos((k * Math.PI) / 18)} cy={100 + 94 * Math.sin((k * Math.PI) / 18)} r="7" />)}</g>
+                  <circle class="cert__disc" cx="100" cy="100" r="92" />
+                  <circle class="cert__ring" cx="100" cy="100" r="84" />
+                  <circle class="cert__ring cert__ring--in" cx="100" cy="100" r="60" />
+                  <text class="cert__around"><textPath href={`#${id}-ring-${i}`} startOffset="0">{`${r.status.toUpperCase()} · ${r.name.toUpperCase()} · ${r.status.toUpperCase()} · ${r.name.toUpperCase()} ·`}</textPath></text>
+                  <text class="cert__mark" x="100" y={r.mark.length > 4 ? 110 : 114} text-anchor="middle" font-size={r.mark.length > 5 ? 26 : r.mark.length > 3 ? 34 : 44}>{r.mark}</text>
+                  <path class="cert__star" d="M100 136 l3 6 6 1 -4.5 4 1 6 -5.5 -3 -5.5 3 1 -6 -4.5 -4 6 -1z" />
+                </svg>
+              )}
+            </span>
+            <span class="cert__name">{r.name}</span>
+            <span class="cert__status">{r.status}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <dialog class="certdlg" data-cert-dialog>
+    {regs.map((r) => (
+      <article data-cert-panel={r.id} hidden>
+        <p class="certdlg__status">{r.status}</p>
+        <h3>{r.name}</h3>
+        <p class="certdlg__body">{r.body}</p>
+        <p>{r.what}</p>
+        {r.number && <p class="certdlg__no">Number: <b>{r.number}</b></p>}
+        {r.photo ? (
+          <img class="certdlg__img" src={`${base}certs/${r.photo}`} alt={`${r.name} certificate`} loading="lazy" />
+        ) : (
+          r.mark !== 'GST' && <p class="certdlg__ask">A copy of this certificate is available on request.</p>
+        )}
+      </article>
+    ))}
+    <div class="certdlg__actions">
+      {regs.some((r) => r.mark !== 'GST' && !r.photo) && (
+        <a class="pill pill--gold" href={`https://wa.me/918309782770?text=${encodeURIComponent(`Hello Rithwik ${tone === 'food' ? 'Industries' : 'Bird Feeds'}, please share a copy of your certificates.`)}`} target="_blank" rel="noopener" data-cert-request>Request a copy</a>
+      )}
+      <form method="dialog"><button class="pill pill--line-dlg">Close</button></form>
+    </div>
+  </dialog>
+</section>

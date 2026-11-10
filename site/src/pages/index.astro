@@ -20,6 +20,7 @@ import SeasonClock from '../components/SeasonClock.astro';
 import SeedToSack from '../components/SeedToSack.astro';
 import { BIRD_SEASONS, FOOD_SEASONS } from '../data/seasons';
 import { held } from '../data/registrations';
+import Certifications from '../components/Certifications.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const nBird = lineCount(BIRD);
@@ -209,10 +210,12 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
       <SeedToSack id="b-story" tone="bird" title="Seed to sack" packWord="sacks"
         lede="What happens between the farm and your shop. Scroll to follow the grain." />
 
-      <Vision id="b-vision" tone="bird" regs={held('bird')}
+      <Vision id="b-vision" tone="bird"
         vision="Kurnool's bird feed in aviaries and pet stores around the world."
         mission="Clean, sort and pack every feed line to one standard, keep prices fair through the seasons, and build the certifications and shipping partners we need to export."
         image="port-ship" imageAlt="A container ship leaving port" />
+
+      <Certifications id="b-certs" tone="bird" regs={held('bird')} photo="bird-plumhead" photoAlt="A plum-headed parakeet feeding" />
 
       <Steps id="b-order" tone="bird" steps={[
         { title: 'Pick your feeds', body: 'Choose from the cards above. Say if you want it raw or cleaned, and which foxtail crop.' },
@@ -247,6 +250,11 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
             <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>
             <a class="pill pill--line-ink" href={`${base}Rithwik-Catalogue.pdf`} download>Download catalogue (PDF)</a>
           </div>
+          <ul class="trust" data-rise aria-label="Certifications">
+            {held('food').filter((r) => r.mark !== 'GST').map((r) => (
+              <li><a href="#f-certs" data-jump><span class="trust__mark">{r.mark}</span><span>{r.status}</span></a></li>
+            ))}
+          </ul>
         </div>
         <div class="food-hero__art food-hero__art--pack">
           <canvas class="grainpour" aria-hidden="true"></canvas>
@@ -308,10 +316,12 @@ const scenes: Record<string, string> = { millets: 'little', seeds: 'quinoab', pa
       <SeasonClock id="f-seasons" tone="food" crops={FOOD_SEASONS} title="Season clock"
         lede="Each ring is a crop; its arc shows the months it usually comes in. The hand points at today. Step through the year to see what's fresh." />
 
-      <Vision id="f-vision" tone="food" regs={held('food')}
+      <Vision id="f-vision" tone="food"
         vision="Indian millets and super seeds on kitchen shelves across the world."
         mission="Source directly from Andhra Pradesh farmers, clean and pack with care, and meet the food-safety and export standards that overseas buyers expect."
         image="port-ship" imageAlt="A container ship leaving port" />
+
+      <Certifications id="f-certs" tone="food" regs={held('food')} photo="quinoab" photoAlt="White, red and black quinoa" />
 
       <Steps id="f-order" tone="food" steps={[
         { title: 'Choose your products', body: 'Pick from millets, seeds, quinoa, dals and spices above.' },

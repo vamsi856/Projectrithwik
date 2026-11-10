@@ -394,6 +394,16 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     io.observe(c);
   });
 
+  // certification seals open a details dialog
+  $$('.certs', root).forEach((sec) => {
+    const dlg = $<HTMLDialogElement>('[data-cert-dialog]', sec)!;
+    $$<HTMLButtonElement>('[data-cert]', sec).forEach((b) => b.addEventListener('click', () => {
+      $$('[data-cert-panel]', dlg).forEach((a) => (a.hidden = a.dataset.certPanel !== b.dataset.cert));
+      sfx('tick'); dlg.showModal();
+    }));
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  });
+
   // season clock
   $$('[data-seasons]', root).forEach((sec) => {
     const crops: { name: string; months: number[]; c1: string; c2: string }[] = JSON.parse(sec.dataset.seasons!);
@@ -471,7 +481,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   });
 
   // registration seals stamp down
-  $$('.regs', root).forEach((r) => tw(gsap.from($$('[data-seal]', r), {
+  $$('.certs__grid', root).forEach((r) => tw(gsap.from($$('.cert__seal', r), {
     scale: 1.9, rotate: -24, opacity: 0, duration: 0.7, ease: 'back.out(2.2)', stagger: 0.15,
     scrollTrigger: { trigger: r, start: 'top 85%', once: true, onEnter: () => setTimeout(() => sfx('tick'), 450) },
   })));
