@@ -354,6 +354,8 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
       const hero = c.closest<HTMLElement>('[data-hero-pack]');
       const studio = c.closest<HTMLElement>('[data-studio]');
       const mount = studio ? mountLineup : mountPack;
+      // while the visitor is scrolling the names row by hand, the page never moves it for them
+      let rowTouch = false, rowHold = 0;
       const ctl = await mount(c, {
         kind: c.dataset.pack as 'sack' | 'pouch', logo: c.dataset.logo!, items, auto: hero ? Number(c.dataset.auto) : studio ? 3800 : 0,
         bg: view === 'bird' ? '#0e2131' : '#efeadb',
@@ -373,7 +375,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
             $('[data-studio-index]', studio)!.textContent = String(i + 1).padStart(2, '0');
             // keep the chosen name in the middle of the row (horizontal scroll only)
             const pk = $<HTMLElement>('[data-studio-picker]', studio)!, btn = $<HTMLElement>(`[data-pick="${i}"]`, studio)!;
-            pk.scrollTo({ left: btn.offsetLeft - pk.clientWidth / 2 + btn.offsetWidth / 2, behavior: reduce ? 'auto' : 'smooth' });
+            if (!rowTouch && performance.now() > rowHold) pk.scrollTo({ left: btn.offsetLeft - pk.clientWidth / 2 + btn.offsetWidth / 2, behavior: reduce ? 'auto' : 'smooth' });
             if (!reduce) gsap.from($$('.studio__what > *', studio), { y: 10, opacity: 0, duration: 0.45, stagger: 0.05, ease: 'power2.out' });
           }
         },
@@ -384,18 +386,30 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
         if (!reduce) st({ trigger: hero.closest('section')!, start: 'top top', end: 'bottom top', scrub: true, onUpdate: (s) => ctl.setScrollSpin(s.progress * Math.PI * 1.2) });
       }
       if (studio) {
-        // picking a name (or an arrow) turns that pack to the front; if the section is not
-        // fully on screen, the page glides so it is
+        // picking a name (or an arrow) turns that pack to the front. The page only glides
+        // when the turning ring is mostly out of sight, so tapping a name never jolts it.
+        const stageEl = $<HTMLElement>('.studio__stage', studio) ?? studio;
         const bring = () => {
-          const hdr = $<HTMLElement>('.sbar', root)?.offsetHeight ?? 0, r = studio.getBoundingClientRect();
-          if (r.top < hdr - 4 || r.bottom > innerHeight + 4) {
-            if (lenis) lenis.scrollTo(studio, { offset: -hdr, duration: 0.9 });
-            else window.scrollTo({ top: r.top + scrollY - hdr, behavior: reduce ? 'auto' : 'smooth' });
-          }
+          const hdr = $<HTMLElement>('.sbar', root)?.offsetHeight ?? 0, r = stageEl.getBoundingClientRect();
+          const seen = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, hdr)) / (r.height || 1);
+          if (seen >= 0.6) return;
+          if (lenis) lenis.scrollTo(stageEl, { offset: -hdr - 12, duration: 0.9 });
+          else window.scrollTo({ top: r.top + scrollY - hdr - 12, behavior: reduce ? 'auto' : 'smooth' });
         };
-        $$('[data-pick]', studio).forEach((b) => b.addEventListener('click', () => { ctl.stopAuto(); bring(); ctl.show(Number(b.dataset.pick)); }));
-        $('[data-studio-prev]', studio)?.addEventListener('click', () => { ctl.stopAuto(); bring(); ctl.prev(); });
-        $('[data-studio-next]', studio)?.addEventListener('click', () => { ctl.stopAuto(); bring(); ctl.next(); });
+        const choose = (go: () => void) => { ctl.stopAuto(); rowTouch = false; rowHold = 0; bring(); go(); };
+        $$('[data-pick]', studio).forEach((b) => b.addEventListener('click', () => { const i = Number(b.dataset.pick); if (i === ctl.index) return; choose(() => ctl.show(i)); }));
+        $('[data-studio-prev]', studio)?.addEventListener('click', () => choose(() => ctl.prev()));
+        $('[data-studio-next]', studio)?.addEventListener('click', () => choose(() => ctl.next()));
+        // the names row scrolls like any side scroller: touching it stops the ring turning
+        // by itself, and nothing pulls the row back while (or just after) it is being moved
+        const pk = $<HTMLElement>('[data-studio-picker]', studio)!;
+        const hands = () => { ctl.stopAuto(); rowHold = performance.now() + 1500; };
+        pk.addEventListener('touchstart', () => { rowTouch = true; hands(); }, { passive: true });
+        const lift = () => { rowTouch = false; rowHold = performance.now() + 1200; };
+        pk.addEventListener('touchend', lift, { passive: true });
+        pk.addEventListener('touchcancel', lift, { passive: true });
+        pk.addEventListener('wheel', hands, { passive: true });
+        pk.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse') hands(); });
       }
     }, { rootMargin: '300px' });
     io.observe(c);

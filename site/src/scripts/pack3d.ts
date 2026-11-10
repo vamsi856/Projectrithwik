@@ -491,32 +491,44 @@ async function mountRing3D(canvas: HTMLCanvasElement, opts: PackOptions & { bg: 
     await new Promise<void>((done) => gsap.to(o, { a: target(i), duration: reduce ? 0 : 1.1, ease: 'power3.inOut', onUpdate: () => { angle = o.a; wake(); }, onComplete: () => done() }));
   }
 
-  // drag the ring; tap a pack to bring it forward
+  // drag the ring sideways; tap a pack to bring it forward. On a phone the same finger
+  // also scrolls the page, so a gesture only turns the ring once it is clearly sideways,
+  // and a touch the browser takes over for scrolling (pointercancel) never picks a pack.
   const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2();
-  let downX = 0, lastX = 0, dragging = false, moved = 0;
+  let downX = 0, downY = 0, lastX = 0, dragging = false, moved = 0, axis: 0 | 1 | -1 = 0; // 1 sideways, -1 page scroll
   canvas.style.touchAction = 'pan-y'; canvas.style.cursor = 'grab';
-  canvas.addEventListener('pointerdown', (e) => { dragging = true; moved = 0; downX = lastX = e.clientX; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing'; stopAuto(); });
+  canvas.addEventListener('pointerdown', (e) => { dragging = true; moved = 0; axis = e.pointerType === 'mouse' ? 1 : 0; downX = lastX = e.clientX; downY = e.clientY; canvas.style.cursor = 'grabbing'; });
   canvas.addEventListener('pointermove', (e) => {
-    if (!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; moved = Math.abs(e.clientX - downX);
+    if (!dragging) return;
+    const tx = e.clientX - downX, ty = e.clientY - downY;
+    if (!axis && Math.hypot(tx, ty) > 8) { axis = Math.abs(tx) > Math.abs(ty) ? 1 : -1; if (axis === 1) { canvas.setPointerCapture(e.pointerId); stopAuto(); } }
+    if (axis !== 1) { lastX = e.clientX; return; }
+    const dx = e.clientX - lastX; lastX = e.clientX; moved = Math.abs(tx);
     angle -= dx * 0.005; dragV = -dx * 0.002; wake();
   });
+  // straighten up on the nearest pack; if that is the one already chosen, nothing else changes
+  const settle = () => {
+    const step = (Math.PI * 2) / N, near = Math.round((((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)) / step) % N;
+    if (near !== index) { show(near); return; }
+    dragV = 0; const o = { a: angle };
+    gsap.to(o, { a: target(index), duration: 0.6, ease: 'power3.out', onUpdate: () => { angle = o.a; wake(); } });
+  };
   const up = (e: PointerEvent) => {
     if (!dragging) return; dragging = false; canvas.style.cursor = 'grab';
-    if (moved < 6) {
-      const r = canvas.getBoundingClientRect();
-      ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-      ray.setFromCamera(ndc, camera);
-      const hit = ray.intersectObjects(packs, true)[0];
-      if (hit) { show(hit.object.userData.index); return; }
-    }
-    // settle on the nearest pack after a drag
-    setTimeout(() => { const step = (Math.PI * 2) / N; show(Math.round((((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)) / step)); }, 250);
+    if (axis === 1) { setTimeout(settle, 250); return; }
+    if (e.type === 'pointercancel' || axis === -1) return; // the page scrolled: leave the ring alone
+    const r = canvas.getBoundingClientRect();
+    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const hit = ray.intersectObjects(packs, true)[0];
+    if (hit && hit.object.userData.index !== index) { stopAuto(); show(hit.object.userData.index); }
   };
   canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
 
+  // the ring turns by itself until the visitor takes over, then it stays where they put it
   let timer = 0;
   const startAuto = () => { if (opts.auto && !reduce) { clearInterval(timer); timer = window.setInterval(() => visible && show(index + 1), opts.auto); } };
-  function stopAuto() { clearInterval(timer); clearTimeout((canvas as any)._resume); (canvas as any)._resume = setTimeout(startAuto, 9000); }
+  function stopAuto() { clearInterval(timer); }
   startAuto();
 
   // entrance: the ring sweeps round once
@@ -540,7 +552,7 @@ async function mountRingCSS(canvas: HTMLCanvasElement, opts: PackOptions & { bg:
     const c = document.createElement('canvas'); c.width = LW; c.height = LH; c.className = 'ring3d__card';
     await paintSmall(paint, c, opts.items[i], logo, null);
     loadImg(opts.items[i].photo).then(async (ph) => { if (ph) await paintSmall(paint, c, opts.items[i], logo, ph); });
-    c.addEventListener('click', () => show(i));
+    c.addEventListener('click', () => { if (dragged || i === index) return; stopAuto(); show(i); });
     spin.appendChild(c); cards.push(c);
   }
   let angle = 0, index = 0, W = 160, R = 300;
@@ -566,13 +578,28 @@ async function mountRingCSS(canvas: HTMLCanvasElement, opts: PackOptions & { bg:
     const o = { a: angle };
     await gsap.to(o, { a: t, duration: reduce ? 0 : 1, ease: 'power3.inOut', onUpdate: () => { angle = o.a; apply(); } });
   }
-  let down = 0, last = 0, drag = false;
-  stage.addEventListener('pointerdown', (e) => { drag = true; down = last = e.clientX; stopAuto(); });
-  addEventListener('pointermove', (e) => { if (!drag) return; angle -= (e.clientX - last) * 0.25; last = e.clientX; apply(); });
-  addEventListener('pointerup', (e) => { if (!drag) return; drag = false; if (Math.abs(e.clientX - down) > 6) show(Math.round(angle / (360 / N))); });
+  // sideways drags turn the ring; anything the browser takes as a page scroll is ignored
+  let down = 0, downY = 0, last = 0, drag = false, axis: 0 | 1 | -1 = 0, dragged = false;
+  stage.addEventListener('pointerdown', (e) => { drag = true; dragged = false; axis = e.pointerType === 'mouse' ? 1 : 0; down = last = e.clientX; downY = e.clientY; });
+  addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const tx = e.clientX - down, ty = e.clientY - downY;
+    if (!axis && Math.hypot(tx, ty) > 8) { axis = Math.abs(tx) > Math.abs(ty) ? 1 : -1; if (axis === 1) stopAuto(); }
+    if (axis !== 1) { last = e.clientX; return; }
+    angle -= (e.clientX - last) * 0.25; last = e.clientX; if (Math.abs(tx) > 6) dragged = true; apply();
+  });
+  const end = () => {
+    if (!drag) return; drag = false;
+    if (!dragged) return;
+    const near = ((Math.round(angle / (360 / N)) % N) + N) % N;
+    if (near !== index) { show(near); return; }
+    const o = { a: angle }; let t = (index / N) * 360; while (t - angle > 180) t -= 360; while (t - angle < -180) t += 360;
+    gsap.to(o, { a: t, duration: 0.6, ease: 'power3.out', onUpdate: () => { angle = o.a; apply(); } });
+  };
+  addEventListener('pointerup', end); addEventListener('pointercancel', end);
   let timer = 0;
   const startAuto = () => { if (opts.auto && !reduce) { clearInterval(timer); timer = window.setInterval(() => show(index + 1), opts.auto); } };
-  function stopAuto() { clearInterval(timer); clearTimeout((stage as any)._r); (stage as any)._r = setTimeout(startAuto, 9000); }
+  function stopAuto() { clearInterval(timer); }
   startAuto();
   return { show, next: () => show(index + 1), prev: () => show(index - 1), get index() { return index; }, setScrollSpin: () => {}, stopAuto };
 }
