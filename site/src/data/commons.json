@@ -117,13 +117,13 @@
   "a": "Kevin Faccenda"
  },
  "kodo": {
-  "t": "Paspalum scrobiculatum (6220330977).jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/2/29/Paspalum_scrobiculatum_%286220330977%29.jpg",
-  "w": 1672,
-  "h": 1704,
-  "p": "https://commons.wikimedia.org/wiki/File:Paspalum_scrobiculatum_(6220330977).jpg",
-  "l": "CC BY 2.0",
-  "a": "David Eickhoff"
+  "t": "Paspalum scrobiculatum 224164066.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Paspalum_scrobiculatum_224164066.jpg",
+  "w": 2048,
+  "h": 1366,
+  "p": "https://commons.wikimedia.org/wiki/File:Paspalum_scrobiculatum_224164066.jpg",
+  "l": "CC BY 4.0",
+  "a": "Kevin Faccenda"
  },
  "chia": {
   "t": "Mexican chia seeds (2).jpg",
@@ -556,5 +556,14 @@
   "p": "https://commons.wikimedia.org/wiki/File:Hulled_foxtail_millet.jpg",
   "l": "CC BY-SA 2.0 kr",
   "a": "국립국어원"
+ },
+ "chana-brown": {
+  "t": "Cicer arietinum noir MHNT.BOT.2017.12.2.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Cicer_arietinum_noir_MHNT.BOT.2017.12.2.jpg",
+  "w": 5184,
+  "h": 3456,
+  "p": "https://commons.wikimedia.org/wiki/File:Cicer_arietinum_noir_MHNT.BOT.2017.12.2.jpg",
+  "l": "CC BY-SA 3.0",
+  "a": "Roger Culos"
  }
 }
