@@ -475,5 +475,59 @@
   "p": "https://commons.wikimedia.org/wiki/File:Rolled_oats_2.jpg",
   "l": "CC BY-SA 4.0",
   "a": "Yonygg"
+ },
+ "quinoa-red": {
+  "t": "Red quinoa.png",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/4/43/Red_quinoa.png",
+  "w": 1500,
+  "h": 1000,
+  "p": "https://commons.wikimedia.org/wiki/File:Red_quinoa.png",
+  "l": "CC BY-SA 3.0",
+  "a": "blairingmedia"
+ },
+ "chana-white": {
+  "t": "Ordinary chickpeas in a ceramic bowl.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Ordinary_chickpeas_in_a_ceramic_bowl.jpg",
+  "w": 2100,
+  "h": 1400,
+  "p": "https://commons.wikimedia.org/wiki/File:Ordinary_chickpeas_in_a_ceramic_bowl.jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "AlixSaz"
+ },
+ "sesame-white": {
+  "t": "Sa white sesame seeds.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/6/69/Sa_white_sesame_seeds.jpg",
+  "w": 3504,
+  "h": 2336,
+  "p": "https://commons.wikimedia.org/wiki/File:Sa_white_sesame_seeds.jpg",
+  "l": "CC BY-SA 3.0",
+  "a": "Sanjay ach"
+ },
+ "pepper-white": {
+  "t": "White peppercorns.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/4/42/White_peppercorns.jpg",
+  "w": 3000,
+  "h": 3000,
+  "p": "https://commons.wikimedia.org/wiki/File:White_peppercorns.jpg",
+  "l": "CC0",
+  "a": "Fumikas Sagisavas"
+ },
+ "urad-dal": {
+  "t": "URAD DAL.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/3/38/URAD_DAL.jpg",
+  "w": 1840,
+  "h": 2453,
+  "p": "https://commons.wikimedia.org/wiki/File:URAD_DAL.jpg",
+  "l": "CC0",
+  "a": "Ranjithkumar Murugesan"
+ },
+ "jowar-red": {
+  "t": "Red Sorghum Grains.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Red_Sorghum_Grains.jpg",
+  "w": 1800,
+  "h": 2459,
+  "p": "https://commons.wikimedia.org/wiki/File:Red_Sorghum_Grains.jpg",
+  "l": "CC BY-SA 4.0",
+  "a": "IBS-Gh"
  }
 }
