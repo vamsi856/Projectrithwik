@@ -153,6 +153,9 @@ export async function setEnabled(on: boolean) {
   enabled = on;
   try { localStorage.setItem(KEY, on ? '1' : '0'); } catch {}
   if (on) {
+    // iPhone: play as media, so the birds are heard even with the ringer switch on silent
+    // (the visitor turned the sound on themselves)
+    try { const as = (navigator as Navigator & { audioSession?: { type: string } }).audioSession; if (as) as.type = 'playback'; } catch {}
     boot(); await ctx!.resume();
     master.gain.setTargetAtTime(1, ctx!.currentTime, 0.3);
     startBirds();
