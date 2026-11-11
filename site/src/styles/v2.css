@@ -12,6 +12,9 @@
 .site[hidden], .stage[hidden] { display: none; }
 /* photos come as <picture> (AVIF + WebP): the wrapper takes no part in layout */
 picture { display: contents !important; }
+/* ...and its <source> lines (they only tell the browser which file to fetch) take no slot either:
+   in a grid or flex box they would otherwise push the photo out of its place */
+picture > source { display: none !important; }
 /* before the script runs, the head snippet has already picked the view from the link */
 html[data-view="bird"] .site--bird[hidden], html[data-view="food"] .site--food[hidden] { display: block; }
 html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
