@@ -86,7 +86,7 @@ export const FOOD: Product[] = [
   { id: 'f-flax', name: 'Flax seeds', group: 'superfoods', photo: 'flax', swatch: s('#8a4a2c', '#5c2c16', 7), variants: one() },
   { id: 'f-basil', name: 'Basil seeds', group: 'superfoods', photo: 'basil', swatch: s('#2d2b2a', '#55514c', 5), variants: one('Sabja') },
 
-  { id: 'f-sunflower', name: 'Sunflower', group: 'oilseeds', photo: 'blacksun', swatch: s('#2c2a2a', '#4d4a47', 11), variants: one() },
+  { id: 'f-sunflower', name: 'Sunflower', group: 'oilseeds', photo: 'sunflower-striped', swatch: s('#2f2d2b', '#bdb7aa', 11), variants: one() },
   { id: 'f-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower-seeds', swatch: s('#f2ede1', '#cfc6b0', 10), variants: one() },
   { id: 'f-castor', name: 'Castor seeds', group: 'oilseeds', photo: 'castor', swatch: s('#8c6a58', '#4a362c', 12), variants: one() },
   { id: 'f-groundnut', name: 'Groundnuts', group: 'oilseeds', photo: 'groundnut', swatch: s('#e2b98c', '#b07f52', 12), variants: one() },
