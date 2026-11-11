@@ -10,6 +10,8 @@
 
 /* ---------- sites ---------- */
 .site[hidden], .stage[hidden] { display: none; }
+/* photos come as <picture> (AVIF + WebP): the wrapper takes no part in layout */
+picture { display: contents !important; }
 /* before the script runs, the head snippet has already picked the view from the link */
 html[data-view="bird"] .site--bird[hidden], html[data-view="food"] .site--food[hidden] { display: block; }
 html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
@@ -48,7 +50,7 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .sbar__nav a:hover, .sbar__nav a.is-current { opacity: 1; }
 .sbar__nav a:hover::after, .sbar__nav a.is-current::after { transform: scaleX(1); }
 .site--bird .sbar__nav a.is-current { color: var(--marigold); }
-.site--food .sbar__nav a.is-current { color: var(--bronze); }
+.site--food .sbar__nav a.is-current { color: var(--bronze-ink); }
 .sbar__call { text-decoration: none; font-weight: 600; font-size: .92rem; padding: 11px 18px; border-radius: 999px; white-space: nowrap; }
 .site--bird .sbar__call { background: var(--marigold); color: var(--navy); }
 .site--food .sbar__call { background: var(--ink); color: var(--khaki); }
@@ -127,7 +129,7 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
   .sbar__more a::after { display: none; }
   .site--bird .sbar__more-call { background: var(--marigold); color: var(--navy); border-color: var(--marigold); }
   .site--food .sbar__more-call { background: var(--ink); color: var(--khaki); border-color: var(--ink); }
-  .sbar__more-wa { background: #1f9d55; color: #fff; border-color: #1f9d55 !important; }
+  .sbar__more-wa { background: #11804a; color: #fff; border-color: #11804a !important; }
 }
 @media (max-width: 760px) and (prefers-reduced-motion: reduce) {
   .sbar__nav, .sbar.is-open .sbar__nav { transition: none; transform: none; }
@@ -235,7 +237,7 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .pcard__wa {
   display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px;
   font-weight: 600; font-size: .88rem; text-decoration: none; transition: transform .25s var(--ease), background-color .2s;
-  background: #1f9d55; color: #fff;
+  background: #11804a; color: #fff;
 }
 .pcard--food .pcard__wa { background: #1b7f46; }
 .pcard__shine { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, .14), transparent 60%); opacity: 0; transition: opacity .3s; }
@@ -999,7 +1001,7 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
   box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 7px #fff, inset 0 0 0 8.5px rgba(var(--ink-rgb), .35);
 }
 .certs--food .cert__name { font-weight: 700; font-size: .9rem; color: var(--ink); }
-.certs--food .cert__status { font-size: .78rem; font-weight: 600; color: var(--leaf); }
+.certs--food .cert__status { font-size: .78rem; font-weight: 600; color: var(--leaf); opacity: 1; }
 
 /* the same marks, small, under the hero */
 .food-hero .trust { gap: 10px; }
@@ -1032,7 +1034,7 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 .plant__kicker { margin: 0; font-weight: 700; font-size: .95rem; letter-spacing: .02em; }
 .plant--bird .plant__kicker { color: var(--sky); }
 .plant--bird .section-title { color: var(--khaki); }
-.plant--food .plant__kicker { color: var(--bronze); }
+.plant--food .plant__kicker { color: var(--bronze-ink); }
 .plant__lede { margin: 0; opacity: .85; }
 .plant__grid { display: grid; gap: clamp(12px, 1.6vw, 20px); grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: clamp(150px, 15vw, 230px); }
 .plant__fig { position: relative; margin: 0; overflow: hidden; border-radius: 24px; background: rgba(0, 0, 0, .15); }
@@ -1241,3 +1243,12 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
 .perch.perch--legacy { left: 15px; top: 9px; z-index: 3; }
 @media (max-width: 860px) { .perch.perch--legacy { left: -29px; top: 1px; height: calc(var(--tall) * .7 / var(--fy)); } }
 
+
+/* ---------- hero entrance: pure CSS, from the first paint ---------- */
+.hw { display: inline-block; vertical-align: top; }
+.has-motion .hw { overflow: hidden; padding: .08em .02em .1em; margin: -.08em -.02em -.1em; }
+.has-motion .hw > span { display: inline-block; animation: hw-in 1.05s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(.08s + var(--d, 0) * .07s); }
+@keyframes hw-in { from { transform: translateY(115%) rotate(4deg); } }
+.has-motion :is(.bird__hero, .food-hero) [data-rise] { animation: hero-rise 1s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(.35s + var(--i, 0) * .12s); }
+@keyframes hero-rise { from { opacity: 0; transform: translateY(30px); } }
+main[tabindex="-1"]:focus { outline: none; }

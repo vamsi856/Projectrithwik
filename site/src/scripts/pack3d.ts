@@ -180,18 +180,8 @@ function packGeometry(kind: PackKind, side: 1 | -1 = 1) {
   return geo;
 }
 
-/** True when WebGL would run on the CPU (no graphics card, or blocked). */
-export function softwareGL() {
-  try {
-    const c = document.createElement('canvas');
-    const gl = (c.getContext('webgl', { failIfMajorPerformanceCaveat: true }) || null) as WebGLRenderingContext | null;
-    if (!gl) return true;
-    const ext = gl.getExtension('WEBGL_debug_renderer_info');
-    const name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : '';
-    gl.getExtension('WEBGL_lose_context')?.loseContext();
-    return /swiftshader|llvmpipe|software|basic render/i.test(name);
-  } catch { return true; }
-}
+export { softwareGL } from './gpu';
+import { softwareGL } from './gpu';
 
 type PackControl = { show: (i: number) => Promise<void>; next: () => Promise<void>; prev: () => Promise<void>; readonly index: number; setScrollSpin: (v: number) => void; stopAuto: () => void };
 

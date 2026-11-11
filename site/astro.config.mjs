@@ -6,5 +6,6 @@ export default defineConfig({
   base: '/Projectrithwik',
   trailingSlash: 'ignore',
   image: { layout: 'constrained' },
-  build: { inlineStylesheets: 'auto' },
+  // all CSS goes inside the page: no separate stylesheet to wait for before the first paint
+  build: { inlineStylesheets: 'always' },
 });

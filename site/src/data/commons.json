@@ -44,24 +44,6 @@
   "l": "CC BY-SA 4.0",
   "a": "Salil Kumar Mukherjee"
  },
- "maize": {
-  "t": "Liat Portal for Foodie Disorder - Fresh Corn on the Cob.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/2/23/Liat_Portal_for_Foodie_Disorder_-_Fresh_Corn_on_the_Cob.jpg",
-  "w": 3024,
-  "h": 4032,
-  "p": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Fresh_Corn_on_the_Cob.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "HaJunkiyada"
- },
- "horsegram": {
-  "t": "Horse Gram Seeds.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/6/68/Horse_Gram_Seeds.jpg",
-  "w": 6000,
-  "h": 4000,
-  "p": "https://commons.wikimedia.org/wiki/File:Horse_Gram_Seeds.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "Sanjay Acharya"
- },
  "little": {
   "t": "A closeup fo Samai millet with husk.JPG",
   "u": "https://upload.wikimedia.org/wikipedia/commons/f/f8/A_closeup_fo_Samai_millet_with_husk.JPG",
@@ -116,33 +98,6 @@
   "l": "CC BY-SA 3.0",
   "a": "Sanjay Acharya"
  },
- "pumpkin": {
-  "t": "Pumpkin seed. img 016.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/5/57/Pumpkin_seed._img_016.jpg",
-  "w": 5184,
-  "h": 3456,
-  "p": "https://commons.wikimedia.org/wiki/File:Pumpkin_seed._img_016.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "Dmitry Makeev"
- },
- "sunkernel": {
-  "t": "Sunflower seed whole and kernel.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/2/29/Sunflower_seed_whole_and_kernel.jpg",
-  "w": 1280,
-  "h": 800,
-  "p": "https://commons.wikimedia.org/wiki/File:Sunflower_seed_whole_and_kernel.jpg",
-  "l": "CC BY-SA 3.0",
-  "a": "Benjamint444"
- },
- "basil": {
-  "t": "Ocimum basilicum seeds (Zenon Sych).jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Ocimum_basilicum_%D0%92%D0%B0%D1%81%D0%B8%D0%BB%D1%8C%D0%BA%D0%B8_%D1%81%D0%BF%D1%80%D0%B0%D0%B2%D0%B6%D0%BD%D1%96_-_%D0%BD%D0%B0%D1%81%D1%96%D0%BD%D0%BD%D1%8F.jpg",
-  "w": 3264,
-  "h": 2448,
-  "p": "https://commons.wikimedia.org/wiki/File:Ocimum_basilicum_%D0%92%D0%B0%D1%81%D0%B8%D0%BB%D1%8C%D0%BA%D0%B8_%D1%81%D0%BF%D1%80%D0%B0%D0%B2%D0%B6%D0%BD%D1%96_-_%D0%BD%D0%B0%D1%81%D1%96%D0%BD%D0%BD%D1%8F.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "Zenon Sych"
- },
  "sesame": {
   "t": "Black sesame seeds.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Black_sesame_seeds.jpg",
@@ -169,15 +124,6 @@
   "p": "https://commons.wikimedia.org/wiki/File:White,_red,_and_black_quinoa.jpg",
   "l": "CC BY-SA 4.0",
   "a": "Vladimirf7"
- },
- "quinoar": {
-  "t": "Red quinoa plants.JPG",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Red_quinoa_plants.JPG",
-  "w": 3056,
-  "h": 4592,
-  "p": "https://commons.wikimedia.org/wiki/File:Red_quinoa_plants.JPG",
-  "l": "CC BY-SA 4.0",
-  "a": "Michael Hermann"
  },
  "chana": {
   "t": "Chana Ko Dal.jpg",
@@ -232,15 +178,6 @@
   "p": "https://commons.wikimedia.org/wiki/File:Dried_bay_leaves.jpg",
   "l": "CC BY-SA 4.0",
   "a": "Mauro Cateb"
- },
- "tea": {
-  "t": "Ceylon black tea leaves.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Ceylon_black_tea_leaves.jpg",
-  "w": 3872,
-  "h": 2592,
-  "p": "https://commons.wikimedia.org/wiki/File:Ceylon_black_tea_leaves.jpg",
-  "l": "CC BY-SA 3.0",
-  "a": "Patrick Kolencherry"
  },
  "bird-budgies": {
   "t": "Budgerigars Budgies (8454309703).jpg",
@@ -558,6 +495,39 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/sunflower-striped.webp",
+  "own": true
+ },
+ "basil-rithwik": {
+  "t": "Basil (sabja) seeds",
+  "u": "",
+  "w": 640,
+  "h": 480,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/basil-rithwik.webp",
+  "own": true
+ },
+ "sunflower-hulled-rithwik": {
+  "t": "Hulled sunflower seeds",
+  "u": "",
+  "w": 920,
+  "h": 690,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/sunflower-hulled-rithwik.webp",
+  "own": true
+ },
+ "pumpkin-rithwik": {
+  "t": "Pumpkin seeds",
+  "u": "",
+  "w": 599,
+  "h": 449,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/pumpkin-rithwik.webp",
   "own": true
  }
 }

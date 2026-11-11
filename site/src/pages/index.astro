@@ -1,7 +1,7 @@
 ---
 import '../styles/site.css';
 import '../styles/v2.css';
-import { Image, getImage } from 'astro:assets';
+import { Image, Picture, getImage } from 'astro:assets';
 import birdLogo from '../assets/brand/birdfeeds-emblem.jpg';
 import foodLogo from '../assets/brand/industries-emblem.png';
 import ProductCard from '../components/ProductCard.astro';
@@ -10,6 +10,7 @@ import Contact from '../components/Contact.astro';
 import Vision from '../components/Vision.astro';
 import Steps from '../components/Steps.astro';
 import Footer from '../components/Footer.astro';
+import W from '../components/W.astro';
 import { BIRD, FOOD, BIRD_GROUPS, FOOD_GROUPS, BRANDS, CONTACT, lineCount, lineName } from '../data/products';
 import { photo, credits } from '../data/photos';
 import Photo from '../components/Photo.astro';
@@ -35,6 +36,39 @@ const birdOptions = BIRD.flatMap((p) => p.variants.map((v) => lineName(p, v)));
 const foodOptions = FOOD.flatMap((p) => p.variants.map((v) => lineName(p, v)));
 const marquee = (names: string[]) => [...new Set(names)];
 const birdHeroPhoto = photo('bird-budgies');
+const HERO_SIZES = '(max-width: 860px) 100vw, 58vw';
+// what search engines read about the two businesses (schema.org)
+const SITE = 'https://vamsi856.github.io/Projectrithwik/';
+const abs = (u: string) => new URL(u, 'https://vamsi856.github.io').href;
+const [lat, lng] = CONTACT.officeAt.split(',').map(Number);
+const birdLogoUrl = abs((await getImage({ src: birdLogo, width: 512, format: 'png' })).src);
+const foodLogoUrl = abs((await getImage({ src: foodLogo, width: 512, format: 'png' })).src);
+const business = (key: 'bird' | 'food', hash: string, logoUrl: string, desc: string, items: { name: string }[]) => ({
+  '@type': ['LocalBusiness', 'WholesaleStore'],
+  '@id': `${SITE}${hash}`,
+  name: BRANDS[key].name,
+  description: desc,
+  url: `${SITE}${hash}`,
+  logo: logoUrl,
+  image: [logoUrl, `${SITE}og.jpg`],
+  email: BRANDS[key].email,
+  telephone: CONTACT.phones.map((p) => p.tel),
+  taxID: BRANDS[key].gstin,
+  address: { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' },
+  geo: { '@type': 'GeoCoordinates', latitude: lat, longitude: lng },
+  hasMap: CONTACT.directions,
+  areaServed: { '@type': 'Country', name: 'India' },
+  contactPoint: { '@type': 'ContactPoint', contactType: 'sales', telephone: CONTACT.phones[0].tel, email: BRANDS[key].email, availableLanguage: ['en', 'te', 'hi'] },
+  hasOfferCatalog: { '@type': 'OfferCatalog', name: `${BRANDS[key].name} range`, itemListElement: items.map((p) => ({ '@type': 'Offer', itemOffered: { '@type': 'Product', name: p.name } })) },
+});
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: 'Rithwik, Kurnool', inLanguage: 'en-IN' },
+    business('bird', '#bird-feeds', birdLogoUrl, 'Bird feed grains from Kurnool: foxtail, proso, little, kodo, barnyard and browntop millets, jowar, bajra, maize, sunflower and safflower, processed or unprocessed.', BIRD),
+    business('food', '#human-food', foodLogoUrl, 'Food staples from Kurnool: millets, super foods, oil seeds, pulses, spices and cereals for homes, shops and bulk buyers.', FOOD),
+  ],
+};
 void photo;
 const birdAboutPhoto = photo('bird-on-millet');
 const birdFlightPhoto = photo('bird-parakeet-flight');
@@ -47,6 +81,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rithwik, Kurnool: Bird Feeds and Human Food</title>
+  <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="description" content="Two businesses from Kurnool, Andhra Pradesh. Rithwik Bird Feeds: foxtail, proso, sunflower, jowar and more. Rithwik Industries: millets, super foods, oil seeds, pulses, spices and cereals." />
   <meta name="theme-color" content="#0b1924" />
   <link rel="canonical" href="https://vamsi856.github.io/Projectrithwik/" />
@@ -57,12 +92,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
   <meta property="og:url" content="https://vamsi856.github.io/Projectrithwik/" />
   <meta property="og:image" content={new URL(`${base}og.jpg`, 'https://vamsi856.github.io').href} />
   <meta name="twitter:card" content="summary_large_image" />
-  <script type="application/ld+json" set:html={JSON.stringify([
-    { '@context': 'https://schema.org', '@type': 'LocalBusiness', name: BRANDS.bird.name, email: BRANDS.bird.email, telephone: '+91 83097 82770', taxID: BRANDS.bird.gstin, url: 'https://vamsi856.github.io/Projectrithwik/#bird-feeds',
-      address: { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' } },
-    { '@context': 'https://schema.org', '@type': 'LocalBusiness', name: BRANDS.food.name, email: BRANDS.food.email, telephone: '+91 83097 82770', taxID: BRANDS.food.gstin, url: 'https://vamsi856.github.io/Projectrithwik/#human-food',
-      address: { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' } },
-  ])} />
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <link rel="icon" href={`${base}favicon.ico`} sizes="48x48" />
   <link rel="icon" href={`${base}favicon-32.png`} type="image/png" sizes="32x32" />
   <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
@@ -70,25 +100,40 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
   <link rel="preload" href={`${base}fonts/anton-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin />
   <link rel="preload" href={`${base}fonts/instrument-sans-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin />
   <link rel="preload" href={`${base}fonts/instrument-sans-latin-600-normal.woff2`} as="font" type="font/woff2" crossorigin />
+  <script is:inline define:vars={{ heroSet: birdHeroPhoto?.avif ?? '', heroSizes: HERO_SIZES }}>
+    // A link straight to the bird site: fetch its hero photo at once (it is lazy otherwise,
+    // so the book and the food site never download it).
+    if (location.hash === '#bird-feeds' && heroSet) {
+      var l = document.createElement('link');
+      l.rel = 'preload'; l.as = 'image'; l.type = 'image/avif'; l.setAttribute('imagesrcset', heroSet); l.setAttribute('imagesizes', heroSizes); l.setAttribute('fetchpriority', 'high');
+      document.head.appendChild(l);
+    }
+  </script>
   <script is:inline>
     // Show the right site before first paint when the link points straight at one.
-    (function () { var h = location.hash; document.documentElement.dataset.view = h === '#bird-feeds' ? 'bird' : h === '#human-food' ? 'food' : 'book'; })();
+    (function () {
+      var h = location.hash, d = document.documentElement;
+      d.dataset.view = h === '#bird-feeds' ? 'bird' : h === '#human-food' ? 'food' : 'book';
+      // the hero entrance is pure CSS and starts with the first paint
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('has-motion');
+    })();
   </script>
 </head>
 <body data-view="book">
 
   <!-- ================= THE BOOK ================= -->
-  <section class="stage" id="book-view" aria-label="Choose a business">
+  <main class="stage" id="book-view" aria-labelledby="book-title">
+    <h1 class="sr" id="book-title">Rithwik Bird Feeds and Rithwik Industries, Kurnool</h1>
     <div class="stage__grain" aria-hidden="true"></div>
     <canvas class="stage__dust" aria-hidden="true"></canvas>
-    <canvas class="stage__flock" data-flock="2" aria-hidden="true"></canvas>
+    <div class="stage__flock" data-flock="2" aria-hidden="true"></div>
     <p class="stage__hint" id="stageHint">Two businesses, one family. Open the book.</p>
 
     <div class="book__tilt" id="bookTilt">
     <div class="book" id="book">
       <a class="page page--food" href="#human-food" data-enter="food">
         <div class="page__inner">
-          <Image class="page__emblem page__emblem--food" src={foodLogo} alt="" width={300} loading="eager" />
+          <Picture class="page__emblem page__emblem--food" src={foodLogo} alt="" formats={['avif']} fallbackFormat="webp" widths={[160, 240, 360, 480, 612]} sizes="(max-width: 860px) 52vw, 9vw" quality={60} loading="lazy" />
           <div class="page__text">
             <p class="page__kicker">Rithwik Industries</p>
             <h2 class="page__title">Human<br />food</h2>
@@ -104,8 +149,8 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         <button class="cover__front" id="openBook" type="button" aria-label="Open the book">
           <span class="cover__frame" aria-hidden="true"></span>
           <span class="cover__emblems" aria-hidden="true">
-            <Image src={birdLogo} alt="" width={260} loading="eager" />
-            <Image src={foodLogo} alt="" width={260} loading="eager" />
+            <Picture src={birdLogo} alt="" formats={['avif']} fallbackFormat="webp" widths={[110, 200, 300, 400]} sizes="(max-width: 860px) 26vw, 12vw" quality={65} loading="lazy" />
+            <Picture src={foodLogo} alt="" formats={['avif']} fallbackFormat="webp" widths={[110, 200, 300, 400]} sizes="(max-width: 860px) 26vw, 12vw" quality={60} loading="lazy" />
           </span>
           <span class="cover__title">Rithwik</span>
           <span class="cover__sub">Bird Feeds &amp; Industries</span>
@@ -115,7 +160,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         </button>
         <a class="cover__back page page--bird" href="#bird-feeds" data-enter="bird" tabindex="-1">
           <div class="page__inner">
-            <Image class="page__emblem page__emblem--bird" src={birdLogo} alt="" width={260} loading="eager" />
+            <Picture class="page__emblem page__emblem--bird" src={birdLogo} alt="" formats={['avif']} fallbackFormat="webp" widths={[160, 240, 340, 432]} sizes="(max-width: 860px) 55vw, 8vw" quality={65} loading="lazy" />
             <div class="page__text">
               <p class="page__kicker">Rithwik Bird Feeds</p>
               <h2 class="page__title">Bird<br />feeds</h2>
@@ -132,33 +177,34 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
     </div>
 
     <p class="stage__direct">Go straight to <a href="#bird-feeds" data-enter="bird">Bird Feeds</a> or <a href="#human-food" data-enter="food">Human Food</a></p>
-  </section>
+  </main>
 
   <div class="turn" id="turn" aria-hidden="true"></div>
 
 
   <!-- ================= SITE 1: RITHWIK BIRD FEEDS ================= -->
   <div class="site site--bird" id="bird-feeds" data-site="bird" hidden>
+    <a class="skip" href="#b-main" data-skip>Skip to content</a>
     <SiteHeader logo={birdLogo} first="Rithwik" second="Bird Feeds" top="b-top" email={BRANDS.bird.email}
       phones={[CONTACT.phones[1], CONTACT.phones[2]]}
       links={[{ href: 'b-about', label: 'About' }, { href: 'b-packs', label: 'Packs' }, { href: 'b-birds', label: 'Birds' }, { href: 'b-feeds', label: 'Feeds' }, { href: 'b-vision', label: 'Vision' }, { href: 'b-contact', label: 'Contact' }]}
       sister={{ view: 'food', href: '#human-food', text: 'Rithwik Industries, food for people' }} />
 
-    <main>
+    <main id="b-main" tabindex="-1">
       <section class="bird__hero" id="b-top" aria-labelledby="bird-title">
         {birdHeroPhoto && (
           <div class="bird__photo" data-parallax="0.18">
-            <Photo name="bird-budgies" alt="" sizes="(max-width: 860px) 100vw, 58vw" eager />
+            <Photo name="bird-budgies" alt="" sizes={HERO_SIZES} priority />
           </div>
         )}
         <canvas class="seedfall" aria-hidden="true"></canvas>
-        <canvas class="bird__flock" data-flock="3" aria-hidden="true"></canvas>
+        <div class="bird__flock" data-flock="3" aria-hidden="true"></div>
         <span class="ghost ghost--bird" data-ghost="Feeds" aria-hidden="true"></span>
         <div class="bird__intro bird__intro--pack">
           <div class="bird__copy">
-            <h1 class="display" id="bird-title" data-split><span class="display__a">Rithwik</span> <span class="display__b">Bird feeds</span></h1>
-            <p class="bird__lede" data-rise>{BIRD.length} feeds in {nBird} grades, sold processed or unprocessed, from our office in Kurnool and our warehouse at Duvvur.</p>
-            <div class="actions" data-rise>
+            <h1 class="display" id="bird-title"><span class="display__a"><W t="Rithwik" d={0} /></span> <span class="display__b"><W t="Bird" d={1} /> <W t="feeds" d={2} /></span></h1>
+            <p class="bird__lede" data-rise style="--i:0">{BIRD.length} feeds in {nBird} grades, sold processed or unprocessed, from our office in Kurnool and our warehouse at Duvvur.</p>
+            <div class="actions" data-rise style="--i:1">
               <a class="pill pill--gold" href="#b-feeds" data-jump data-magnetic>See the feeds</a>
               <a class="pill pill--line" href={`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent('Hello Rithwik Bird Feeds, I would like a price.')}`} target="_blank" rel="noopener">WhatsApp an order</a>
             </div>
@@ -247,29 +293,30 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
 
     <Footer logo={birdLogo} tone="bird" brand={BRANDS.bird.name} gstin={BRANDS.bird.gstin} email={BRANDS.bird.email} top="b-top"
       sister={{ view: 'food', href: '#human-food', text: 'Rithwik Industries, millets, super foods, pulses and spices for people' }} />
-    <canvas class="scrollbird" aria-hidden="true"></canvas>
+    <div class="scrollbird" aria-hidden="true"></div>
   </div>
 
 
   <!-- ================= SITE 2: RITHWIK INDUSTRIES ================= -->
   <div class="site site--food" id="human-food" data-site="food" hidden>
+    <a class="skip" href="#f-main" data-skip>Skip to content</a>
     <SiteHeader logo={foodLogo} first="Rithwik" second="Industries" top="f-top" email={BRANDS.food.email}
       phones={[CONTACT.phones[0], CONTACT.phones[3]]}
       links={[{ href: 'f-about', label: 'About' }, { href: 'f-packs', label: 'Packs' }, { href: 'f-range', label: 'Products' }, { href: 'f-vision', label: 'Vision' }, { href: 'f-contact', label: 'Contact' }]}
       sister={{ view: 'bird', href: '#bird-feeds', text: 'Rithwik Bird Feeds, food for birds' }} />
 
-    <main>
+    <main id="f-main" tabindex="-1">
       <section class="food-hero" id="f-top" aria-labelledby="food-title">
         <span class="ghost ghost--food" data-ghost="Grain" aria-hidden="true"></span>
         <div class="food-hero__copy">
-          <p class="food-hero__brand" data-rise>Rithwik Industries</p>
-          <h1 class="display display--food" id="food-title" data-split>Nature's <em class="grainword">grain,</em> nurtured for you</h1>
-          <p class="food-hero__lede" data-rise>Millets, super foods, oil seeds, pulses, spices and cereals for homes, shops and bulk buyers.</p>
-          <div class="actions" data-rise>
+          <p class="food-hero__brand" data-rise style="--i:0">Rithwik Industries</p>
+          <h1 class="display display--food" id="food-title"><W t="Nature's" d={0} /> <em class="grainword"><W t="grain," d={1} /></em> <W t="nurtured" d={2} /> <W t="for" d={3} /> <W t="you" d={4} /></h1>
+          <p class="food-hero__lede" data-rise style="--i:1">Millets, super foods, oil seeds, pulses, spices and cereals for homes, shops and bulk buyers.</p>
+          <div class="actions" data-rise style="--i:2">
             <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>
             <a class="pill pill--line-ink" href={`${base}Rithwik-Catalogue.pdf`} download>Download catalogue (PDF)</a>
           </div>
-          <ul class="trust" data-rise aria-label="Certifications">
+          <ul class="trust" data-rise style="--i:3" aria-label="Certifications">
             {held('food').filter((r) => r.mark !== 'GST').map((r) => (
               <li><a href="#f-certs" data-jump title={`${r.name}, ${r.status.toLowerCase()}`}>{r.logo ? <img class="trust__logo" src={`${base}certs/${r.logo}`} alt={r.name} width="40" height="40" loading="lazy" /> : <span class="trust__mark">{r.mark}</span>}</a></li>
             ))}
@@ -289,7 +336,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         <div class="about__copy">
           <h2 class="section-title section-title--food" id="f-about-title" data-split>Who we are</h2>
           <p class="about__lead" data-reveal>Rithwik Industries carries forward a family grain trade that began in 1925, bringing millets, super foods, oil seeds, pulses and spices to homes, shops and bulk buyers.</p>
-          <p data-reveal>We work from our office in Kurnool and our warehouse at Duvvur, keeping eight millets, super foods like chia and five kinds of quinoa, oil seeds, pulses, whole spices, buckwheat and oats. Tell us the pack size you need and we'll quote for it.</p>
+          <p data-reveal>We work from our office in Kurnool and our warehouse at Duvvur, keeping eight millets, five kinds of quinoa, oil seeds and seeds like chia, flax, pumpkin and basil, pulses, whole spices, buckwheat and oats. Tell us the pack size you need and we'll quote for it.</p>
         </div>
         <div class="about__media">
           {fieldPhoto && (
@@ -381,12 +428,14 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
     <span class="sound__nudge" data-sound-nudge hidden>Tap to hear the birds</span>
   </div>
 
+  <aside aria-label="WhatsApp">
   <a class="wa" href={`https://wa.me/${CONTACT.whatsapp}`} target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
     <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3Zm0 23.6a10.6 10.6 0 0 1-5.4-1.5l-.4-.2-3.9 1 1-3.8-.2-.4A10.6 10.6 0 1 1 16 26.6Zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5 1-1.7.1-.2 0-.4 0-.6l-1-2.3c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.7 3.7 0 0 0-1.1 2.7 6.4 6.4 0 0 0 1.3 3.4 14.7 14.7 0 0 0 5.6 5c2.1.9 2.9 1 4 .8a3.4 3.4 0 0 0 2.2-1.6 2.8 2.8 0 0 0 .2-1.6c-.1-.1-.3-.2-.6-.3Z" /></svg>
   </a>
+  </aside>
 
   <script>
-    import '../scripts/main.ts';
+    import '../scripts/boot.ts';
   </script>
 </body>
 </html>

@@ -3,42 +3,34 @@ import FLIGHT from './flight.json';
 import SOUNDS from './sounds.json';
 import PERCH from './perch-credits.json';
 
-// Product and scene photos are served straight from Wikimedia Commons, which allows
-// hotlinking. We request Wikimedia's standard thumbnail widths so every size is cached
-// on their CDN, and let the browser pick one via srcset.
+import SIZES from './photo-sizes.json';
+
+// Product and scene photos come from Wikimedia Commons (credited in the photo credits) and
+// are served from this site, in AVIF with a WebP fallback, at a few widths each (made by
+// the photo build step from the Commons originals). Self-hosting keeps them fast, cached,
+// cookie-free, and safe from Commons' rate limits.
 
 /** `local`: our own crop of the Commons file, served from this site (public/), when only part of the photo is wanted */
 /** `own`: a photo Rithwik supplied (no outside credit needed) */
 export type Remote = { t: string; u: string; w: number; h: number; p: string; l: string; a: string; local?: string; own?: boolean };
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const DATA = commons as Record<string, Remote>;
-const STEPS = [500, 960, 1280, 1920];
+const SIZE = SIZES as Record<string, { w: number; h: number; widths: number[] }>;
 
-function thumb(u: string, width: number) {
-  // https://upload.wikimedia.org/wikipedia/commons/a/ab/Name.jpg
-  //   -> https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Name.jpg/960px-Name.jpg
-  const m = u.match(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/commons\/)(.+\/)([^/]+)$/);
-  if (!m) return u;
-  const [, root, dir, file] = m;
-  const name = /\.png$/i.test(file) ? file : file;
-  return `${root}thumb/${dir}${file}/${width}px-${name}`;
-}
+export type Photo = { src: string; srcset: string; avif: string; width: number; height: number; credit: Remote };
 
-export type Photo = { src: string; srcset: string; width: number; height: number; credit: Remote };
+const file = (key: string, w: number, ext: 'avif' | 'webp') => `${BASE}img/${key}-${w}.${ext}`;
 
 export function photo(key?: string): Photo | undefined {
-  if (!key || !DATA[key]) return undefined;
-  const r = DATA[key];
-  if (r.local) return { src: BASE + r.local, srcset: `${BASE + r.local} ${r.w}w`, width: r.w, height: r.h, credit: r };
-  const widths = STEPS.filter((s) => s < r.w);
-  const set = widths.map((w) => `${thumb(r.u, w)} ${w}w`);
-  if (r.w <= 1920) set.push(`${r.u} ${r.w}w`);
-  const fallbackW = widths.includes(960) ? 960 : widths[widths.length - 1];
+  if (!key || !DATA[key] || !SIZE[key]) return undefined;
+  const r = DATA[key], z = SIZE[key];
+  const fallback = z.widths.includes(800) ? 800 : z.widths[z.widths.length - 1];
   return {
-    src: fallbackW ? thumb(r.u, fallbackW) : r.u,
-    srcset: set.join(', '),
-    width: r.w,
-    height: r.h,
+    src: file(key, fallback, 'webp'),
+    srcset: z.widths.map((w) => `${file(key, w, 'webp')} ${w}w`).join(', '),
+    avif: z.widths.map((w) => `${file(key, w, 'avif')} ${w}w`).join(', '),
+    width: z.w,
+    height: z.h,
     credit: r,
   };
 }
@@ -55,8 +47,6 @@ export const credits = [
 
 /** A ~500px version for painting onto 3D pack labels. */
 export function photoSmall(key?: string) {
-  if (!key || !DATA[key]) return undefined;
-  const r = DATA[key];
-  if (r.local) return BASE + r.local;
-  return r.w > 500 ? thumb(r.u, 500) : r.u;
+  if (!key || !SIZE[key]) return undefined;
+  return file(key, SIZE[key].widths[0], 'webp');
 }

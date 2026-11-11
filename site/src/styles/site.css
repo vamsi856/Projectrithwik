@@ -1,8 +1,8 @@
-@font-face { font-family: "Anton"; src: url("../fonts/anton-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: "Instrument Sans"; src: url("../fonts/instrument-sans-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: "Instrument Sans"; src: url("../fonts/instrument-sans-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
-@font-face { font-family: "Instrument Sans"; src: url("../fonts/instrument-sans-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
-@font-face { font-family: "Instrument Sans"; src: url("../fonts/instrument-sans-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Anton"; src: url("/Projectrithwik/fonts/anton-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("/Projectrithwik/fonts/instrument-sans-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("/Projectrithwik/fonts/instrument-sans-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("/Projectrithwik/fonts/instrument-sans-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url("/Projectrithwik/fonts/instrument-sans-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
 
 /* Rithwik Bird Feeds & Rithwik Industries
    Colours are lifted from the two logos: bird feeds navy, sky and marigold;
@@ -569,3 +569,5 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .foot__home:focus-visible { outline: 3px solid var(--marigold); outline-offset: 4px; }
 .foot__reach a { color: var(--khaki); font-weight: 600; text-underline-offset: 4px; overflow-wrap: anywhere; }
 .foot__small a { color: inherit; text-underline-offset: 3px; }
+/* the GSTIN stays on one line on phones */
+@media (max-width: 640px) { .fact--code b { font-size: clamp(.9rem, 4.1vw, 1.15rem); letter-spacing: 0; } }

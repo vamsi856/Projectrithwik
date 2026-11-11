@@ -1,0 +1,7 @@
+---
+// One word of a hero headline, in its own mask, so it can rise into view with pure CSS
+// from the very first paint (no script needed). `d` is its place in the line-up.
+interface Props { t: string; d: number }
+const { t, d } = Astro.props;
+---
+<span class="hw"><span style={`--d:${d}`}>{t}</span></span>

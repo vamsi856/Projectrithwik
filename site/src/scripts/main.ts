@@ -8,6 +8,7 @@ import { applyFestive } from './festive';
 import { MONTHS_LONG } from '../data/seasons';
 import { createFlock, MACAW, SCARLET } from './flock';
 import { initPerches } from './perch';
+import { softwareGL } from './gpu';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin);
 
@@ -66,7 +67,7 @@ function show(view: View) {
   window.scrollTo(0, 0);
   if (view !== 'book' && !inited.has(view)) { inited.add(view); initSite(view, sites[view]); }
   ScrollTrigger.refresh();
-  const bookFlock = $<HTMLCanvasElement>('.stage__flock');
+  const bookFlock = $('.stage__flock');
   if (bookFlock && flocks.has(bookFlock)) view === 'book' ? flocks.get(bookFlock)!.play() : flocks.get(bookFlock)!.pause();
   if (view === 'book') openBook();
 }
@@ -112,7 +113,7 @@ function openBook() {
   coverFront.setAttribute('aria-hidden', 'true');
   coverBack.setAttribute('tabindex', '0');
   $('#stageHint')!.textContent = 'Pick a page to step inside.';
-  const bf = $<HTMLCanvasElement>('.stage__flock'); if (bf) flockFor(bf).play();
+  const bf = $('.stage__flock'); if (bf) flockFor(bf).play();
 }
 coverFront.addEventListener('click', openBook);
 
@@ -172,7 +173,7 @@ if (fine && !reduce) {
 // Real macaws with real wingbeats (footage frames on one canvas, see flock.ts).
 type Flock = ReturnType<typeof createFlock>;
 const flocks = new Map<Element, Flock>();
-function flockFor(c: HTMLCanvasElement) {
+function flockFor(c: HTMLElement) {
   if (flocks.has(c)) return flocks.get(c)!;
   const hero = c.classList.contains('bird__flock');
   const portrait = innerWidth < innerHeight;
@@ -259,6 +260,23 @@ async function globe(canvas: HTMLCanvasElement, tone: string) {
   return g;
 }
 
+/* ------------------------------------------------------------------ work that can wait */
+// Set-up for things below the first screen runs in short slices (a few ms each) with the
+// page free to paint and respond in between. When the queue is empty the scroll positions
+// are measured once for everything.
+const queue: (() => void)[] = [];
+let draining = false;
+const drain = () => {
+  const end = performance.now() + 6;
+  while (queue.length && performance.now() < end) queue.shift()!();
+  if (queue.length) setTimeout(drain, 0);
+  else { draining = false; ScrollTrigger.refresh(); }
+};
+function after(fn: () => void) {
+  queue.push(fn);
+  if (!draining) { draining = true; setTimeout(drain, 0); }
+}
+
 /* ------------------------------------------------------------------ per-site motion */
 function initSite(view: 'bird' | 'food', root: HTMLElement) {
   const T = siteTriggers[view];
@@ -294,6 +312,12 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   }
   void bar;
 
+  // skip link: keyboard focus jumps past the header and its links, into the page
+  $('[data-skip]', root)?.addEventListener('click', (e) => {
+    e.preventDefault();
+    $('main', root)!.focus({ preventScroll: true });
+  });
+
   // in-site anchor links
   $$<HTMLAnchorElement>('a[data-jump]', root).forEach((a) => a.addEventListener('click', (e) => {
     const t = document.getElementById(a.getAttribute('href')!.slice(1));
@@ -304,14 +328,14 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   $$<HTMLIFrameElement>('iframe[data-src]', root).forEach((f) => new IntersectionObserver(([en], o) => { if (en.isIntersecting) { f.src = f.dataset.src!; o.disconnect(); } }, { rootMargin: '600px' }).observe(f));
 
   // flock + canvases
-  $$<HTMLCanvasElement>('canvas[data-flock]', root).forEach((c) => flockFor(c).play());
+  $$('[data-flock]', root).forEach((c) => flockFor(c).play());
   $$<HTMLCanvasElement>('canvas.seedfall', root).forEach((c) => particleCanvas(c, 'fall'));
   $$<HTMLCanvasElement>('canvas.grainpour', root).forEach((c) => particleCanvas(c, 'pour'));
 
   // globe
   $$<HTMLCanvasElement>('canvas[data-globe]', root).forEach((c) => {
     let g: { toggle: (on: boolean) => void } | null = null, loading = false;
-    import('./pack3d').then(({ softwareGL }) => { if (softwareGL()) { c.closest('.vision__globe')?.classList.add('no-gl'); loading = true; } });
+    if (softwareGL()) { c.closest('.vision__globe')?.classList.add('no-gl'); loading = true; }
     new IntersectionObserver(async ([en]) => {
       if (g) return g.toggle(en.isIntersecting);
       if (!en.isIntersecting || !c.offsetWidth || loading || c.closest('.no-gl')) return;
@@ -494,51 +518,71 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
 
   if (reduce) return;
 
-  // legacy: the rail draws across, each generation stamps in, the year counts up from 1900
-  $$('[data-legacy]', root).forEach((lg) => {
-    const line = $<SVGPathElement>('.legacy__line path', lg)!;
-    const steps = $$('[data-legacy-step]', lg);
-    const tl = gsap.timeline({ scrollTrigger: { trigger: lg, start: 'top 75%', once: true } })
-      .fromTo(line, { strokeDasharray: 1000, strokeDashoffset: 1000 }, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' }, 0)
-      .from(steps, { y: 40, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.12 }, 0.1)
-      .from($$('.legacy__dot', lg), { scale: 0, duration: 0.45, ease: 'back.out(3)', stagger: 0.12 }, 0.15);
-    tw(tl);
+  // Everything below the first screen is set up a little later, in small slices between
+  // frames, so the first screen paints and answers taps straight away.
+  const first = $(':scope > main > section', root);
+  const lazy = (el: Element, fn: () => void) => (first?.contains(el) ? fn() : after(fn));
+  after(() => {
+    // legacy: the rail draws across, each generation stamps in, the year counts up from 1900
+    $$('[data-legacy]', root).forEach((lg) => {
+      const line = $<SVGPathElement>('.legacy__line path', lg)!;
+      const steps = $$('[data-legacy-step]', lg);
+      const tl = gsap.timeline({ scrollTrigger: { trigger: lg, start: 'top 75%', once: true } })
+        .fromTo(line, { strokeDasharray: 1000, strokeDashoffset: 1000 }, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' }, 0)
+        .from(steps, { y: 40, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.12 }, 0.1)
+        .from($$('.legacy__dot', lg), { scale: 0, duration: 0.45, ease: 'back.out(3)', stagger: 0.12 }, 0.15);
+      tw(tl);
+    });
+
+  
   });
 
-  // season dial: arcs draw themselves in
-  $$('[data-seasons]', root).forEach((sec) => {
-    const arcs = $$<SVGPathElement>('.seasons__arc', sec);
-    arcs.forEach((a) => { const L = a.getTotalLength(); a.style.strokeDasharray = `${L}`; a.style.strokeDashoffset = `${L}`; });
-    tw(gsap.to(arcs, { strokeDashoffset: 0, duration: 1.2, ease: 'power3.out', stagger: 0.04, scrollTrigger: { trigger: sec, start: 'top 70%', once: true } }));
+  after(() => {
+    // season dial: arcs draw themselves in
+    $$('[data-seasons]', root).forEach((sec) => {
+      const arcs = $$<SVGPathElement>('.seasons__arc', sec);
+      arcs.forEach((a) => { const L = a.getTotalLength(); a.style.strokeDasharray = `${L}`; a.style.strokeDashoffset = `${L}`; });
+      tw(gsap.to(arcs, { strokeDashoffset: 0, duration: 1.2, ease: 'power3.out', stagger: 0.04, scrollTrigger: { trigger: sec, start: 'top 70%', once: true } }));
+    });
+
+  
   });
 
-  // seed-to-sack: pin and scroll sideways on wide screens
-  $$('[data-story]', root).forEach((sec) => {
-    const pin = $('.story__pin', sec)!, track = $('[data-story-track]', sec)!, bar = $('[data-story-bar]', sec)!;
-    if (innerWidth > 860) {
-      const dist = () => Math.max(0, track.scrollWidth - innerWidth);
-      const t = gsap.to(track, {
-        x: () => -dist(), ease: 'none',
-        scrollTrigger: { trigger: pin, start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1, onUpdate: (s) => gsap.set(bar, { scaleX: s.progress }) },
-      });
-      tw(t);
-      $$('.story__panel', sec).forEach((panel) => {
-        tw(gsap.from($$('.story__copy > *', panel), { y: 40, opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: panel, containerAnimation: t, start: 'left 75%', once: true } }));
-        tw(gsap.from($('.story__art', panel), { scale: 0.85, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: panel, containerAnimation: t, start: 'left 85%', once: true } }));
-      });
-    } else {
-      $$('.story__panel', sec).forEach((panel) => tw(gsap.from(panel, { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: panel, start: 'top 85%', once: true } })));
-    }
+  after(() => {
+    // seed-to-sack: pin and scroll sideways on wide screens
+    $$('[data-story]', root).forEach((sec) => {
+      const pin = $('.story__pin', sec)!, track = $('[data-story-track]', sec)!, bar = $('[data-story-bar]', sec)!;
+      if (innerWidth > 860) {
+        const dist = () => Math.max(0, track.scrollWidth - innerWidth);
+        const t = gsap.to(track, {
+          x: () => -dist(), ease: 'none',
+          scrollTrigger: { trigger: pin, start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1, onUpdate: (s) => gsap.set(bar, { scaleX: s.progress }) },
+        });
+        tw(t);
+        $$('.story__panel', sec).forEach((panel) => {
+          tw(gsap.from($$('.story__copy > *', panel), { y: 40, opacity: 0, stagger: 0.08, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: panel, containerAnimation: t, start: 'left 75%', once: true } }));
+          tw(gsap.from($('.story__art', panel), { scale: 0.85, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: panel, containerAnimation: t, start: 'left 85%', once: true } }));
+        });
+      } else {
+        $$('.story__panel', sec).forEach((panel) => tw(gsap.from(panel, { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: panel, start: 'top 85%', once: true } })));
+      }
+    });
+
+  
   });
 
-  // registration seals stamp down
-  $$('.certs__grid', root).forEach((r) => tw(gsap.from($$('.cert__seal', r), {
-    scale: 1.9, rotate: -24, opacity: 0, duration: 0.7, ease: 'back.out(2.2)', stagger: 0.15,
-    scrollTrigger: { trigger: r, start: 'top 85%', once: true, onEnter: () => setTimeout(() => sfx('tick'), 450) },
-  })));
+  after(() => {
+    // registration seals stamp down
+    $$('.certs__grid', root).forEach((r) => tw(gsap.from($$('.cert__seal', r), {
+      scale: 1.9, rotate: -24, opacity: 0, duration: 0.7, ease: 'back.out(2.2)', stagger: 0.15,
+      scrollTrigger: { trigger: r, start: 'top 85%', once: true, onEnter: () => setTimeout(() => sfx('tick'), 450) },
+    })));
+
+  
+  });
 
   // hero birds scatter from the pointer or a finger, then settle back
-  $$<HTMLCanvasElement>('canvas.bird__flock', root).forEach((c) => {
+  $$('.bird__flock', root).forEach((c) => {
     const hero = c.closest('section')!, f = flockFor(c);
     let lastChirp = 0;
     const scare = (e: PointerEvent) => {
@@ -549,124 +593,148 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     hero.addEventListener('pointerdown', scare);
   });
 
-  // marquees: GSAP loop that speeds up and leans with scroll velocity
-  $$('.marquee__track', root).forEach((track) => {
-    track.style.animation = 'none';
-    const loop = gsap.to(track, { xPercent: -50, duration: 40, ease: 'none', repeat: -1, paused: true });
-    const lean = gsap.quickTo(track, 'skewX', { duration: 0.5, ease: 'power3.out' });
-    const settle = gsap.delayedCall(0.2, () => { loop.timeScale(1); lean(0); }).pause();
-    st({ trigger: track, start: 'top bottom', end: 'bottom top',
-      onToggle: (s) => (s.isActive ? loop.play() : loop.pause()),
-      onUpdate: (s) => {
-        const v = s.getVelocity();
-        loop.timeScale(1 + Math.min(Math.abs(v) / 300, 6) * (v < 0 ? -1 : 1));
-        lean(gsap.utils.clamp(-12, 12, v / -160));
-        settle.restart(true);
-      } });
+  after(() => {
+    // marquees: GSAP loop that speeds up and leans with scroll velocity
+    $$('.marquee__track', root).forEach((track) => {
+      track.style.animation = 'none';
+      const loop = gsap.to(track, { xPercent: -50, duration: 40, ease: 'none', repeat: -1, paused: true });
+      const lean = gsap.quickTo(track, 'skewX', { duration: 0.5, ease: 'power3.out' });
+      const settle = gsap.delayedCall(0.2, () => { loop.timeScale(1); lean(0); }).pause();
+      st({ trigger: track, start: 'top bottom', end: 'bottom top',
+        onToggle: (s) => (s.isActive ? loop.play() : loop.pause()),
+        onUpdate: (s) => {
+          const v = s.getVelocity();
+          loop.timeScale(1 + Math.min(Math.abs(v) / 300, 6) * (v < 0 ? -1 : 1));
+          lean(gsap.utils.clamp(-12, 12, v / -160));
+          settle.restart(true);
+        } });
+    });
+
+  
   });
 
   // headline splits
-  $$('[data-split]', root).forEach((el) => {
+  $$('[data-split]', root).forEach((el) => lazy(el, () => {
     SplitText.create(el, {
       type: 'words,lines', mask: 'lines', autoSplit: true,
       onSplit: (self) => tw(gsap.from(self.words, { yPercent: 115, rotate: 4, duration: 1.05, ease: 'power4.out', stagger: 0.06, scrollTrigger: { trigger: el, start: 'top 88%', once: true } })),
     });
-  });
-  // hero copy
-  gsap.from($$('[data-rise]', $('main', root)!).slice(0, 3), { y: 30, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.12, delay: 0.35 });
+  }));
+  // hero copy: its entrance is CSS (see .hw and [data-rise] in v2.css), so it starts with the first paint
   const badge = $('.food-hero__art img', root);
   if (badge) gsap.from(badge, { scale: 0.7, rotate: -8, opacity: 0, duration: 1.4, ease: 'elastic.out(1, 0.7)', delay: 0.2 });
 
   // reveals
-  $$('[data-reveal]', root).forEach((el) => tw(gsap.from(el, { y: 40, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%', once: true } })));
+  $$('[data-reveal]', root).forEach((el) => lazy(el, () => tw(gsap.from(el, { y: 40, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%', once: true } }))));
 
   // photo curtains
-  $$('[data-curtain]', root).forEach((fig) => {
+  $$('[data-curtain]', root).forEach((fig) => lazy(fig, () => {
     const img = $('img', fig);
     tw(gsap.timeline({ scrollTrigger: { trigger: fig, start: 'top 85%', once: true } })
       .fromTo(fig, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'expo.inOut' })
       .from(img, { scale: 1.35, duration: 1.8, ease: 'expo.out' }, 0.1));
-  });
+  }));
   // parallax
-  $$('[data-parallax]', root).forEach((el) => {
+  $$('[data-parallax]', root).forEach((el) => lazy(el, () => {
     const k = Number(el.dataset.parallax);
     tw(gsap.fromTo(el, { yPercent: -k * 50 }, { yPercent: k * 50, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
-  });
-  $$('.range__banner img', root).forEach((img) => tw(gsap.fromTo(img, { yPercent: -15 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: img.closest('figure'), start: 'top bottom', end: 'bottom top', scrub: true } })));
+  }));
+  $$('.range__banner img', root).forEach((img) => lazy(img, () => tw(gsap.fromTo(img, { yPercent: -15 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: img.closest('figure'), start: 'top bottom', end: 'bottom top', scrub: true } }))));
   // ghost words drift
-  $$('.ghost', root).forEach((g) => {
+  $$('.ghost', root).forEach((g) => lazy(g, () => {
     const centred = g.classList.contains('ghost--enq');
     if (centred) gsap.set(g, { x: 0, xPercent: -50 });
     tw(gsap.fromTo(g, { xPercent: centred ? -40 : 6 }, { xPercent: centred ? -60 : -14, ease: 'none', scrollTrigger: { trigger: g.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
-  });
-
-  // cards cascade in, then tilt with the pointer
-  gsap.set(cards, { opacity: 0, y: 60, rotateX: -18, transformPerspective: 900 });
-  T.push(...ScrollTrigger.batch(cards, {
-    start: 'top 92%', once: true,
-    onEnter: (b) => gsap.to(b, { opacity: 1, y: 0, rotateX: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, clearProps: 'transform' }),
   }));
-  $$('.pcard__swatch', root).forEach((s) => tw(gsap.from(s, { rotate: -200, scale: 0, duration: 1.1, ease: 'back.out(1.8)', scrollTrigger: { trigger: s, start: 'top 95%', once: true } })));
-  if (fine) cards.forEach((card) => {
-    const shine = document.createElement('span'); shine.className = 'pcard__shine'; card.appendChild(shine);
-    card.addEventListener('pointermove', (e) => {
-      const r = card.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
-      card.style.setProperty('--mx', `${px * 100}%`); card.style.setProperty('--my', `${py * 100}%`);
-      gsap.to(card, { rotateY: (px - 0.5) * 10, rotateX: (0.5 - py) * 8, transformPerspective: 900, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
+
+  after(() => {
+    // cards cascade in, then tilt with the pointer
+    gsap.set(cards, { opacity: 0, y: 60, rotateX: -18, transformPerspective: 900 });
+    T.push(...ScrollTrigger.batch(cards, {
+      start: 'top 92%', once: true,
+      onEnter: (b) => gsap.to(b, { opacity: 1, y: 0, rotateX: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, clearProps: 'transform' }),
+    }));
+    $$('.pcard__swatch', root).forEach((s) => tw(gsap.from(s, { rotate: -200, scale: 0, duration: 1.1, ease: 'back.out(1.8)', scrollTrigger: { trigger: s, start: 'top 95%', once: true } })));
+    if (fine) cards.forEach((card) => {
+      const shine = document.createElement('span'); shine.className = 'pcard__shine'; card.appendChild(shine);
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+        card.style.setProperty('--mx', `${px * 100}%`); card.style.setProperty('--my', `${py * 100}%`);
+        gsap.to(card, { rotateY: (px - 0.5) * 10, rotateX: (0.5 - py) * 8, transformPerspective: 900, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
+      });
+      card.addEventListener('pointerleave', () => gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.7, ease: 'power3.out' }));
     });
-    card.addEventListener('pointerleave', () => gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.7, ease: 'power3.out' }));
+
+  
   });
 
-  // birds on the feed cards (see perch.ts)
-  initPerches(root, reduce);
+  after(() => {
+    // birds on the feed cards (see perch.ts)
+    initPerches(root, reduce);
 
-  // counters
-  $$('[data-count]', root).forEach((el) => {
-    const n = Number(el.dataset.count); const o = { v: Number(el.dataset.countFrom || 0) };
-    tw(gsap.to(o, { v: n, duration: 1.6, ease: 'power2.out', onUpdate: () => (el.textContent = String(Math.round(o.v))), scrollTrigger: { trigger: el, start: 'top 90%', once: true } }));
+  
   });
-  // facts pop
-  $$('.facts', root).forEach((f) => tw(gsap.from($$('.fact', f), { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: f, start: 'top 90%', once: true } })));
 
-  // steps: dashed path draws, numbers pop
-  $$('.steps', root).forEach((sec) => {
-    const path = $<SVGPathElement>('.steps__path path', sec);
-    if (path) {
-      const len = path.getTotalLength();
-      gsap.set(path, { strokeDasharray: `6 10`, strokeDashoffset: 0 });
-      const mask = path.cloneNode() as SVGPathElement; // reveal by animating a solid overlay mask
-      void mask;
-      tw(gsap.fromTo(path, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', ease: 'none', scrollTrigger: { trigger: sec, start: 'top 75%', end: 'center 50%', scrub: true } }));
-      void len;
+  after(() => {
+    // counters
+    $$('[data-count]', root).forEach((el) => {
+      const n = Number(el.dataset.count); const o = { v: Number(el.dataset.countFrom || 0) };
+      tw(gsap.to(o, { v: n, duration: 1.6, ease: 'power2.out', onUpdate: () => (el.textContent = String(Math.round(o.v))), scrollTrigger: { trigger: el, start: 'top 90%', once: true } }));
+    });
+    // facts pop
+    $$('.facts', root).forEach((f) => tw(gsap.from($$('.fact', f), { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: f, start: 'top 90%', once: true } })));
+
+  
+  });
+
+  after(() => {
+    // steps: dashed path draws, numbers pop
+    $$('.steps', root).forEach((sec) => {
+      const path = $<SVGPathElement>('.steps__path path', sec);
+      if (path) {
+        const len = path.getTotalLength();
+        gsap.set(path, { strokeDasharray: `6 10`, strokeDashoffset: 0 });
+        const mask = path.cloneNode() as SVGPathElement; // reveal by animating a solid overlay mask
+        void mask;
+        tw(gsap.fromTo(path, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', ease: 'none', scrollTrigger: { trigger: sec, start: 'top 75%', end: 'center 50%', scrub: true } }));
+        void len;
+      }
+      tw(gsap.from($$('.step', sec), { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.15, scrollTrigger: { trigger: sec, start: 'top 75%', once: true } }));
+      tw(gsap.from($$('.step b', sec), { scale: 0, rotate: -90, duration: 0.8, ease: 'back.out(2)', stagger: 0.15, delay: 0.3, scrollTrigger: { trigger: sec, start: 'top 75%', once: true } }));
+    });
+
+  
+  });
+
+  after(() => {
+    // vision: legend fades in under the globe
+    $$('.vision', root).forEach((v) => tw(gsap.from($('.vision__legend', v), { opacity: 0, y: 16, duration: 0.8, delay: 0.6, scrollTrigger: { trigger: v, start: 'top 60%', once: true } })));
+
+    // magnetic primary buttons
+    if (fine) $$('[data-magnetic]', root).forEach((b) => {
+      b.addEventListener('pointermove', (e) => { const r = b.getBoundingClientRect(); gsap.to(b, { x: (e.clientX - r.left - r.width / 2) * 0.3, y: (e.clientY - r.top - r.height / 2) * 0.4, duration: 0.4 }); });
+      b.addEventListener('pointerleave', () => gsap.to(b, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' }));
+    });
+
+  
+  });
+
+  after(() => {
+    // bird site: real macaws fly across the screen as you scroll down the page, past the
+    // millets, the packs and everything else. They only set off while the page is moving and
+    // ride up with it a little slower than the content (so they read as further away); when
+    // scrolling stops they fly on out of the screen and no new ones come until you scroll.
+    const sb = $('.scrollbird', root);
+    if (sb && !reduce) {
+      const near = (w: number, h: number) => (w < h ? Math.min(w * 0.6, h * 0.36, 420) : Math.min(w * 0.24, h * 0.5, 460));
+      const f = createFlock(sb, { sheets: [MACAW, SCARLET], count: innerWidth < innerHeight ? 2 : 3, near, far: (w, h) => near(w, h) * 0.5, stream: { parallax: 0.4 } });
+      f.setActive(false); f.play();
+      // the hero has its own flock: these take over once it is scrolled past
+      const hero = $<HTMLElement>('.bird__hero', root);
+      if (hero) st({ trigger: hero, start: 'bottom 55%', endTrigger: root, end: 'bottom bottom', onToggle: (s) => f.setActive(s.isActive) });
+      else f.setActive(true);
     }
-    tw(gsap.from($$('.step', sec), { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.15, scrollTrigger: { trigger: sec, start: 'top 75%', once: true } }));
-    tw(gsap.from($$('.step b', sec), { scale: 0, rotate: -90, duration: 0.8, ease: 'back.out(2)', stagger: 0.15, delay: 0.3, scrollTrigger: { trigger: sec, start: 'top 75%', once: true } }));
   });
-
-  // vision: legend fades in under the globe
-  $$('.vision', root).forEach((v) => tw(gsap.from($('.vision__legend', v), { opacity: 0, y: 16, duration: 0.8, delay: 0.6, scrollTrigger: { trigger: v, start: 'top 60%', once: true } })));
-
-  // magnetic primary buttons
-  if (fine) $$('[data-magnetic]', root).forEach((b) => {
-    b.addEventListener('pointermove', (e) => { const r = b.getBoundingClientRect(); gsap.to(b, { x: (e.clientX - r.left - r.width / 2) * 0.3, y: (e.clientY - r.top - r.height / 2) * 0.4, duration: 0.4 }); });
-    b.addEventListener('pointerleave', () => gsap.to(b, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' }));
-  });
-
-  // bird site: real macaws fly across the screen as you scroll down the page, past the
-  // millets, the packs and everything else. They only set off while the page is moving and
-  // ride up with it a little slower than the content (so they read as further away); when
-  // scrolling stops they fly on out of the screen and no new ones come until you scroll.
-  const sb = $<HTMLCanvasElement>('.scrollbird', root);
-  if (sb && !reduce) {
-    const near = (w: number, h: number) => (w < h ? Math.min(w * 0.6, h * 0.36, 420) : Math.min(w * 0.24, h * 0.5, 460));
-    const f = createFlock(sb, { sheets: [MACAW, SCARLET], count: innerWidth < innerHeight ? 2 : 3, near, far: (w, h) => near(w, h) * 0.5, stream: { parallax: 0.4 } });
-    f.setActive(false); f.play();
-    // the hero has its own flock: these take over once it is scrolled past
-    const hero = $<HTMLElement>('.bird__hero', root);
-    if (hero) st({ trigger: hero, start: 'bottom 55%', endTrigger: root, end: 'bottom bottom', onToggle: (s) => f.setActive(s.isActive) });
-    else f.setActive(true);
-  }
-
 }
 
 /* ------------------------------------------------------------------ forms */

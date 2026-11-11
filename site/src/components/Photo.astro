@@ -1,10 +1,16 @@
 ---
 import { photo } from '../data/photos';
-interface Props { name: string; alt: string; sizes: string; class?: string; eager?: boolean }
-const { name, alt, sizes, class: cls, eager = false } = Astro.props;
+// `eager`: load straight away. `priority`: the first photo a visitor sees on one of the two
+// sites. It stays lazy (so it never downloads while its site is hidden) and the page head
+// preloads it when the link opens that site directly.
+interface Props { name: string; alt: string; sizes: string; class?: string; eager?: boolean; priority?: boolean }
+const { name, alt, sizes, class: cls, eager = false, priority = false } = Astro.props;
 const p = photo(name);
 ---
 {p && (
-  <img class={cls} src={p.src} srcset={p.srcset} sizes={sizes} width={p.width} height={p.height} alt={alt}
-    loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager ? 'high' : 'auto'} referrerpolicy="no-referrer" />
+  <picture>
+    <source type="image/avif" srcset={p.avif} sizes={sizes} />
+    <img class={cls} src={p.src} srcset={p.srcset} sizes={sizes} width={p.width} height={p.height} alt={alt}
+      loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager || priority ? 'high' : 'auto'} />
+  </picture>
 )}

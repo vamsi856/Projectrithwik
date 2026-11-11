@@ -11,10 +11,10 @@ const { logo, first, second, top, links, email, phones, sister } = Astro.props;
 const navId = `${top}-nav`;
 const wa = `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(`Hello ${first} ${second},`)}`;
 ---
-<div class="strip">
+<aside class="strip" aria-label="Contact details">
   <a href={`mailto:${email}`}>{email}</a>
   {phones.map((p) => <a href={`tel:${p.tel}`}>{p.label}</a>)}
-</div>
+</aside>
 <header class="sbar">
   <a class="sbar__brand" href={`#${top}`} data-jump aria-label={`${first} ${second}, back to the top`}>
     <Image src={logo} alt="" width={88} height={88} />
