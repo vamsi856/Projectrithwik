@@ -1,6 +1,16 @@
 ---
+import { CONTACT } from '../data/products';
 interface Props { id: string; tone: 'bird' | 'food'; steps: { title: string; body: string }[] }
 const { id, tone, steps } = Astro.props;
+// a phone number written in a step ("message 83097 82770") opens WhatsApp to that number
+const brand = tone === 'food' ? 'Rithwik Industries' : 'Rithwik Bird Feeds';
+const PHONE = /(\d{5} \d{5})/;
+const parts = (body: string) => body.split(PHONE).map((t, i) => {
+  if (i % 2 === 0) return { text: t };
+  const p = CONTACT.phones.find((x) => x.label === t);
+  const num = (p?.tel ?? `+91${t.replace(/\s/g, '')}`).replace(/^\+/, '');
+  return { text: t, href: `https://wa.me/${num}?text=${encodeURIComponent(`Hello ${brand},`)}` };
+});
 ---
 <section class:list={['steps', `steps--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
   <h2 class:list={['section-title', tone === 'food' && 'section-title--food']} id={`${id}-title`} data-split>How to order</h2>
@@ -8,7 +18,9 @@ const { id, tone, steps } = Astro.props;
     <svg class="steps__path" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M10 80 C 200 10, 320 110, 500 60 S 800 10, 990 70" /></svg>
     <ol class="steps__list">
       {steps.map((s, i) => (
-        <li class="step"><b>{i + 1}</b><h3>{s.title}</h3><p>{s.body}</p></li>
+        <li class="step"><b>{i + 1}</b><h3>{s.title}</h3><p>{parts(s.body).map((x) => x.href
+          ? <a class="step__tel" href={x.href} target="_blank" rel="noopener" aria-label={`${x.text} on WhatsApp`}>{x.text}</a>
+          : x.text)}</p></li>
       ))}
     </ol>
   </div>

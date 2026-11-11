@@ -23,6 +23,10 @@ const { id, tone, brand, email, options, label, qtyHint, msgHint } = Astro.props
       <label class="field"><span>Quantity</span><input name="qty" placeholder={qtyHint} /></label>
       <label class="field"><span>Anything else</span><textarea name="msg" rows="3" placeholder={msgHint}></textarea></label>
       <button class:list={['pill', 'pill--block', tone === 'food' ? 'pill--ink' : 'pill--gold']} type="submit">Send on WhatsApp</button>
+      <div class="form__ok" role="status" aria-live="polite" hidden>
+        <p class="form__ok-title" data-form-ok-title>WhatsApp is opening with your message.</p>
+        <p data-form-ok-body>Press send there and we'll reply with today's price. <a data-form-wa href={`https://wa.me/${CONTACT.whatsapp}`} target="_blank" rel="noopener">Didn't open? Tap here</a></p>
+      </div>
     </form>
   </div>
   <div class="map">

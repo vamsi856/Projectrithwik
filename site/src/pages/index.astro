@@ -1,7 +1,7 @@
 ---
 import '../styles/site.css';
 import '../styles/v2.css';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import birdLogo from '../assets/brand/birdfeeds-emblem.jpg';
 import foodLogo from '../assets/brand/industries-emblem.png';
 import ProductCard from '../components/ProductCard.astro';
@@ -26,6 +26,9 @@ import Legacy from '../components/Legacy.astro';
 import Plant from '../components/Plant.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+// the logos painted onto the 3D packs: small webp copies, not the full-size originals
+const birdLogoTex = (await getImage({ src: birdLogo, width: 432, format: 'webp', quality: 88 })).src;
+const foodLogoTex = (await getImage({ src: foodLogo, width: 440, format: 'webp', quality: 90 })).src;
 const nBird = lineCount(BIRD);
 const nFood = lineCount(FOOD);
 const birdOptions = BIRD.flatMap((p) => p.variants.map((v) => lineName(p, v)));
@@ -54,14 +57,16 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
   <meta property="og:url" content="https://vamsi856.github.io/Projectrithwik/" />
   <meta property="og:image" content={new URL(`${base}og.jpg`, 'https://vamsi856.github.io').href} />
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="apple-touch-icon" href={`${base}favicon.jpg`} />
   <script type="application/ld+json" set:html={JSON.stringify([
     { '@context': 'https://schema.org', '@type': 'LocalBusiness', name: BRANDS.bird.name, email: BRANDS.bird.email, telephone: '+91 83097 82770', taxID: BRANDS.bird.gstin, url: 'https://vamsi856.github.io/Projectrithwik/#bird-feeds',
       address: { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' } },
     { '@context': 'https://schema.org', '@type': 'LocalBusiness', name: BRANDS.food.name, email: BRANDS.food.email, telephone: '+91 83097 82770', taxID: BRANDS.food.gstin, url: 'https://vamsi856.github.io/Projectrithwik/#human-food',
       address: { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' } },
   ])} />
-  <link rel="icon" href={`${base}favicon.jpg`} />
+  <link rel="icon" href={`${base}favicon.ico`} sizes="48x48" />
+  <link rel="icon" href={`${base}favicon-32.png`} type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
+  <link rel="manifest" href={`${base}site.webmanifest`} />
   <link rel="preload" href={`${base}fonts/anton-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin />
   <link rel="preload" href={`${base}fonts/instrument-sans-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin />
   <link rel="preload" href={`${base}fonts/instrument-sans-latin-600-normal.woff2`} as="font" type="font/woff2" crossorigin />
@@ -136,7 +141,8 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
   <div class="site site--bird" id="bird-feeds" data-site="bird" hidden>
     <SiteHeader logo={birdLogo} first="Rithwik" second="Bird Feeds" top="b-top" email={BRANDS.bird.email}
       phones={[CONTACT.phones[1], CONTACT.phones[2]]}
-      links={[{ href: 'b-about', label: 'About' }, { href: 'b-packs', label: 'Packs' }, { href: 'b-birds', label: 'Birds' }, { href: 'b-feeds', label: 'Feeds' }, { href: 'b-vision', label: 'Vision' }, { href: 'b-contact', label: 'Contact' }]} />
+      links={[{ href: 'b-about', label: 'About' }, { href: 'b-packs', label: 'Packs' }, { href: 'b-birds', label: 'Birds' }, { href: 'b-feeds', label: 'Feeds' }, { href: 'b-vision', label: 'Vision' }, { href: 'b-contact', label: 'Contact' }]}
+      sister={{ view: 'food', href: '#human-food', text: 'Rithwik Industries, food for people' }} />
 
     <main>
       <section class="bird__hero" id="b-top" aria-labelledby="bird-title">
@@ -157,7 +163,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
               <a class="pill pill--line" href={`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent('Hello Rithwik Bird Feeds, I would like a price.')}`} target="_blank" rel="noopener">WhatsApp an order</a>
             </div>
           </div>
-          <HeroPack kind="sack" logo={birdLogo.src} items={BIRD_PACKS} />
+          <HeroPack kind="sack" logo={birdLogoTex} items={BIRD_PACKS} />
         </div>
         <span class="scrollcue" aria-hidden="true"></span>
       </section>
@@ -193,7 +199,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
 
       <Plant tone="bird" id="b-plant" />
 
-      <PackStudio id="b-packs" kind="sack" tone="bird" logo={birdLogo.src} items={BIRD_PACKS} contact="b-contact"
+      <PackStudio id="b-packs" kind="sack" tone="bird" logo={birdLogoTex} items={BIRD_PACKS} contact="b-contact"
         title="Our packs" lede="Every feed line in its own Rithwik sack." />
 
       <BirdsWeFeed id="b-birds" />
@@ -239,7 +245,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         label="Feed" qtyHint="For example, 50 bags or 2 tonnes" msgHint="Delivery town, processed or unprocessed, packing" />
     </main>
 
-    <Footer logo={birdLogo} tone="bird" brand={BRANDS.bird.name} gstin={BRANDS.bird.gstin}
+    <Footer logo={birdLogo} tone="bird" brand={BRANDS.bird.name} gstin={BRANDS.bird.gstin} email={BRANDS.bird.email} top="b-top"
       sister={{ view: 'food', href: '#human-food', text: 'Rithwik Industries, millets, super foods, pulses and spices for people' }} />
     <canvas class="scrollbird" aria-hidden="true"></canvas>
   </div>
@@ -249,7 +255,8 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
   <div class="site site--food" id="human-food" data-site="food" hidden>
     <SiteHeader logo={foodLogo} first="Rithwik" second="Industries" top="f-top" email={BRANDS.food.email}
       phones={[CONTACT.phones[0], CONTACT.phones[3]]}
-      links={[{ href: 'f-about', label: 'About' }, { href: 'f-packs', label: 'Packs' }, { href: 'f-range', label: 'Products' }, { href: 'f-vision', label: 'Vision' }, { href: 'f-contact', label: 'Contact' }]} />
+      links={[{ href: 'f-about', label: 'About' }, { href: 'f-packs', label: 'Packs' }, { href: 'f-range', label: 'Products' }, { href: 'f-vision', label: 'Vision' }, { href: 'f-contact', label: 'Contact' }]}
+      sister={{ view: 'bird', href: '#bird-feeds', text: 'Rithwik Bird Feeds, food for birds' }} />
 
     <main>
       <section class="food-hero" id="f-top" aria-labelledby="food-title">
@@ -270,7 +277,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         </div>
         <div class="food-hero__art food-hero__art--pack">
           <canvas class="grainpour" aria-hidden="true"></canvas>
-          <HeroPack kind="pouch" logo={foodLogo.src} items={FOOD_PACKS} />
+          <HeroPack kind="pouch" logo={foodLogoTex} items={FOOD_PACKS} />
         </div>
       </section>
 
@@ -297,7 +304,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
 
       <Plant tone="food" id="f-plant" />
 
-      <PackStudio id="f-packs" kind="pouch" tone="food" logo={foodLogo.src} items={FOOD_PACKS} contact="f-contact"
+      <PackStudio id="f-packs" kind="pouch" tone="food" logo={foodLogoTex} items={FOOD_PACKS} contact="f-contact"
         title="Our packs" lede="Kraft pouches with a clear window, so you can see the grain." />
 
       <div id="f-range">
@@ -349,7 +356,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
         label="Product" qtyHint="For example, 25 kg or 1 tonne" msgHint="Delivery town, packing size" />
     </main>
 
-    <Footer logo={foodLogo} tone="food" brand={BRANDS.food.name} gstin={BRANDS.food.gstin}
+    <Footer logo={foodLogo} tone="food" brand={BRANDS.food.name} gstin={BRANDS.food.gstin} email={BRANDS.food.email} top="f-top"
       sister={{ view: 'bird', href: '#bird-feeds', text: 'Rithwik Bird Feeds, millets, jowar and sunflower for birds' }} />
   </div>
 

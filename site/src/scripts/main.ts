@@ -275,8 +275,23 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   st({ trigger: root, start: 'top top', end: 'bottom bottom', onUpdate: (s) => gsap.set(prog, { scaleX: s.progress }) });
   $$<HTMLAnchorElement>('[data-nav]', root).forEach((a) => {
     const sec = document.getElementById(a.dataset.nav!);
-    if (sec) st({ trigger: sec, start: 'top 50%', end: 'bottom 50%', onToggle: (s) => s.isActive && $$('[data-nav]', root).forEach((x) => x.classList.toggle('is-current', x === a)) });
+    if (sec) st({ trigger: sec, start: 'top 50%', end: 'bottom 50%', onToggle: (s) => (s.isActive ? $$('[data-nav]', root).forEach((x) => x.classList.toggle('is-current', x === a)) : a.classList.remove('is-current')) });
   });
+  // phones: the section links live in a menu under the header
+  const menuBtn = $<HTMLButtonElement>('[data-menu]', bar);
+  if (menuBtn) {
+    const setMenu = (open: boolean) => {
+      bar.classList.toggle('is-open', open);
+      menuBtn.setAttribute('aria-expanded', String(open));
+      $('.sr', menuBtn)!.textContent = open ? 'Close menu' : 'Menu';
+    };
+    menuBtn.addEventListener('click', () => { const open = !bar.classList.contains('is-open'); setMenu(open); sfx('tick'); if (open) $<HTMLElement>('.sbar__nav a', bar)?.focus({ preventScroll: true }); });
+    $('.sbar__nav', bar)!.addEventListener('click', (e) => { if ((e.target as Element).closest('a')) setMenu(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && bar.classList.contains('is-open')) { setMenu(false); menuBtn.focus(); } });
+    document.addEventListener('pointerdown', (e) => { if (bar.classList.contains('is-open') && !bar.contains(e.target as Node)) setMenu(false); });
+    matchMedia('(min-width: 761px)').addEventListener('change', (m) => m.matches && setMenu(false));
+    document.addEventListener('rithwik:view', () => setMenu(false));
+  }
   void bar;
 
   // in-site anchor links
@@ -665,8 +680,21 @@ function wireForm(form: HTMLFormElement) {
     const f = (n: string) => ((form.elements.namedItem(n) as HTMLInputElement).value || '').trim();
     const lines = [`Hello ${form.dataset.division},`, `I'm ${name.value.trim()}. I'd like a price for ${f('product')}.`, f('qty') && `Quantity: ${f('qty')}`, f('msg')].filter(Boolean);
     sfx('pop');
-    window.open(`https://wa.me/${WA}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    const url = `https://wa.me/${WA}?text=${encodeURIComponent(lines.join('\n'))}`;
+    // no 'noopener' feature here: with it, open() always returns null and a blocked tab can't be told apart
+    let w: Window | null = null;
+    try { w = window.open(url, '_blank'); if (w) w.opener = null; } catch { w = null; }
+    link.href = url;
+    ok.classList.toggle('is-warn', !w);
+    okTitle.textContent = w ? `Thanks, ${name.value.trim().split(/\s+/)[0]}. WhatsApp is opening with your message.` : 'Your browser stopped WhatsApp from opening.';
+    okBody.firstChild!.textContent = w ? "Press send there and we'll reply with today's price. " : 'Your message is ready. ';
+    link.textContent = w ? "Didn't open? Tap here" : 'Open WhatsApp and send it';
+    ok.hidden = false;
+    if (!reduce) gsap.fromTo(ok, { y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: 'power2.out' });
   });
+  const ok = $<HTMLElement>('.form__ok', form)!, okTitle = $('[data-form-ok-title]', ok)!, okBody = $('[data-form-ok-body]', ok)!, link = $<HTMLAnchorElement>('[data-form-wa]', ok)!;
+  // editing the form again clears the old confirmation
+  form.addEventListener('input', () => { ok.hidden = true; });
   name.addEventListener('input', () => { if (name.value.trim()) { err.hidden = true; name.removeAttribute('aria-invalid'); } });
 }
 

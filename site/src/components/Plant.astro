@@ -17,16 +17,16 @@ const bird = tone === 'bird';
   </header>
   <div class:list={['plant__grid', bird ? 'plant__grid--bird' : 'plant__grid--food']}>
     <figure class="plant__fig plant__fig--line" data-curtain>
-      <Image src={line} alt="The Rithwik cleaning line: pre-cleaner, graders and bucket elevators, with sacks of grain on the floor" widths={[640, 1000, 1156]} sizes={bird ? '(max-width: 860px) 92vw, 60vw' : '(max-width: 860px) 92vw, 46vw'} loading="lazy" />
+      <Image src={line} alt="The Rithwik cleaning line: pre-cleaner, graders and bucket elevators, with sacks of grain on the floor" widths={[640, 1000, 1156]} sizes={bird ? '(max-width: 860px) 92vw, 60vw' : '(max-width: 860px) 92vw, 46vw'} quality={70} loading="lazy" />
       <figcaption><b>The cleaning line</b><span>Pre-cleaner, graders and elevators</span></figcaption>
     </figure>
     <figure class="plant__fig plant__fig--warehouse" data-curtain>
-      <Image src={warehouse} alt="The Rithwik warehouse at Duvvur, with the Rithwik Bird Feeds signboard on the wall" widths={[640, 1000, 1156]} sizes={bird ? '(max-width: 860px) 92vw, 60vw' : '(max-width: 860px) 92vw, 46vw'} loading="lazy" />
+      <Image src={warehouse} alt="The Rithwik warehouse at Duvvur, with the Rithwik Bird Feeds signboard on the wall" widths={[640, 1000, 1156]} sizes={bird ? '(max-width: 860px) 92vw, 60vw' : '(max-width: 860px) 92vw, 46vw'} quality={70} loading="lazy" />
       <figcaption><b>Our warehouse</b><span>Duvvur, YSR district</span></figcaption>
     </figure>
     {bird && (
       <figure class="plant__fig plant__fig--sack" data-curtain>
-        <Image src={sack} alt="A filled 50 kg Rithwik Birds Feeds India sack of Super Fine Millets" widths={[400, 700]} sizes="(max-width: 860px) 92vw, 30vw" loading="lazy" />
+        <Image src={sack} alt="A filled 50 kg Rithwik Birds Feeds India sack of Super Fine Millets" widths={[400, 700]} sizes="(max-width: 860px) 92vw, 30vw" quality={70} loading="lazy" />
         <figcaption><b>The 50 kg sack</b><span>Super Fine Millets</span></figcaption>
       </figure>
     )}
