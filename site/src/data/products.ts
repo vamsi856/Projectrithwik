@@ -53,7 +53,7 @@ export const BIRD: Product[] = [
     variants: [{ label: 'Mahendra', gst: '0%' }, { label: 'Milky white', gst: '0%' }, { label: 'Nidhi', gst: '0%' }, { label: 'Red', gst: '0%', photo: 'jowar-red', swatch: s('#a4552f', '#6e3418', 9) }, tint('Yellow', '0%', '#e2c164', '#b38f34', 9)] },
   { id: 'b-maize', name: 'Maize', group: 'grains', photo: 'maize-grain', swatch: s('#f0e4c4', '#cdbb8d', 12), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-sunflower', name: 'Sunflower', group: 'oilseeds', photo: 'sf17', swatch: s('#b9b3a6', '#56514b', 11), variants: [{ label: 'Striped', gst: '5%' }] },
-  { id: 'b-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower', swatch: s('#f2ede1', '#cfc6b0', 10), variants: [{ label: '', gst: '5%' }] },
+  { id: 'b-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower-seeds', swatch: s('#f2ede1', '#cfc6b0', 10), variants: [{ label: '', gst: '5%' }] },
 ];
 
 export const FOOD_GROUPS = [
@@ -87,7 +87,7 @@ export const FOOD: Product[] = [
   { id: 'f-basil', name: 'Basil seeds', group: 'superfoods', photo: 'basil', swatch: s('#2d2b2a', '#55514c', 5), variants: one('Sabja') },
 
   { id: 'f-sunflower', name: 'Sunflower', group: 'oilseeds', photo: 'blacksun', swatch: s('#2c2a2a', '#4d4a47', 11), variants: one() },
-  { id: 'f-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower', swatch: s('#f2ede1', '#cfc6b0', 10), variants: one() },
+  { id: 'f-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower-seeds', swatch: s('#f2ede1', '#cfc6b0', 10), variants: one() },
   { id: 'f-castor', name: 'Castor seeds', group: 'oilseeds', photo: 'castor', swatch: s('#8c6a58', '#4a362c', 12), variants: one() },
   { id: 'f-groundnut', name: 'Groundnuts', group: 'oilseeds', photo: 'groundnut', swatch: s('#e2b98c', '#b07f52', 12), variants: one() },
   { id: 'f-sesame', name: 'Sesame seeds', group: 'oilseeds', photo: 'sesame', swatch: s('#262423', '#4a4542', 6), variants: [...many('Black', 'Z-black'), { label: 'White', gst: '', photo: 'sesame-white', swatch: s('#f1ead8', '#d3c7a9', 6) }] },

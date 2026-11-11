@@ -22,9 +22,10 @@ export type Sheet = {
 
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 /** Blue-and-gold macaw, one full wingbeat cut at full resolution from the 4K version of
- * free slow-motion footage (Christopher Borges on Pexels, Pexels licence), colour-corrected
- * to the bird's true gold and turquoise. Sheets stay under 4096 px for phone GPUs. */
-export const MACAW: Sheet = { src: [0, 1, 2].map((k) => `${BASE}birds/macaw-hq-${k}.webp`), per: 12, fw: 1052, fh: 723, cols: 3, frames: 27, fps: 30, ax: 0.711, ay: 0.71, rot: -0.1 };
+ * free slow-motion footage (Christopher Borges on Pexels, Pexels licence), each frame
+ * restored with Real-ESRGAN (the video's compression smear removed, feathers sharpened),
+ * colour-corrected to the bird's true gold and turquoise. Sheets stay under 4096 px for phone GPUs. */
+export const MACAW: Sheet = { src: [0, 1, 2].map((k) => `${BASE}birds/macaw-hq-${k}.webp`), per: 12, fw: 1062, fh: 725, cols: 3, frames: 27, fps: 30, ax: 0.704, ay: 0.708, rot: -0.1 };
 /** Scarlet macaw: the same wingbeat, with the gold plumage turned to scarlet (the blue
  * flight and tail feathers kept), so the sky has more than one kind of macaw. */
 export const SCARLET: Sheet = { ...MACAW, src: [0, 1, 2].map((k) => `${BASE}birds/scarlet-hq-${k}.webp`), lite: true };

@@ -7,7 +7,9 @@ import PERCH from './perch-credits.json';
 // hotlinking. We request Wikimedia's standard thumbnail widths so every size is cached
 // on their CDN, and let the browser pick one via srcset.
 
-export type Remote = { t: string; u: string; w: number; h: number; p: string; l: string; a: string };
+/** `local`: our own crop of the Commons file, served from this site (public/), when only part of the photo is wanted */
+export type Remote = { t: string; u: string; w: number; h: number; p: string; l: string; a: string; local?: string };
+const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const DATA = commons as Record<string, Remote>;
 const STEPS = [500, 960, 1280, 1920];
 
@@ -26,6 +28,7 @@ export type Photo = { src: string; srcset: string; width: number; height: number
 export function photo(key?: string): Photo | undefined {
   if (!key || !DATA[key]) return undefined;
   const r = DATA[key];
+  if (r.local) return { src: BASE + r.local, srcset: `${BASE + r.local} ${r.w}w`, width: r.w, height: r.h, credit: r };
   const widths = STEPS.filter((s) => s < r.w);
   const set = widths.map((w) => `${thumb(r.u, w)} ${w}w`);
   if (r.w <= 1920) set.push(`${r.u} ${r.w}w`);
@@ -53,5 +56,6 @@ export const credits = [
 export function photoSmall(key?: string) {
   if (!key || !DATA[key]) return undefined;
   const r = DATA[key];
+  if (r.local) return BASE + r.local;
   return r.w > 500 ? thumb(r.u, 500) : r.u;
 }

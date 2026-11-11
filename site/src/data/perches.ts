@@ -57,8 +57,8 @@ export const PERCHES: Record<string, Perch[]> = {
 };
 
 const GLIDE = 'lovebird-fly';
-// one frame of the macaw flight sheet (the flock's footage): 1052 x 723, feet tucked at (0.6, 0.72)
-const FLAP = { w: 1052, h: 723, fx: 0.6, fy: 0.72 };
+// one frame of the macaw flight sheet (the flock's footage): 1062 x 725, feet tucked at (0.6, 0.72)
+const FLAP = { w: 1062, h: 725, fx: 0.6, fy: 0.72 };
 
 const pct = (n: number) => `${+(n * 100).toFixed(3)}%`;
 

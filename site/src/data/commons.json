@@ -44,15 +44,6 @@
   "l": "Public domain",
   "a": "Supportstorm"
  },
- "safflower": {
-  "t": "Carthamus tinctorius 050709a.JPG",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/d/df/Carthamus_tinctorius_050709a.JPG",
-  "w": 3008,
-  "h": 2000,
-  "p": "https://commons.wikimedia.org/wiki/File:Carthamus_tinctorius_050709a.JPG",
-  "l": "Public domain",
-  "a": "Pseudoanas"
- },
  "bajra": {
   "t": "Food grain pearl millet 1.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Food_grain_pearl_millet_1.jpg",
@@ -565,5 +556,15 @@
   "p": "https://commons.wikimedia.org/wiki/File:Cicer_arietinum_noir_MHNT.BOT.2017.12.2.jpg",
   "l": "CC BY-SA 3.0",
   "a": "Roger Culos"
+ },
+ "safflower-seeds": {
+  "t": "Carthamus tinctorius - Osaka Museum of Natural History - DSC07849.JPG (cropped to the seeds)",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/6/65/Carthamus_tinctorius_-_Osaka_Museum_of_Natural_History_-_DSC07849.JPG",
+  "w": 1075,
+  "h": 806,
+  "p": "https://commons.wikimedia.org/wiki/File:Carthamus_tinctorius_-_Osaka_Museum_of_Natural_History_-_DSC07849.JPG",
+  "l": "CC0",
+  "a": "Daderot",
+  "local": "photos/safflower-seeds.webp"
  }
 }
