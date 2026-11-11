@@ -1,0 +1,26 @@
+---
+// One real bird sitting on something (a feed card's top edge, the 2022 dot on the family
+// timeline). It is placed so its feet are at the host's anchor point; src/scripts/perch.ts
+// flies it in and keeps it alive.
+import { perchLayout, type Perch } from '../data/perches';
+interface Props { perch: Perch; class?: string; dist?: number; delay?: number }
+const { perch: q, class: cls, dist, delay } = Astro.props;
+const l = perchLayout(q);
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+{l && (
+  <div class:list={['perch', cls]} data-perch data-face={l.face} data-pose={l.bird.pose ?? 'side'} data-arrive={l.arrive}
+    data-dist={dist} data-delay={delay} aria-hidden="true" style={l.style}>
+    <span class="perch__shadow"></span>
+    <div class="perch__hop"><div class="perch__sway"><div class="perch__bird" data-flip={q.flip ? '' : undefined}>
+      <img class="perch__img" src={`${base}perch/${q.bird}.webp`} width={l.bird.w} height={l.bird.h} alt="" loading="lazy" decoding="async" />
+      {l.sprite?.kind === 'glide' && (
+        <img class="perch__fly" src={`${base}perch/${l.sprite.src}.webp`} alt="" loading="lazy" decoding="async"
+          style={`left:${l.sprite.left};top:${l.sprite.top};width:${l.sprite.width};height:${l.sprite.height}`} />
+      )}
+      {l.sprite?.kind === 'flap' && (
+        <span class="perch__fly perch__flap" style={`left:${l.sprite.left};top:${l.sprite.top};width:${l.sprite.width};height:${l.sprite.height}`}></span>
+      )}
+    </div></div></div>
+  </div>
+)}

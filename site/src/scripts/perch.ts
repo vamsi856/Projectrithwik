@@ -47,7 +47,7 @@ export function initPerches(root: ParentNode, reduce: boolean) {
     const fly = el.querySelector<HTMLElement>('.perch__fly');
     const b: Bird = {
       el, hop: el.querySelector('.perch__hop')!, sway: el.querySelector('.perch__sway')!, bird: el.querySelector('.perch__bird')!,
-      img: el.querySelector('.perch__img')!, shadow: el.querySelector('.perch__shadow'), fly, card: el.closest('[data-card]')!, mates: [],
+      img: el.querySelector('.perch__img')!, shadow: el.querySelector('.perch__shadow'), fly, card: el.closest<HTMLElement>('[data-perch-host]') ?? el.closest<HTMLElement>('[data-card]')!, mates: [],
       face: Number(el.dataset.face) || 1, flip: 1, front: el.dataset.pose === 'front', arrive: el.dataset.arrive === 'climb' ? 'climb' : fly ? el.dataset.arrive || 'hop' : 'hop',
       fy: parseFloat(getComputedStyle(el).getPropertyValue('--fy')) || 0.8, fx: parseFloat(getComputedStyle(el).getPropertyValue('--fx')) || 0.5,
       shift: 0, busy: false, sitting: false, away: true, timer: 0, lastTurn: 0,
@@ -118,7 +118,9 @@ export function initPerches(root: ParentNode, reduce: boolean) {
       return;
     }
     // flying in: from behind and above, a curving glide that flares up just before touchdown
-    const T = b.arrive === 'macaw' ? 1.35 : 1.05, dx = b.arrive === 'macaw' ? 420 : 300, dy = b.arrive === 'macaw' ? 260 : 210;
+    const far = Number(b.el.dataset.dist) || 0; // a longer flight, e.g. along the family timeline
+    const dx = far || (b.arrive === 'macaw' ? 420 : 300), dy = far ? 150 : b.arrive === 'macaw' ? 260 : 210;
+    const T = (b.arrive === 'macaw' ? 1.35 : 1.05) * (far ? Math.max(1, far / 420) ** 0.6 : 1);
     tl.set(b.el, { autoAlpha: 1 }).call(() => takeWing(b))
       .fromTo(b.hop, { x: b.shift - d * dx }, { x: b.shift, duration: T, ease: 'power2.out' }, 0)
       .fromTo(b.hop, { y: -dy }, { y: 0, duration: T, ease: 'sine.inOut' }, 0)
@@ -230,7 +232,7 @@ export function initPerches(root: ParentNode, reduce: boolean) {
     if (e.isIntersecting) inView.add(card); else inView.delete(card);
     if (e.isIntersecting && e.intersectionRatio > 0.2) {
       list.forEach((b, i) => {
-        if (b.away && !b.busy && !b.timer) arrive(b, 0.3 + i * 0.75 + rnd(0, 0.3));
+        if (b.away && !b.busy && !b.timer) arrive(b, (Number(b.el.dataset.delay) || 0.3) + i * 0.75 + rnd(0, 0.3));
         else if (b.sitting && !b.busy && !b.timer) rest(b);
       });
     }

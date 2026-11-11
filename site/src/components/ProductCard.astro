@@ -3,7 +3,8 @@ import Photo from './Photo.astro';
 import type { Product } from '../data/products';
 import { lineName, axesLabel } from '../data/products';
 import { photo } from '../data/photos';
-import { PERCHES, perchLayout } from '../data/perches';
+import { PERCHES } from '../data/perches';
+import Perch from './Perch.astro';
 
 interface Props { product: Product; contact: string; tone: 'bird' | 'food' }
 const { product: p, contact, tone } = Astro.props;
@@ -29,25 +30,11 @@ for (const v of p.variants) {
 }
 const firstLine = lineName(p, first);
 // real birds sitting on the card's top edge (Bird Feeds only)
-const perches = tone === 'bird' ? (PERCHES[p.id] ?? []).map((q) => ({ q, l: perchLayout(q) })).filter((x) => x.l) : [];
+const perches = tone === 'bird' ? PERCHES[p.id] ?? [] : [];
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 <article class:list={['pcard', `pcard--${tone}`]} data-group={p.group} data-card data-name={axes.length ? p.name : undefined}>
-  {perches.map(({ q, l }) => (
-    <div class="perch" data-perch data-face={l!.face} data-pose={l!.bird.pose ?? 'side'} data-arrive={l!.arrive} aria-hidden="true" style={l!.style}>
-      <span class="perch__shadow"></span>
-      <div class="perch__hop"><div class="perch__sway"><div class="perch__bird" data-flip={q.flip ? '' : undefined}>
-        <img class="perch__img" src={`${base}perch/${q.bird}.webp`} width={l!.bird.w} height={l!.bird.h} alt="" loading="lazy" decoding="async" />
-        {l!.sprite?.kind === 'glide' && (
-          <img class="perch__fly" src={`${base}perch/${l!.sprite.src}.webp`} alt="" loading="lazy" decoding="async"
-            style={`left:${l!.sprite.left};top:${l!.sprite.top};width:${l!.sprite.width};height:${l!.sprite.height}`} />
-        )}
-        {l!.sprite?.kind === 'flap' && (
-          <span class="perch__fly perch__flap" style={`left:${l!.sprite.left};top:${l!.sprite.top};width:${l!.sprite.width};height:${l!.sprite.height}`}></span>
-        )}
-      </div></div></div>
-    </div>
-  ))}
+  {perches.map((q) => <Perch perch={q} />)}
   <div class:list={['pcard__media', looks.length > 1 && 'pcard__media--looks']}>
     {looks.map((l) => (
       <div class:list={['pcard__look', l.lines.includes(firstLine) && 'is-shown']} data-look={l.lines.join('|')}>

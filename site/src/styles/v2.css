@@ -1182,3 +1182,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
   .perch { height: calc(var(--tall) * .8 / var(--fy)); left: calc(var(--xm, var(--x)) * 100%); }
 }
 @media (prefers-reduced-motion: reduce) { .perch__img { animation: none; cursor: default; } .perch__bird[data-flip] { transform: scaleX(-1); } }
+
+/* the macaw on the family timeline: its feet on top of today's (2022) dot */
+.perch.perch--legacy { left: 15px; top: 9px; z-index: 3; }
+@media (max-width: 860px) { .perch.perch--legacy { left: -29px; top: 1px; } }
+

@@ -56,6 +56,9 @@ export const PERCHES: Record<string, Perch[]> = {
   'b-safflower': [{ bird: 'ringneck', x: 0.62, tall: 92, arrive: 'hop' }],
 };
 
+/** the macaw that flies along the family timeline and lands on the 2022 dot */
+export const LEGACY_PERCH: Perch = { bird: 'bgmacaw', x: 0, tall: 96, arrive: 'macaw' };
+
 const GLIDE = 'lovebird-fly';
 // one frame of the macaw flight sheet (the flock's footage): 1062 x 725, feet tucked at (0.6, 0.72)
 const FLAP = { w: 1062, h: 725, fx: 0.6, fy: 0.72 };

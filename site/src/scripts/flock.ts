@@ -82,8 +82,9 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
   const imgs = new Map<Sheet, Mip[]>();
 
   const size = () => {
-    // phones are 2-3x: draw at up to 2x so the feathers stay crisp (1.5x looked soft)
-    dpr = Math.min(devicePixelRatio || 1, 2);
+    // draw at the screen's own pixel density (phones are 3x): a 2x canvas stretched to 3x
+    // was a large part of why the birds looked soft
+    dpr = Math.min(devicePixelRatio || 1, 3);
     W = canvas.clientWidth; H = canvas.clientHeight;
     canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(H * dpr));
     ctx.imageSmoothingQuality = 'high';
@@ -91,7 +92,9 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
   };
 
   const px = (v: FlockOptions['near']) => (typeof v === 'function' ? v(W, H) : v);
-  const sizeAt = (depth: number) => px(o.far) + (px(o.near) - px(o.far)) * depth;
+  // never wider on screen than the footage itself: stretching a frame is what reads as blur
+  const crisp = (size: number) => Math.min(size, Math.max(...o.sheets.map((s) => s.fw)) / dpr);
+  const sizeAt = (depth: number) => crisp(px(o.far) + (px(o.near) - px(o.far)) * depth);
   const spawn = (b: Partial<Bird> & { sheet: Sheet; img: Mip[]; depth: number; lane?: number }, anywhere: boolean): Bird => {
     const size = sizeAt(b.depth);
     if (o.pinned) return { sheet: b.sheet, img: b.img, depth: 1, size, lane: 0, x: W / 2, y: H / 2, y0: H / 2, vx: 0, t: 0, rate: 1, wob: 0, dx: 0, dy: 0, vdx: 0, vdy: 0, panic: 0, flip: false };

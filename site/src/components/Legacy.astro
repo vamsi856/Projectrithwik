@@ -1,7 +1,10 @@
 ---
 // The family line from 1925 to today. The rail draws itself as you scroll and
-// each generation stamps in; the latest step, Rithwik, is highlighted.
+// each generation stamps in; the latest step, Rithwik, is highlighted, and on the Bird
+// Feeds site a macaw flies along the rail and lands on it.
 import { LEGACY, SINCE } from '../data/legacy';
+import Perch from './Perch.astro';
+import { LEGACY_PERCH } from '../data/perches';
 interface Props { tone: 'bird' | 'food' }
 const { tone } = Astro.props;
 const years = new Date().getFullYear() - SINCE;
@@ -17,8 +20,10 @@ const years = new Date().getFullYear() - SINCE;
   <ol class="legacy__rail">
     <svg class="legacy__line" viewBox="0 0 1000 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0 10 H1000" /></svg>
     {LEGACY.map((g, i) => (
-      <li class:list={['legacy__step', i === LEGACY.length - 1 && 'is-now']} data-legacy-step>
+      <li class:list={['legacy__step', i === LEGACY.length - 1 && 'is-now']} data-legacy-step data-perch-host={tone === 'bird' && i === LEGACY.length - 1 ? '' : undefined}>
         <span class="legacy__dot" aria-hidden="true"></span>
+        {/* a macaw flies along the rail from 1925 and lands on today's dot */}
+        {tone === 'bird' && i === LEGACY.length - 1 && <Perch perch={LEGACY_PERCH} class="perch--legacy" dist={760} delay={1.2} />}
         <span class="legacy__year">{g.year}</span>
         <span class="legacy__person">{g.person}</span>
         <span class="legacy__firm">{g.firm}</span>

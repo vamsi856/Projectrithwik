@@ -683,7 +683,26 @@ const reflectSound = () => {
   soundLabel.textContent = `${what} ${on ? 'on' : 'off'}`;
 };
 document.addEventListener('rithwik:view', reflectSound);
-soundBtn.addEventListener('click', async () => { nudge.hidden = true; soundPending = false; await setEnabled(!isEnabled()); reflectSound(); });
+// sound left on last visit (it shows as on): browsers only let it start after a real tap,
+// click or key press, so it starts on the first one anywhere on the page. A touch that only
+// scrolls is not one (the browser would refuse), so we keep waiting for a real tap.
+const unlockEvents = ['pointerup', 'touchend', 'click', 'keydown'] as const;
+const stopWaiting = () => unlockEvents.forEach((t) => removeEventListener(t, unlock, true));
+async function unlock(e: Event) {
+  if (!soundPending) return stopWaiting();
+  if ((e.target as Element | null)?.closest?.('[data-sound-toggle]')) return; // the button handles itself
+  const ua = (navigator as Navigator & { userActivation?: { isActive: boolean } }).userActivation;
+  if (ua && !ua.isActive) return;
+  soundPending = false; stopWaiting();
+  await setEnabled(true); reflectSound();
+}
+soundBtn.addEventListener('click', async () => {
+  nudge.hidden = true;
+  // while it is waiting to start, the button shows "on": a press means "start", not "turn off"
+  if (soundPending) { soundPending = false; stopWaiting(); await setEnabled(true); }
+  else await setEnabled(!isEnabled());
+  reflectSound();
+});
 function nudgeSound() {
   if (isEnabled() || wantedBefore()) return;
   setTimeout(() => {
@@ -695,9 +714,7 @@ function nudgeSound() {
 }
 if (soundPending) {
   reflectSound();
-  const resume = async () => { const go = soundPending; soundPending = false; if (go && !isEnabled()) { await setEnabled(true); reflectSound(); } };
-  addEventListener('pointerdown', resume, { once: true });
-  addEventListener('keydown', resume, { once: true });
+  unlockEvents.forEach((t) => addEventListener(t, unlock, true));
 }
 
 /* ------------------------------------------------------------------ misc */
