@@ -8,7 +8,8 @@ import PERCH from './perch-credits.json';
 // on their CDN, and let the browser pick one via srcset.
 
 /** `local`: our own crop of the Commons file, served from this site (public/), when only part of the photo is wanted */
-export type Remote = { t: string; u: string; w: number; h: number; p: string; l: string; a: string; local?: string };
+/** `own`: a photo Rithwik supplied (no outside credit needed) */
+export type Remote = { t: string; u: string; w: number; h: number; p: string; l: string; a: string; local?: string; own?: boolean };
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const DATA = commons as Record<string, Remote>;
 const STEPS = [500, 960, 1280, 1920];
@@ -44,7 +45,7 @@ export function photo(key?: string): Photo | undefined {
 
 // Flying birds in the Bird Feeds hero: frames cut from this free footage (background removed).
 export const credits = [
-  ...Object.entries(DATA).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
+  ...Object.entries(DATA).filter(([, r]) => !r.own).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
   ...Object.entries(FLIGHT as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
   // the birds sitting on the feed cards (cut out of these photos)
   ...Object.entries(PERCH as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),

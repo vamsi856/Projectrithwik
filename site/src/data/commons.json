@@ -35,15 +35,6 @@
   "l": "CC BY 3.0",
   "a": "Amada44"
  },
- "sf17": {
-  "t": "SunflowerSeed2009.JPG",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/b/b6/SunflowerSeed2009.JPG",
-  "w": 3072,
-  "h": 2304,
-  "p": "https://commons.wikimedia.org/wiki/File:SunflowerSeed2009.JPG",
-  "l": "Public domain",
-  "a": "Supportstorm"
- },
  "bajra": {
   "t": "Food grain pearl millet 1.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Food_grain_pearl_millet_1.jpg",
@@ -566,5 +557,16 @@
   "l": "CC0",
   "a": "Daderot",
   "local": "photos/safflower-seeds.webp"
+ },
+ "sunflower-striped": {
+  "t": "Striped sunflower seeds",
+  "u": "",
+  "w": 740,
+  "h": 414,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/sunflower-striped.webp",
+  "own": true
  }
 }
