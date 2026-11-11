@@ -1,6 +1,7 @@
 import commons from './commons.json';
 import FLIGHT from './flight.json';
 import SOUNDS from './sounds.json';
+import PERCH from './perch-credits.json';
 
 // Product and scene photos are served straight from Wikimedia Commons, which allows
 // hotlinking. We request Wikimedia's standard thumbnail widths so every size is cached
@@ -42,6 +43,8 @@ export function photo(key?: string): Photo | undefined {
 export const credits = [
   ...Object.entries(DATA).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
   ...Object.entries(FLIGHT as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
+  // the birds sitting on the feed cards (cut out of these photos)
+  ...Object.entries(PERCH as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
   // the birdsong and the flute (src/scripts/sound.ts)
   ...Object.entries(SOUNDS as Record<string, { t: string; a: string; l: string; p: string }>).map(([key, r]) => ({ key, title: r.t, author: r.a, license: r.l, source: r.p })),
 ];

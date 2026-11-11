@@ -6,7 +6,8 @@ import Lenis from 'lenis';
 import { sfx, setMode, setEnabled, isEnabled, wantedBefore } from './sound';
 import { applyFestive } from './festive';
 import { MONTHS_LONG } from '../data/seasons';
-import { createFlock, MACAW } from './flock';
+import { createFlock, MACAW, SCARLET } from './flock';
+import { initPerches } from './perch';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin);
 
@@ -601,6 +602,9 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     card.addEventListener('pointerleave', () => gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.7, ease: 'power3.out' }));
   });
 
+  // birds on the feed cards (see perch.ts)
+  initPerches(root, reduce);
+
   // counters
   $$('[data-count]', root).forEach((el) => {
     const n = Number(el.dataset.count); const o = { v: Number(el.dataset.countFrom || 0) };
@@ -640,7 +644,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   const sb = $<HTMLCanvasElement>('.scrollbird', root);
   if (sb && !reduce) {
     const near = (w: number, h: number) => (w < h ? Math.min(w * 0.6, h * 0.36, 420) : Math.min(w * 0.24, h * 0.5, 460));
-    const f = createFlock(sb, { sheets: [MACAW], count: innerWidth < innerHeight ? 2 : 3, near, far: (w, h) => near(w, h) * 0.5, stream: { parallax: 0.4 } });
+    const f = createFlock(sb, { sheets: [MACAW, SCARLET], count: innerWidth < innerHeight ? 2 : 3, near, far: (w, h) => near(w, h) * 0.5, stream: { parallax: 0.4 } });
     f.setActive(false); f.play();
     // the hero has its own flock: these take over once it is scrolled past
     const hero = $<HTMLElement>('.bird__hero', root);

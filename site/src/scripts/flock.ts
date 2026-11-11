@@ -16,6 +16,8 @@ export type Sheet = {
   /** footage frame rate after sampling */ fps: number;
   /** where the bird's body sits inside a frame (0..1), used as the pivot */ ax: number; ay: number;
   /** tilt applied to every frame, radians (levels footage shot at an angle) */ rot?: number;
+  /** only the half-size copy is kept decoded (the full image is left to the browser): for
+   * extra species, so a phone never holds two full sets of frames in memory */ lite?: boolean;
 };
 
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
@@ -23,6 +25,9 @@ const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
  * free slow-motion footage (Christopher Borges on Pexels, Pexels licence), colour-corrected
  * to the bird's true gold and turquoise. Sheets stay under 4096 px for phone GPUs. */
 export const MACAW: Sheet = { src: [0, 1, 2].map((k) => `${BASE}birds/macaw-hq-${k}.webp`), per: 12, fw: 1052, fh: 723, cols: 3, frames: 27, fps: 30, ax: 0.711, ay: 0.71, rot: -0.1 };
+/** Scarlet macaw: the same wingbeat, with the gold plumage turned to scarlet (the blue
+ * flight and tail feathers kept), so the sky has more than one kind of macaw. */
+export const SCARLET: Sheet = { ...MACAW, src: [0, 1, 2].map((k) => `${BASE}birds/scarlet-hq-${k}.webp`), lite: true };
 
 type Bird = {
   sheet: Sheet; img: Mip[];
@@ -53,10 +58,10 @@ export type FlockOptions = {
 // and shimmery, while a pre-shrunk copy stays crisp.
 type Mip = { full: CanvasImageSource; half: CanvasImageSource | null };
 const bitmaps = new Map<string, Promise<Mip>>();
-const bitmap = (src: string) => {
+const bitmap = (src: string, lite = false) => {
   if (!bitmaps.has(src)) bitmaps.set(src, loadImg(src).then(async (im): Promise<Mip> => {
     if (!('createImageBitmap' in window)) return { full: im, half: null };
-    const full = await createImageBitmap(im);
+    const full = lite ? im : await createImageBitmap(im);
     let half: ImageBitmap | null = null;
     try { half = await createImageBitmap(im, { resizeWidth: Math.round(im.naturalWidth / 2), resizeHeight: Math.round(im.naturalHeight / 2), resizeQuality: 'high' }); } catch { /* full only */ }
     return { full, half };
@@ -103,7 +108,8 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
   };
 
   const streamBird = (down: boolean): Bird => {
-    const sheet = o.sheets[(Math.random() * o.sheets.length) | 0];
+    // any species whose frames are ready (a second one may still be loading)
+    const pool = o.sheets.filter((s) => imgs.has(s)), sheet = pool[(Math.random() * pool.length) | 0];
     const depth = 0.35 + Math.random() * 0.65, size = sizeAt(depth);
     // scrolling down, the page carries birds upward, so they set off low (and the reverse)
     const y0 = H * (down ? 0.42 + Math.random() * 0.4 : 0.12 + Math.random() * 0.4);
@@ -183,7 +189,9 @@ export function createFlock(canvas: HTMLCanvasElement, o: FlockOptions) {
 
   const ready = (async () => {
     // decoded once into a bitmap so drawing never stalls on decode
-    await Promise.all(o.sheets.map(async (s) => imgs.set(s, await Promise.all(s.src.map(bitmap)))));
+    const loads = o.sheets.map(async (s) => { const m = await Promise.all(s.src.map((u) => bitmap(u, s.lite))); imgs.set(s, m); });
+    // a stream starts with the first species to arrive; a fixed flock waits for all of them
+    await (o.stream ? Promise.race(loads) : Promise.all(loads));
     size();
     for (let i = 0; i < (o.stream ? 0 : o.count); i++) {
       const sheet = o.sheets[i % o.sheets.length];
