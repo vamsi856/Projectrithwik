@@ -314,8 +314,7 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 /* ---------- scroll bird ---------- */
 /* the scroll flock: a sky over the whole screen that never takes a tap (under the header) */
 /* the paper bird that zigzags down the Bird Feeds page as you scroll */
-.scrollbird { position: fixed; z-index: 30; left: 0; top: 0; width: 100px; height: 77px; margin: -38px 0 0 -50px; pointer-events: none; opacity: 0; overflow: visible; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .35)); }
-.scrollbird .pb__wing { transform-box: view-box; }
+.scrollbird { position: fixed; z-index: 30; left: 0; top: 0; width: 64px; height: 39px; margin: -19px 0 0 -32px; fill: var(--marigold); pointer-events: none; opacity: 0; overflow: visible; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .4)); }
 
 /* ---------- map lazy ---------- */
 .map iframe:not([src]) { visibility: hidden; }

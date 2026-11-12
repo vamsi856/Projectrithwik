@@ -746,18 +746,14 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
         if (i) sb0.after(el);
         const [size, lag, dx, dy, speed] = FORM[i];
         gsap.set(el, { scale: size, zIndex: 30 - i });
-        const body = $('.pb', el)!, near = $('.pb__wing--near', el)!, far = $('.pb__wing--far', el)!;
-        gsap.set([near, far], { svgOrigin: '2 0' });
-        const flap = gsap.timeline({ repeat: -1, paused: true, delay: i * 0.05 })
-          .to(near, { scaleY: -0.7, duration: 0.13, ease: 'sine.in' })
-          .to(far, { scaleY: -0.55, duration: 0.13, ease: 'sine.in' }, 0.02)
-          .to(near, { scaleY: 1, duration: 0.17, ease: 'sine.out' })
-          .to(far, { scaleY: 1, duration: 0.17, ease: 'sine.out' }, '<0.02')
-          .timeScale(speed);
-        gsap.set([near, far], { scaleY: 0.8 });
+        const body = $('.pb', el)!, wing = $('path', el)!;
+        const UP = 'M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z';
+        const DOWN = 'M-30 11 Q-17 3 0 2 Q17 3 30 11 Q17 5 0 7 Q-17 5 -30 11Z';
+        const flap = gsap.to(wing, { attr: { d: DOWN }, duration: 0.14 / speed, repeat: -1, yoyo: true, ease: 'sine.inOut', paused: true, delay: i * 0.05 });
+        const near = wing, far = wing;
         return { el, body, near, far, flap, size, lag, dx, dy, face: 1 };
       });
-      const glide = () => birds.forEach((b, i) => { b.flap.pause(); gsap.to([b.near, b.far], { scaleY: 0.8, duration: 0.4 + i * 0.08, ease: 'power2.out' }); });
+      const glide = () => birds.forEach((b, i) => { b.flap.pause(); gsap.to(b.near, { attr: { d: 'M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z' }, duration: 0.3 + i * 0.06 }); });
       let still = 0;
       st({
         trigger: root, start: 'top top', end: 'bottom bottom',
