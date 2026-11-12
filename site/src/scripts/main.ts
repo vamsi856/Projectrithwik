@@ -229,7 +229,7 @@ function particleCanvas(c: HTMLCanvasElement, mode: 'fall' | 'pour') {
       const a = Math.random() * Math.PI * 2, sp = 1.5 + Math.random() * 3.5;
       parts.push({ x: e.clientX - r.left, y: e.clientY - r.top, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2, r: 0, vr: (Math.random() - 0.5) * 0.3, s: 2 + Math.random() * 2.6, c: colours[(Math.random() * colours.length) | 0], a: 0.95, trail: true });
     }
-    sfx('rattle'); setTimeout(() => sfx('chirp'), 180);
+    sfx('rattle'); if (document.documentElement.dataset.view !== 'food') setTimeout(() => sfx('chirp'), 180); // Human Food: no birds
   });
   // a few seeds tumble from the pointer as it moves over the hero
   if (mode === 'fall' && fine) c.parentElement!.addEventListener('pointermove', (e) => {
@@ -817,8 +817,9 @@ let soundPending = wantedBefore();
 const reflectSound = () => {
   const on = isEnabled() || soundPending;
   soundBtn.setAttribute('aria-pressed', String(on));
-  const what = document.documentElement.dataset.view === 'food' ? 'Flute' : 'Birdsong';
-  soundLabel.textContent = `${what} ${on ? 'on' : 'off'}`;
+  const food = document.documentElement.dataset.view === 'food';
+  soundLabel.textContent = `${food ? 'Flute' : 'Birdsong'} ${on ? 'on' : 'off'}`;
+  nudge.textContent = food ? 'Tap to hear the flute' : 'Tap to hear the birds';
 };
 document.addEventListener('rithwik:view', reflectSound);
 // sound left on last visit (it shows as on): browsers only let it start after a real tap,

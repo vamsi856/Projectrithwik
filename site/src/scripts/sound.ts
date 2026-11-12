@@ -4,8 +4,8 @@
 // Bird Feeds and the book: a real dawn chorus, recorded in France by Joseph Sardin
 // ("Réveil des oiseaux", Wikimedia Commons, CC0). It is looped with a slow
 // equal-power crossfade so the seam is never heard.
-// Human Food: a Carnatic bansuri phrase by Arvind ("Carnatic flute", Wikimedia
-// Commons, CC BY-SA 3.0), played now and then over the same birds, very softly.
+// Human Food: plain music, no birds. A Carnatic bansuri piece by Arvind ("Carnatic
+// flute", Wikimedia Commons, CC BY-SA 3.0), repeated with a short breath between.
 // The small interface sounds (page turn, seed rattle, chirp) are generated live.
 
 type Mode = 'book' | 'bird' | 'food' | 'off';
@@ -72,7 +72,7 @@ async function startBirds() {
   play(ctx.currentTime + 0.05, rand(0, buf.duration - 20));
 }
 
-/** The flute plays a phrase, rests, and plays again: never a wall of sound. */
+/** The flute plays its piece, takes a short breath, and plays again. */
 let fluteTimer = 0, flutePlaying = false;
 async function scheduleFlute(first = false) {
   clearTimeout(fluteTimer);
@@ -82,13 +82,13 @@ async function scheduleFlute(first = false) {
   flutePlaying = true;
   const s = ctx.createBufferSource(); s.buffer = buf; s.connect(fluteBus);
   s.start(ctx.currentTime + (first ? 0.4 : 0.05));
-  s.onended = () => { flutePlaying = false; fluteTimer = window.setTimeout(() => scheduleFlute(), rand(14000, 26000)); };
+  s.onended = () => { flutePlaying = false; fluteTimer = window.setTimeout(() => scheduleFlute(), rand(2500, 4500)); };
 }
 
 function levels() {
   if (!ctx) return;
   const t = ctx.currentTime;
-  const birds = !enabled ? 0 : mode === 'bird' ? 1 : mode === 'book' ? 0.6 : mode === 'food' ? 0.22 : 0;
+  const birds = !enabled ? 0 : mode === 'bird' ? 1 : mode === 'book' ? 0.6 : 0; // Human Food: the flute alone
   const flute = enabled && mode === 'food' ? 0.85 : 0;
   birdBus.gain.setTargetAtTime(birds, t, 0.9);
   fluteBus.gain.setTargetAtTime(flute, t, mode === 'food' ? 0.6 : 0.35);
