@@ -619,12 +619,13 @@
   "t": "Mahendra jowar",
   "u": "",
   "w": 436,
-  "h": 327,
+  "h": 672,
   "p": "",
   "l": "",
   "a": "Rithwik",
   "local": "photos/jowar-mahendra-rithwik.webp",
-  "own": true
+  "own": true,
+  "whole": true
  },
  "jowar-red-rithwik": {
   "t": "Red jowar",

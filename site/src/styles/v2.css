@@ -1143,6 +1143,11 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
 /* product pictures per line: the chosen line's picture fades in over the others */
 .pcard__look { position: absolute; inset: 0; opacity: 0; transition: opacity .45s var(--ease); }
 .pcard__look.is-shown { opacity: 1; }
+/* uncropped photo: the whole picture, centred on a blurred, dimmed copy of itself */
+.pcard__look--whole .pcard__img { position: absolute; inset: 0; object-fit: contain; transform: none; }
+.pcard__look--whole .pcard__img--fill { object-fit: cover; filter: blur(16px) brightness(.62) saturate(1.1); transform: scale(1.2); }
+.pcard:hover .pcard__look--whole .pcard__img:not(.pcard__img--fill) { transform: scale(1.04); }
+.pcard:hover .pcard__look--whole .pcard__img--fill { transform: scale(1.2); }
 
 /* map: the office is pinned; a button opens directions in Google Maps */
 .map { position: relative; }
