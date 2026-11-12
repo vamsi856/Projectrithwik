@@ -588,5 +588,16 @@
   "a": "Rithwik",
   "local": "photos/proso-yellow-rithwik.webp",
   "own": true
+ },
+ "jowar-milky-rithwik": {
+  "t": "Milky white jowar",
+  "u": "",
+  "w": 900,
+  "h": 675,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/jowar-milky-rithwik.webp",
+  "own": true
  }
 }
