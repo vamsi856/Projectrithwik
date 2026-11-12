@@ -184,12 +184,12 @@
 ]
 },
 "founders-rithwik": {
-"h": 1250,
-"w": 1000,
+"h": 900,
+"w": 1200,
 "widths": [
 480,
 800,
-1000
+1200
 ]
 },
 "foxtail": {
@@ -238,10 +238,12 @@
 ]
 },
 "jowar-mahendra-rithwik": {
-"h": 213,
-"w": 284,
+"h": 960,
+"w": 1280,
 "widths": [
-284
+480,
+800,
+1280
 ]
 },
 "jowar-milky-rithwik": {

@@ -884,7 +884,7 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 .legacy__step.is-now .legacy__firm { opacity: 1; font-weight: 600; }
 /* Rithwik Industries: the founders' photo under the 2022 step */
 .legacy__founders { margin: 14px 0 0; width: min(100%, 300px); }
-.legacy__founders-img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 22px; box-shadow: 0 22px 44px -22px rgba(0, 0, 0, .45), 0 0 0 1px rgba(var(--ink-rgb), .08); }
+.legacy__founders-img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 22px; box-shadow: 0 22px 44px -22px rgba(0, 0, 0, .45), 0 0 0 1px rgba(var(--ink-rgb), .08); }
 .legacy__founders figcaption { margin-top: 10px; font-size: .88rem; line-height: 1.4; }
 .legacy__founders figcaption b { display: block; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--bronze-ink); }
 .cover__since { margin-top: 10px; font: 600 clamp(.75rem, 1vw, .9rem)/1 var(--text); letter-spacing: .02em; color: #f0d58c; padding: 7px 12px; border: 1px solid rgba(201, 162, 74, .5); border-radius: 999px; }
