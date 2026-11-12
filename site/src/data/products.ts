@@ -42,7 +42,7 @@ export const BIRD: Product[] = [
   { id: 'b-little', name: 'Little millet', group: 'millets', photo: 'little', swatch: s('#d8c48a', '#b29e60', 6), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-proso', name: 'Proso millet', group: 'millets', photo: 'proso', swatch: s('#e6d39a', '#c4ac68', 8),
     variants: [tint('Green', '0%', '#c3c27a', '#8f8f48', 8), { label: 'Yellow', gst: '0%' }] },
-  { id: 'b-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra', swatch: s('#9aa197', '#6e776c', 8), variants: [{ label: 'Bajra', gst: '0%' }] },
+  { id: 'b-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra-rithwik', swatch: s('#9aa197', '#6e776c', 8), variants: [{ label: 'Bajra', gst: '0%' }] },
   { id: 'b-jowar', name: 'Jowar', group: 'grains', photo: 'jowar', swatch: s('#eadfc6', '#c7b896', 9),
     variants: [{ label: 'Mahendra', gst: '0%' }, { label: 'Milky white', gst: '0%' }, { label: 'Nidhi', gst: '0%' }, { label: 'Red', gst: '0%', photo: 'jowar-red', swatch: s('#a4552f', '#6e3418', 9) }, tint('Yellow', '0%', '#e2c164', '#b38f34', 9)] },
   { id: 'b-maize', name: 'Maize', group: 'grains', photo: 'maize-grain', swatch: s('#f0e4c4', '#cdbb8d', 12), variants: [{ label: '', gst: '0%' }] },
@@ -70,7 +70,7 @@ export const FOOD: Product[] = [
   { id: 'f-kodo', name: 'Kodo millet', group: 'millets', photo: 'kodo', swatch: s('#a9824e', '#7d5a2e', 7), variants: one() },
   { id: 'f-little', name: 'Little millet', group: 'millets', photo: 'little', swatch: s('#d8c48a', '#b29e60', 6), variants: one() },
   { id: 'f-proso', name: 'Proso millet', group: 'millets', photo: 'proso', swatch: s('#e6d39a', '#c4ac68', 8), variants: one() },
-  { id: 'f-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra', swatch: s('#9aa197', '#6e776c', 8), variants: one('Bajra') },
+  { id: 'f-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra-rithwik', swatch: s('#9aa197', '#6e776c', 8), variants: one('Bajra') },
   { id: 'f-ragi', name: 'Ragi', group: 'millets', photo: 'ragi', swatch: s('#8a3b2b', '#5e2216', 6), variants: one('Finger millet') },
 
   { id: 'f-chia', name: 'Chia seeds', group: 'superfoods', photo: 'chia', swatch: s('#e9e4d8', '#bdb5a2', 5), variants: one() },

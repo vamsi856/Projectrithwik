@@ -26,15 +26,6 @@
   "l": "CC BY-SA 4.0",
   "a": "Roger Culos"
  },
- "bajra": {
-  "t": "Food grain pearl millet 1.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Food_grain_pearl_millet_1.jpg",
-  "w": 1242,
-  "h": 918,
-  "p": "https://commons.wikimedia.org/wiki/File:Food_grain_pearl_millet_1.jpg",
-  "l": "CC BY-SA 3.0",
-  "a": "Sengai Podhuvan"
- },
  "jowar": {
   "t": "A plate of sorghum grain.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/d/dc/A_plate_of_sorghum_grain.jpg",
@@ -563,6 +554,17 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/browntop-rithwik.webp",
+  "own": true
+ },
+ "bajra-rithwik": {
+  "t": "Pearl millet",
+  "u": "",
+  "w": 960,
+  "h": 720,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/bajra-rithwik.webp",
   "own": true
  }
 }
