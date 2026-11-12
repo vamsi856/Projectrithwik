@@ -458,15 +458,6 @@
   "l": "CC BY-SA 4.0",
   "a": "Rajani Gairshail"
  },
- "foxtail-hulled": {
-  "t": "Hulled foxtail millet.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/4/40/Hulled_foxtail_millet.jpg",
-  "w": 2000,
-  "h": 1310,
-  "p": "https://commons.wikimedia.org/wiki/File:Hulled_foxtail_millet.jpg",
-  "l": "CC BY-SA 2.0 kr",
-  "a": "국립국어원"
- },
  "chana-brown": {
   "t": "Cicer arietinum noir MHNT.BOT.2017.12.2.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Cicer_arietinum_noir_MHNT.BOT.2017.12.2.jpg",
@@ -539,6 +530,17 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/foxtail-winter-rithwik.webp",
+  "own": true
+ },
+ "foxtail-summer-rithwik": {
+  "t": "Foxtail millet, summer crop",
+  "u": "",
+  "w": 1600,
+  "h": 1198,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/foxtail-summer-rithwik.webp",
   "own": true
  }
 }
