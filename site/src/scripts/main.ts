@@ -729,33 +729,49 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   });
 
   after(() => {
-    // bird site: a folded-paper bird zigzags down the page with your scroll. Its wings beat
-    // while the page moves and it glides (wings spread) when you stop; it banks into each
-    // turn and always faces the way it is flying.
-    const sb = $<SVGSVGElement>('svg.scrollbird', root);
-    if (sb && !reduce) {
-      const body = $('.pb', sb)!, near = $('.pb__wing--near', sb)!, far = $('.pb__wing--far', sb)!;
-      gsap.set([near, far], { svgOrigin: '2 0' });
-      // one wingbeat: wings sweep down past the body and back up
-      const flap = gsap.timeline({ repeat: -1, paused: true })
-        .to(near, { scaleY: -0.7, duration: 0.13, ease: 'sine.in' })
-        .to(far, { scaleY: -0.55, duration: 0.13, ease: 'sine.in' }, 0.02)
-        .to(near, { scaleY: 1, duration: 0.17, ease: 'sine.out' })
-        .to(far, { scaleY: 1, duration: 0.17, ease: 'sine.out' }, '<0.02');
-      const glide = () => { flap.pause(); gsap.to([near, far], { scaleY: 0.8, duration: 0.4, ease: 'power2.out' }); };
-      glide();
-      let still = 0, face = 1;
+    // bird site: a small flock of folded-paper birds zigzags down the page with your scroll.
+    // Each has its own size, place in the formation and timing, so they read as a flock and
+    // not copies. Wings beat while the page moves and spread into a glide when you stop; each
+    // banks into the turns and faces the way it is flying.
+    const sb0 = $<SVGSVGElement>('svg.scrollbird', root);
+    if (sb0 && !reduce) {
+      const n = innerWidth < 700 ? 4 : 5;
+      // [size, lead/lag along the path, sideways offset, height offset, wingbeat speed]
+      const FORM: [number, number, number, number, number][] = [
+        [1.35, 0, 0, 0, 1], [1.1, -0.012, -0.07, -0.09, 1.12], [1.0, -0.02, 0.06, 0.08, 0.92],
+        [0.88, -0.03, -0.12, 0.13, 1.2], [0.8, -0.038, 0.1, -0.15, 1.05],
+      ];
+      const birds = Array.from({ length: n }, (_, i) => {
+        const el = i === 0 ? sb0 : (sb0.cloneNode(true) as SVGSVGElement);
+        if (i) sb0.after(el);
+        const [size, lag, dx, dy, speed] = FORM[i];
+        gsap.set(el, { scale: size, zIndex: 30 - i });
+        const body = $('.pb', el)!, near = $('.pb__wing--near', el)!, far = $('.pb__wing--far', el)!;
+        gsap.set([near, far], { svgOrigin: '2 0' });
+        const flap = gsap.timeline({ repeat: -1, paused: true, delay: i * 0.05 })
+          .to(near, { scaleY: -0.7, duration: 0.13, ease: 'sine.in' })
+          .to(far, { scaleY: -0.55, duration: 0.13, ease: 'sine.in' }, 0.02)
+          .to(near, { scaleY: 1, duration: 0.17, ease: 'sine.out' })
+          .to(far, { scaleY: 1, duration: 0.17, ease: 'sine.out' }, '<0.02')
+          .timeScale(speed);
+        gsap.set([near, far], { scaleY: 0.8 });
+        return { el, body, near, far, flap, size, lag, dx, dy, face: 1 };
+      });
+      const glide = () => birds.forEach((b, i) => { b.flap.pause(); gsap.to([b.near, b.far], { scaleY: 0.8, duration: 0.4 + i * 0.08, ease: 'power2.out' }); });
+      let still = 0;
       st({
         trigger: root, start: 'top top', end: 'bottom bottom',
         onUpdate: (s) => {
-          const p = s.progress, w = innerWidth, h = innerHeight, k = Math.PI * 5;
-          const x = w * (0.5 + 0.42 * Math.sin(p * k)), y = h * (0.25 + 0.5 * p) + Math.cos(p * Math.PI * 9) * 30;
-          // which way it is heading across the screen right now
-          const dir = Math.sign(Math.cos(p * k) * (s.direction || 1)) || face;
-          if (dir !== face) { face = dir; gsap.to(body, { scaleX: face, duration: 0.25, ease: 'power2.inOut', svgOrigin: '0 0' }); }
-          const ang = gsap.utils.clamp(-28, 28, Math.cos(p * Math.PI * 9) * -14 * (s.direction || 1)) * face;
-          gsap.to(sb, { x, y, rotate: ang, opacity: p > 0.03 && p < 0.98 ? 1 : 0, duration: 0.7, ease: 'power2.out', overwrite: 'auto' });
-          if (flap.paused()) flap.play();
+          const w = innerWidth, h = innerHeight, k = Math.PI * 5, sd = s.direction || 1;
+          birds.forEach((b, i) => {
+            const p = Math.max(0, s.progress + b.lag * sd);
+            const x = w * (0.5 + 0.42 * Math.sin(p * k) + b.dx * 0.5), y = h * (0.25 + 0.5 * p + b.dy * 0.5) + Math.cos(p * Math.PI * 9) * 30;
+            const dir = Math.sign(Math.cos(p * k) * sd) || b.face;
+            if (dir !== b.face) { b.face = dir; gsap.to(b.body, { scaleX: dir, duration: 0.25, ease: 'power2.inOut', svgOrigin: '0 0' }); }
+            const ang = gsap.utils.clamp(-28, 28, Math.cos(p * Math.PI * 9) * -14 * sd) * b.face;
+            gsap.to(b.el, { x, y, rotate: ang, opacity: s.progress > 0.03 && s.progress < 0.98 ? 1 : 0, duration: 0.7 + i * 0.12, ease: 'power2.out', overwrite: 'auto' });
+            if (b.flap.paused()) b.flap.play();
+          });
           clearTimeout(still); still = window.setTimeout(glide, 260);
         },
       });
