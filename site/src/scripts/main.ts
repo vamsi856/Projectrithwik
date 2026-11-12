@@ -755,22 +755,50 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
         const near = wing, far = wing;
         return { el, body, near, far, flap, size, lag, dx, dy, face: 1 };
       });
-      const glide = () => birds.forEach((b, i) => { b.flap.pause(); gsap.to(b.near, { attr: { d: 'M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z' }, duration: 0.3 + i * 0.06 }); });
+      // At the end of the page the flock lands on the red pin of the map: the map always centres
+      // on the place, so the pin's point is the middle of the map frame. The lead bird perches
+      // on top of the pin, the other two settle either side of its foot, wings folded.
+      const mapFrame = $<HTMLElement>('[data-map] iframe', root);
+      // [x from the pin's point, y from it, size when landed]
+      // (Google's pin is about 27 x 43 px with its point at the map's centre)
+      const PERCH: [number, number, number][] = [[0, -49, 1], [-33, -5, 0.82], [34, -4, 0.76]];
+      const UP = 'M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z';
+      const FOLDED = 'M-22 -10 Q-11 -16 0 2 Q11 -16 22 -10 Q11 -6 0 7 Q-11 -6 -22 -10Z';
+      let landed = false;
+      const glide = () => birds.forEach((b, i) => { b.flap.pause(); gsap.to(b.near, { attr: { d: landed ? FOLDED : UP }, duration: 0.3 + i * 0.06 }); });
       let still = 0;
       st({
         trigger: root, start: 'top top', end: 'bottom bottom',
         onUpdate: (s) => {
           const w = innerWidth, h = innerHeight, k = Math.PI * 5, sd = s.direction || 1;
+          // how far the landing has got: starts as the pin comes up from the bottom of the
+          // screen, done once it is a little above the middle
+          const r = mapFrame?.getBoundingClientRect();
+          const pinX = r ? r.left + r.width / 2 : 0, pinY = r ? r.top + r.height / 2 : h * 9;
+          const L = r && r.height ? gsap.utils.clamp(0, 1, (h * 0.95 - pinY) / (h * 0.38)) : 0;
+          const E = L * L * (3 - 2 * L);
+          const wasLanded = landed; landed = L >= 1;
           birds.forEach((b, i) => {
             const p = Math.max(0, s.progress + b.lag * sd);
             // the zigzag stays inside the screen: on a narrow phone it swings less far
             const amp = Math.min(0.42, 0.5 - 52 * b.size / w - Math.abs(b.dx) * 0.5);
-            const x = w * (0.5 + amp * Math.sin(p * k) + b.dx * 0.5), y = h * (0.25 + 0.5 * p + b.dy * 0.5) + Math.cos(p * Math.PI * 9) * 30;
+            let x = w * (0.5 + amp * Math.sin(p * k) + b.dx * 0.5), y = h * (0.25 + 0.5 * p + b.dy * 0.5) + Math.cos(p * Math.PI * 9) * 30;
+            let ang = gsap.utils.clamp(-28, 28, Math.cos(p * Math.PI * 9) * -14 * sd);
             const dir = Math.sign(Math.cos(p * k) * sd) || b.face;
-            if (dir !== b.face) { b.face = dir; gsap.to(b.body, { scaleX: dir, duration: 0.25, ease: 'power2.inOut', svgOrigin: '0 0' }); }
-            const ang = gsap.utils.clamp(-28, 28, Math.cos(p * Math.PI * 9) * -14 * sd) * b.face;
-            gsap.to(b.el, { x, y, rotate: ang, opacity: s.progress > 0.03 && s.progress < 0.98 ? 1 : 0, duration: 0.7 + i * 0.12, ease: 'power2.out', overwrite: 'auto' });
-            if (b.flap.paused()) b.flap.play();
+            if (dir !== b.face && !landed) { b.face = dir; gsap.to(b.body, { scaleX: dir, duration: 0.25, ease: 'power2.inOut', svgOrigin: '0 0' }); }
+            ang *= b.face;
+            let scale = b.size, opacity = s.progress > 0.03 && s.progress < 0.98 ? 1 : 0;
+            if (E > 0) {
+              const [px, py, ps] = PERCH[i];
+              x += (pinX + px - x) * E; y += (pinY + py - y) * E;
+              ang *= 1 - E; scale += (ps - scale) * E;
+              // while landed they ride the pin up the page, and leave with it
+              opacity = pinY > -80 && pinY < h + 80 ? 1 : 0;
+            }
+            // landed: stuck to the pin, so follow it at once; in flight: drift with a little lag
+            gsap.to(b.el, { x, y, rotate: ang, scale, opacity, duration: landed ? 0.06 : 0.7 + i * 0.12 - 0.5 * E, ease: 'power2.out', overwrite: 'auto' });
+            if (landed) { if (!wasLanded) { b.flap.pause(); gsap.to(b.near, { attr: { d: FOLDED }, duration: 0.35 + i * 0.08, ease: 'power2.out' }); } }
+            else if (b.flap.paused()) b.flap.play();
           });
           clearTimeout(still); still = window.setTimeout(glide, 260);
         },
