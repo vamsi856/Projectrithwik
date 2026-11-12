@@ -529,5 +529,16 @@
   "a": "Rithwik",
   "local": "photos/pumpkin-rithwik.webp",
   "own": true
+ },
+ "foxtail-winter-rithwik": {
+  "t": "Foxtail millet, winter crop",
+  "u": "",
+  "w": 1545,
+  "h": 1160,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/foxtail-winter-rithwik.webp",
+  "own": true
  }
 }
