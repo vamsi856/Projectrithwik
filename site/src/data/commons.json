@@ -17,15 +17,6 @@
   "l": "CC BY-SA 4.0",
   "a": "Roger Culos"
  },
- "ragi": {
-  "t": "Eleusine coracana MHNT.BOT.2015.34.17.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Eleusine_coracana_MHNT.BOT.2015.34.17.jpg",
-  "w": 4476,
-  "h": 3456,
-  "p": "https://commons.wikimedia.org/wiki/File:Eleusine_coracana_MHNT.BOT.2015.34.17.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "Roger Culos"
- },
  "little": {
   "t": "A closeup fo Samai millet with husk.JPG",
   "u": "https://upload.wikimedia.org/wikipedia/commons/f/f8/A_closeup_fo_Samai_millet_with_husk.JPG",
@@ -650,6 +641,17 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/safflower-rithwik.webp",
+  "own": true
+ },
+ "ragi-rithwik": {
+  "t": "Ragi (finger millet)",
+  "u": "",
+  "w": 1200,
+  "h": 900,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/ragi-rithwik.webp",
   "own": true
  }
 }

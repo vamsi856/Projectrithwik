@@ -71,9 +71,9 @@ export const FOOD: Product[] = [
   { id: 'f-little', name: 'Little millet', group: 'millets', photo: 'little', swatch: s('#d8c48a', '#b29e60', 6), variants: one() },
   { id: 'f-proso', name: 'Proso millet', group: 'millets', photo: 'proso', swatch: s('#e6d39a', '#c4ac68', 8), variants: one() },
   { id: 'f-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra-rithwik', swatch: s('#9aa197', '#6e776c', 8), variants: one('Bajra') },
-  { id: 'f-ragi', name: 'Ragi', group: 'millets', photo: 'ragi', swatch: s('#8a3b2b', '#5e2216', 6), variants: one('Finger millet') },
+  { id: 'f-ragi', name: 'Ragi', group: 'millets', photo: 'ragi-rithwik', swatch: s('#c0603a', '#7a3020', 6), variants: one('Finger millet') },
 
-  { id: 'f-chia', name: 'Chia seeds', group: 'superfoods', photo: 'chia', swatch: s('#e9e4d8', '#bdb5a2', 5), variants: one() },
+  { id: 'f-chia', name: 'Chia seeds', group: 'superfoods', photo: 'chia', swatch: s('#4b4844', '#9a948a', 5), variants: [{ label: 'Black', gst: '' }, tint('White', '', '#f2ede2', '#cdc4ae', 5)] },
   { id: 'f-quinoa', name: 'Quinoa', group: 'superfoods', photo: 'quinoaw', swatch: s('#efe5cc', '#cdbf9b', 6), variants: [...many('Regular', 'Bold'), { label: 'Red', gst: '', photo: 'quinoa-red', swatch: s('#a0402e', '#6a2419', 6) }, tint('Black', '', '#2b2826', '#4d4844', 6), { label: 'Tricolor', gst: '', photo: 'quinoab' }] },
   { id: 'f-pumpkin', name: 'Pumpkin seeds', group: 'superfoods', photo: 'pumpkin-rithwik', swatch: s('#7f9a5a', '#556d36', 11), variants: one() },
   { id: 'f-sunhulled', name: 'Sunflower seeds', group: 'superfoods', photo: 'sunflower-hulled-rithwik', swatch: s('#d9d0bb', '#a99f86', 10), variants: one('Hulled') },
