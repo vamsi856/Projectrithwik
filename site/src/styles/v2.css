@@ -882,11 +882,33 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 .legacy__person { font-weight: 700; font-size: 1.02rem; }
 .legacy__firm { font-size: .9rem; opacity: .75; }
 .legacy__step.is-now .legacy__firm { opacity: 1; font-weight: 600; }
-/* Rithwik Industries: the founders' photo under the 2022 step */
-.legacy__founders { margin: 14px 0 0; width: min(100%, 300px); }
-.legacy__founders-img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 22px; box-shadow: 0 22px 44px -22px rgba(0, 0, 0, .45), 0 0 0 1px rgba(var(--ink-rgb), .08); }
-.legacy__founders figcaption { margin-top: 10px; font-size: .88rem; line-height: 1.4; }
-.legacy__founders figcaption b { display: block; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--bronze-ink); }
+/* 2022: the dot is a round icon of the two founders, sitting on the rail */
+.legacy__step.is-now { padding-top: 64px; }
+.legacy__step.is-now .legacy__dot--founders { width: 60px; height: 60px; left: -15px; top: -7px; overflow: hidden; }
+.legacy__dot-img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.legacy--bird .legacy__step.is-now .legacy__dot--founders { background: var(--navy); box-shadow: 0 0 0 3px var(--marigold), 0 0 0 9px rgba(242, 178, 27, .22), 0 14px 26px -10px rgba(0, 0, 0, .6); }
+.legacy--food .legacy__step.is-now .legacy__dot--founders { background: var(--khaki); box-shadow: 0 0 0 3px var(--bronze), 0 0 0 9px rgba(var(--ink-rgb), .1), 0 14px 26px -12px rgba(0, 0, 0, .35); }
+/* the founders under the 2022 step, laid out like a phone home screen: a big widget of the two
+   of them and an app icon for each. On wide screens it reaches back under 2011 and 1976 so the widget can be big. */
+.legacy__founders { --fw: min(680px, calc(300% + 28px)); margin: 18px 0 0 calc(100% - var(--fw)); width: var(--fw); display: grid; grid-template-columns: 1fr auto; gap: 16px 18px; align-items: start; }
+.legacy__widget { position: relative; border-radius: 30px; overflow: hidden; box-shadow: 0 26px 50px -24px rgba(0, 0, 0, .5), 0 0 0 1px rgba(var(--ink-rgb), .08); }
+.legacy__founders-img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform .8s var(--ease); }
+.legacy__widget-tag { position: absolute; left: 14px; bottom: 14px; padding: 7px 13px; border-radius: 999px; font: 700 .7rem/1 var(--text); letter-spacing: .14em; text-transform: uppercase; color: #fff; background: rgba(12, 20, 28, .45); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.legacy__apps { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.legacy__app { display: grid; justify-items: center; gap: 7px; font-size: .82rem; font-weight: 600; text-align: center; }
+.legacy__app-img { display: block; width: clamp(88px, 9.5vw, 128px); aspect-ratio: 1; object-fit: cover; border-radius: 24%; box-shadow: 0 14px 28px -14px rgba(0, 0, 0, .55), 0 0 0 1px rgba(var(--ink-rgb), .08); transition: transform .35s var(--ease); }
+@media (hover: hover) {
+  .legacy__widget:hover .legacy__founders-img { transform: scale(1.04); }
+  .legacy__app:hover .legacy__app-img { transform: translateY(-4px) scale(1.06); }
+}
+.legacy--bird .legacy__widget, .legacy--bird .legacy__app-img { box-shadow: 0 24px 46px -22px rgba(0, 0, 0, .75), 0 0 0 1px rgba(242, 178, 27, .3); }
+.legacy--bird .legacy__app { color: var(--khaki); }
+@media (max-width: 860px) {
+  /* phones: the widget across the width, the two icons in a row under it */
+  .legacy__founders { --fw: 100%; margin-left: 0; grid-template-columns: 1fr; max-width: 420px; }
+  .legacy__apps { grid-auto-flow: column; justify-content: start; gap: 22px; }
+  .legacy__app-img { width: 88px; }
+}
 .cover__since { margin-top: 10px; font: 600 clamp(.75rem, 1vw, .9rem)/1 var(--text); letter-spacing: .02em; color: #f0d58c; padding: 7px 12px; border: 1px solid rgba(201, 162, 74, .5); border-radius: 999px; }
 @media (max-width: 860px) {
   .legacy__head { grid-template-columns: 1fr; }
@@ -898,6 +920,8 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
   .legacy__step { padding-top: 0; }
   .legacy__dot { left: -40px; top: 4px; }
   .legacy__step.is-now .legacy__dot { left: -44px; top: 0; }
+  .legacy__step.is-now { padding-top: 0; }
+  .legacy__step.is-now .legacy__dot--founders { width: 50px; height: 50px; left: -54px; top: -9px; }
 }
 @media (max-width: 760px), (max-aspect-ratio: 4/5) { .cover__since { grid-column: 2; margin-top: 4px; } }
 
@@ -1205,8 +1229,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
 @media (prefers-reduced-motion: reduce) { .perch__img { animation: none; cursor: default; } .perch__bird[data-flip] { transform: scaleX(-1); } }
 
 /* the macaw on the family timeline: its feet on top of today's (2022) dot */
-.perch.perch--legacy { left: 15px; top: 9px; z-index: 3; }
-@media (max-width: 860px) { .perch.perch--legacy { left: -29px; top: 1px; height: calc(var(--tall) * .7 / var(--fy)); } }
+.perch.perch--legacy { left: 15px; top: -7px; z-index: 3; } /* feet on top of the founders' circle */
+@media (max-width: 860px) { .perch.perch--legacy { left: -29px; top: -9px; height: calc(var(--tall) * .7 / var(--fy)); } }
 
 
 /* ---------- hero entrance: pure CSS, from the first paint ---------- */
