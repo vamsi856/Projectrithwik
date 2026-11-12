@@ -577,5 +577,16 @@
   "a": "Rithwik",
   "local": "photos/proso-green-rithwik.webp",
   "own": true
+ },
+ "proso-yellow-rithwik": {
+  "t": "Yellow proso millet",
+  "u": "",
+  "w": 899,
+  "h": 674,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/proso-yellow-rithwik.webp",
+  "own": true
  }
 }
