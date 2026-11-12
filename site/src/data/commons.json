@@ -431,16 +431,6 @@
   "l": "CC BY-SA 3.0",
   "a": "Roger Culos"
  },
- "safflower-seeds": {
-  "t": "Carthamus tinctorius - Osaka Museum of Natural History - DSC07849.JPG (cropped to the seeds)",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/6/65/Carthamus_tinctorius_-_Osaka_Museum_of_Natural_History_-_DSC07849.JPG",
-  "w": 860,
-  "h": 645,
-  "p": "https://commons.wikimedia.org/wiki/File:Carthamus_tinctorius_-_Osaka_Museum_of_Natural_History_-_DSC07849.JPG",
-  "l": "CC0",
-  "a": "Daderot",
-  "local": "photos/safflower-seeds.webp"
- },
  "sunflower-striped": {
   "t": "Striped sunflower seeds",
   "u": "",
@@ -649,6 +639,17 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/maize-rithwik.webp",
+  "own": true
+ },
+ "safflower-rithwik": {
+  "t": "Safflower",
+  "u": "",
+  "w": 899,
+  "h": 674,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/safflower-rithwik.webp",
   "own": true
  }
 }
