@@ -24,7 +24,6 @@ import { held } from '../data/registrations';
 import Certifications from '../components/Certifications.astro';
 import BirdsWeFeed from '../components/BirdsWeFeed.astro';
 import Legacy from '../components/Legacy.astro';
-import Plant from '../components/Plant.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 // the logos painted onto the 3D packs: small webp copies, not the full-size originals
@@ -243,7 +242,6 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
 
       <Legacy tone="bird" />
 
-      <Plant tone="bird" id="b-plant" />
 
       <PackStudio id="b-packs" kind="sack" tone="bird" logo={birdLogoTex} items={BIRD_PACKS} contact="b-contact"
         title="Our packs" lede="Every feed line in its own Rithwik sack." />
@@ -349,7 +347,6 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
 
       <Legacy tone="food" />
 
-      <Plant tone="food" id="f-plant" />
 
       <PackStudio id="f-packs" kind="pouch" tone="food" logo={foodLogoTex} items={FOOD_PACKS} contact="f-contact"
         title="Our packs" lede="Kraft pouches with a clear window, so you can see the grain." />

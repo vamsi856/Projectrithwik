@@ -1029,44 +1029,6 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 .studio__note { margin: 0; }
 
 /* =========================================================
-   INSIDE RITHWIK: the family's own photos
-   ========================================================= */
-.plant { position: relative; max-width: var(--max); margin: 0 auto; padding: clamp(64px, 9vw, 120px) var(--gutter); }
-.plant__head { display: grid; gap: 10px; margin-bottom: clamp(26px, 4vw, 44px); max-width: 60ch; }
-.plant__head .section-title { margin: 0; }
-.plant__kicker { margin: 0; font-weight: 700; font-size: .95rem; letter-spacing: .02em; }
-.plant--bird .plant__kicker { color: var(--sky); }
-.plant--bird .section-title { color: var(--khaki); }
-.plant--food .plant__kicker { color: var(--bronze-ink); }
-.plant__lede { margin: 0; opacity: .85; }
-.plant__grid { display: grid; gap: clamp(12px, 1.6vw, 20px); grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: clamp(150px, 15vw, 230px); }
-.plant__fig { position: relative; margin: 0; overflow: hidden; border-radius: 24px; background: rgba(0, 0, 0, .15); }
-.plant__fig img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s var(--ease); }
-.plant__fig:hover img { transform: scale(1.04); }
-.plant__fig figcaption {
-  position: absolute; left: 12px; bottom: 12px; display: grid; gap: 2px; padding: 10px 14px; border-radius: 14px; max-width: calc(100% - 24px);
-  font-size: .82rem; line-height: 1.3;
-}
-.plant__fig figcaption b { font: 400 1.15rem/1 var(--display); text-transform: uppercase; letter-spacing: .02em; }
-.plant--bird .plant__fig figcaption { background: rgba(11, 25, 36, .78); color: var(--khaki); }
-.plant--bird .plant__fig figcaption b { color: var(--marigold); }
-.plant--food .plant__fig figcaption { background: rgba(var(--paper-rgb), .9); color: var(--ink); }
-.plant--food .plant__fig figcaption b { color: var(--ink); }
-/* base grid; the layouts for each site are set further down */
-.plant__fig--line { grid-column: 6 / span 7; }
-.plant__fig--warehouse { grid-column: 6 / span 7; }
-.plant__grid--four .plant__fig--warehouse { grid-column: 6 / span 4; }
-.plant__fig--sack { grid-column: 10 / span 3; }
-.plant__fig--sack img { object-position: 50% 40%; }
-@media (max-width: 860px) {
-  .plant__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 46vw; }
-  .plant__fig--line, .plant__fig--warehouse, .plant__grid--four .plant__fig--warehouse { grid-column: 1 / -1; }
-  .plant__grid--four .plant__fig--warehouse { grid-column: 1 / span 1; }
-  .plant__fig--sack { grid-column: 2 / span 1; }
-  .plant__fig figcaption b { font-size: 1rem; }
-}
-
-/* =========================================================
    OUR PACKS, final layout: one screen tall. Title on top, the 3D ring in the middle
    taking all the room that is left, then one row of names with arrows, and a
    compact bar with the chosen product and its price button.
@@ -1152,21 +1114,6 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
   .studio__stage { height: min(78vw, 360px); }
   .studio__name { white-space: normal; font-size: 1.35rem; line-height: 1.05; }
   .studio__detail .pill { padding-inline: 16px; }
-}
-
-/* Inside Rithwik: cleaning line, warehouse, and (Bird Feeds) the sack */
-.plant__grid--bird, .plant__grid--food { grid-auto-rows: auto; }
-.plant__grid--bird .plant__fig--line { grid-column: 1 / span 8; grid-row: 1; aspect-ratio: 1156 / 468; }
-.plant__grid--bird .plant__fig--warehouse { grid-column: 1 / span 8; grid-row: 2; aspect-ratio: 1156 / 468; }
-.plant__grid--bird .plant__fig--sack { grid-column: 9 / span 4; grid-row: 1 / span 2; }
-.plant__grid--bird .plant__fig--sack img { position: absolute; inset: 0; }
-.plant__grid--food .plant__fig--line { grid-column: 1 / span 6; grid-row: auto; aspect-ratio: 2 / 1; }
-.plant__grid--food .plant__fig--warehouse { grid-column: 7 / span 6; grid-row: auto; aspect-ratio: 2 / 1; }
-@media (max-width: 860px) {
-  .plant__grid--bird .plant__fig, .plant__grid--food .plant__fig { grid-column: 1 / -1; grid-row: auto; }
-  .plant__grid--bird .plant__fig--line, .plant__grid--bird .plant__fig--warehouse, .plant__grid--food .plant__fig--line, .plant__grid--food .plant__fig--warehouse { aspect-ratio: 1156 / 468; }
-  .plant__grid--bird .plant__fig--sack { aspect-ratio: 1 / 1; }
-  .plant__grid--bird .plant__fig--sack img { object-position: 50% 8%; }
 }
 
 /* the sound switch, minimised: a small round button stacked above WhatsApp on every screen,
