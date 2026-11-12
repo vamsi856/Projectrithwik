@@ -17,7 +17,7 @@ const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document)
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => [...r.querySelectorAll<T>(s)];
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-const WA = '918309782770';
+const WA = '919245555556';
 if (!reduce) document.documentElement.classList.add('has-motion');
 
 /* ------------------------------------------------------------------ smooth scroll */
@@ -735,7 +735,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     // banks into the turns and faces the way it is flying.
     const sb0 = $<SVGSVGElement>('svg.scrollbird', root);
     if (sb0 && !reduce) {
-      const n = innerWidth < 700 ? 2 : 3;
+      const n = 3;
       // [size, lead/lag along the path, sideways offset, height offset, wingbeat speed]
       const FORM: [number, number, number, number, number][] = [
         [1.35, 0, 0, 0, 1], [1.1, -0.012, -0.07, -0.09, 1.12], [1.0, -0.02, 0.06, 0.08, 0.92],
@@ -761,7 +761,9 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
           const w = innerWidth, h = innerHeight, k = Math.PI * 5, sd = s.direction || 1;
           birds.forEach((b, i) => {
             const p = Math.max(0, s.progress + b.lag * sd);
-            const x = w * (0.5 + 0.42 * Math.sin(p * k) + b.dx * 0.5), y = h * (0.25 + 0.5 * p + b.dy * 0.5) + Math.cos(p * Math.PI * 9) * 30;
+            // the zigzag stays inside the screen: on a narrow phone it swings less far
+            const amp = Math.min(0.42, 0.5 - 52 * b.size / w - Math.abs(b.dx) * 0.5);
+            const x = w * (0.5 + amp * Math.sin(p * k) + b.dx * 0.5), y = h * (0.25 + 0.5 * p + b.dy * 0.5) + Math.cos(p * Math.PI * 9) * 30;
             const dir = Math.sign(Math.cos(p * k) * sd) || b.face;
             if (dir !== b.face) { b.face = dir; gsap.to(b.body, { scaleX: dir, duration: 0.25, ease: 'power2.inOut', svgOrigin: '0 0' }); }
             const ang = gsap.utils.clamp(-28, 28, Math.cos(p * Math.PI * 9) * -14 * sd) * b.face;

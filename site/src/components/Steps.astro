@@ -2,7 +2,7 @@
 import { CONTACT } from '../data/products';
 interface Props { id: string; tone: 'bird' | 'food'; steps: { title: string; body: string }[] }
 const { id, tone, steps } = Astro.props;
-// a phone number written in a step ("message 83097 82770") opens WhatsApp to that number
+// a phone number written in a step ("message 92455 55556") opens WhatsApp to that number
 const brand = tone === 'food' ? 'Rithwik Industries' : 'Rithwik Bird Feeds';
 const PHONE = /(\d{5} \d{5})/;
 const parts = (body: string) => body.split(PHONE).map((t, i) => {

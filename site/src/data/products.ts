@@ -119,14 +119,13 @@ export const lineName = (p: Product, v: { label: string }) => (v.label ? `${p.na
 export const CONTACT = {
   office: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost, Kurnool, Andhra Pradesh 518002',
   warehouse: '2/161, 2/162, Sanjivareddypalle, Duvvur, YSR district',
-  whatsapp: '918309782770',
+  whatsapp: '919245555556',
   /** the number on every Call button */
   call: { tel: '+919245555556', label: '92455 55556' },
   phones: [
-    { tel: '+918309782770', label: '83097 82770', note: 'WhatsApp' },
+    { tel: '+919245555556', label: '92455 55556', note: 'WhatsApp' },
     { tel: '+918828282823', label: '88282 82823' },
     { tel: '+917329999996', label: '73299 99996' },
-    { tel: '+919245555556', label: '92455 55556' },
   ],
   // the office pin: Dhanalakshmi Nagar (87/14xx), by Nandyal Checkpost, Kurnool 518002
   officeAt: '15.794046,78.053707',

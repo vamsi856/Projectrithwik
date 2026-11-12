@@ -69,7 +69,7 @@ async function paintSack(ctx: CanvasRenderingContext2D, item: PackItem, logo: HT
     ctx.fillText('RITHWIK', TW / 2, 560);
     ctx.fillStyle = '#7cc4ea'; ctx.font = '400 110px Anton'; ctx.fillText('BIRD FEEDS', TW / 2, 690);
     ctx.fillStyle = 'rgba(228,223,193,.8)'; ctx.font = '600 40px "Instrument Sans"';
-    ['Office: Kurnool, Andhra Pradesh', 'Warehouse: Duvvur, YSR', 'WhatsApp 83097 82770', 'rithwikbirdfeeds@gmail.com'].forEach((l, i) => ctx.fillText(l, TW / 2, 860 + i * 64));
+    ['Office: Kurnool, Andhra Pradesh', 'Warehouse: Duvvur, YSR', 'WhatsApp 92455 55556', 'rithwikbirdfeeds@gmail.com'].forEach((l, i) => ctx.fillText(l, TW / 2, 860 + i * 64));
     ctx.textAlign = 'left';
     return;
   }
@@ -124,7 +124,7 @@ async function paintPouch(ctx: CanvasRenderingContext2D, item: PackItem, logo: H
     ctx.font = '400 92px Anton'; ctx.fillText('INDUSTRIES', TW / 2, 630);
     ctx.fillStyle = '#7a5a20'; ctx.font = 'italic 500 42px "Instrument Sans"'; ctx.fillText("Nature's grain, nurtured for you", TW / 2, 720);
     ctx.fillStyle = '#0f2a20'; ctx.font = '600 38px "Instrument Sans"';
-    ['Kurnool, Andhra Pradesh', 'WhatsApp 83097 82770', 'rithwikindustries@gmail.com'].forEach((l, i) => ctx.fillText(l, TW / 2, 880 + i * 62));
+    ['Kurnool, Andhra Pradesh', 'WhatsApp 92455 55556', 'rithwikindustries@gmail.com'].forEach((l, i) => ctx.fillText(l, TW / 2, 880 + i * 62));
     ctx.textAlign = 'left';
     return;
   }
