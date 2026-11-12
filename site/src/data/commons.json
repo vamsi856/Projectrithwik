@@ -413,15 +413,6 @@
   "l": "CC0",
   "a": "Ranjithkumar Murugesan"
  },
- "jowar-red": {
-  "t": "Red Sorghum Grains.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Red_Sorghum_Grains.jpg",
-  "w": 1800,
-  "h": 2459,
-  "p": "https://commons.wikimedia.org/wiki/File:Red_Sorghum_Grains.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "IBS-Gh"
- },
  "lobia-red": {
   "t": "Sea Island red peas.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/5/52/Sea_Island_red_peas.jpg",
@@ -633,6 +624,17 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/jowar-mahendra-rithwik.webp",
+  "own": true
+ },
+ "jowar-red-rithwik": {
+  "t": "Red jowar",
+  "u": "",
+  "w": 899,
+  "h": 674,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/jowar-red-rithwik.webp",
   "own": true
  }
 }

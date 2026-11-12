@@ -44,7 +44,7 @@ export const BIRD: Product[] = [
     variants: [{ label: 'Green', gst: '0%', photo: 'proso-green-rithwik', swatch: s('#c3c27a', '#8f8f48', 8) }, { label: 'Yellow', gst: '0%' }] },
   { id: 'b-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra-rithwik', swatch: s('#9aa197', '#6e776c', 8), variants: [{ label: 'Bajra', gst: '0%' }] },
   { id: 'b-jowar', name: 'Jowar', group: 'grains', photo: 'jowar-mahendra-rithwik', swatch: s('#eadfc6', '#c7b896', 9),
-    variants: [{ label: 'Mahendra', gst: '0%' }, { label: 'Milky white', gst: '0%', photo: 'jowar-milky-rithwik' }, { label: 'Nidhi', gst: '0%', photo: 'jowar-nidhi-rithwik' }, { label: 'Red', gst: '0%', photo: 'jowar-red', swatch: s('#a4552f', '#6e3418', 9) }, { label: 'Yellow', gst: '0%', photo: 'jowar-yellow-rithwik', swatch: s('#e2c164', '#b38f34', 9) }] },
+    variants: [{ label: 'Mahendra', gst: '0%' }, { label: 'Milky white', gst: '0%', photo: 'jowar-milky-rithwik' }, { label: 'Nidhi', gst: '0%', photo: 'jowar-nidhi-rithwik' }, { label: 'Red', gst: '0%', photo: 'jowar-red-rithwik', swatch: s('#a4552f', '#6e3418', 9) }, { label: 'Yellow', gst: '0%', photo: 'jowar-yellow-rithwik', swatch: s('#e2c164', '#b38f34', 9) }] },
   { id: 'b-maize', name: 'Maize', group: 'grains', photo: 'maize-grain', swatch: s('#f0e4c4', '#cdbb8d', 12), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-sunflower', name: 'Sunflower', group: 'oilseeds', photo: 'sunflower-striped', swatch: s('#2f2d2b', '#bdb7aa', 11), variants: [{ label: 'Striped', gst: '5%' }] },
   { id: 'b-safflower', name: 'Safflower', group: 'oilseeds', photo: 'safflower-seeds', swatch: s('#f2ede1', '#cfc6b0', 10), variants: [{ label: '', gst: '5%' }] },
