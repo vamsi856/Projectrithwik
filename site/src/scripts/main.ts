@@ -6,7 +6,7 @@ import Lenis from 'lenis';
 import { sfx, setMode, setEnabled, isEnabled, wantedBefore } from './sound';
 import { applyFestive } from './festive';
 import { MONTHS_LONG } from '../data/seasons';
-import { createFlock, MACAW, SCARLET } from './flock';
+import { createFlock, MACAW } from './flock';
 import { initPerches } from './perch';
 import { softwareGL } from './gpu';
 
@@ -720,18 +720,26 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   });
 
   after(() => {
-    // bird site: one real macaw flies with you down the page, zigzagging across the screen:
-    // its path follows the scroll (scroll back up and it flies back), its wings beat faster
-    // the faster you scroll, and it turns to face the way it is going.
-    const sb = $('.scrollbird', root);
+    // bird site: a paper bird zigzags down the page with your scroll, flapping while the page
+    // moves and gliding when it stops; it banks into each turn of the zigzag
+    const sb = $<SVGSVGElement>('svg.scrollbird', root);
     if (sb && !reduce) {
-      const near = (w: number, h: number) => (w < h ? Math.min(w * 0.44, h * 0.27, 310) : Math.min(w * 0.17, h * 0.36, 330));
-      const f = createFlock(sb, { sheets: [MACAW], count: 1, near, far: near, zigzag: true });
-      f.setActive(false); f.play();
-      // the hero has its own flock: these take over once it is scrolled past
-      const hero = $<HTMLElement>('.bird__hero', root);
-      if (hero) st({ trigger: hero, start: 'bottom 55%', endTrigger: root, end: 'bottom top', onToggle: (s) => f.setActive(s.isActive) });
-      else f.setActive(true);
+      const wing = $('path', sb)!;
+      const UP = 'M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z';
+      const DOWN = 'M-30 11 Q-17 3 0 2 Q17 3 30 11 Q17 5 0 7 Q-17 5 -30 11Z';
+      wing.setAttribute('d', UP);
+      const flap = gsap.to(wing, { attr: { d: DOWN }, duration: 0.14, repeat: -1, yoyo: true, ease: 'sine.inOut', paused: true });
+      let still = 0;
+      st({
+        trigger: root, start: 'top top', end: 'bottom bottom',
+        onUpdate: (s) => {
+          const p = s.progress, w = innerWidth, h = innerHeight;
+          const x = w * (0.5 + 0.42 * Math.sin(p * Math.PI * 5)), y = h * (0.25 + 0.5 * p) + Math.cos(p * Math.PI * 9) * 30;
+          const ang = Math.cos(p * Math.PI * 5) * 25 * Math.sign(s.direction || 1);
+          gsap.to(sb, { x, y, rotate: ang, opacity: p > 0.04 && p < 0.97 ? 0.95 : 0, duration: 0.6, ease: 'power2.out', overwrite: 'auto' });
+          flap.play(); clearTimeout(still); still = window.setTimeout(() => { flap.pause(); gsap.to(wing, { attr: { d: UP }, duration: 0.3 }); }, 220);
+        },
+      });
     }
   });
 }

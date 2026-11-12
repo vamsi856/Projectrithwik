@@ -313,7 +313,8 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 
 /* ---------- scroll bird ---------- */
 /* the scroll flock: a sky over the whole screen that never takes a tap (under the header) */
-.scrollbird { position: fixed; z-index: 30; left: 0; top: 0; width: 100%; height: 100vh; height: 100lvh; pointer-events: none; }
+/* the paper bird that zigzags down the Bird Feeds page as you scroll */
+.scrollbird { position: fixed; z-index: 30; left: 0; top: 0; width: 46px; height: 28px; margin: -14px 0 0 -23px; fill: var(--marigold); pointer-events: none; opacity: 0; overflow: visible; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .4)); }
 
 /* ---------- map lazy ---------- */
 .map iframe:not([src]) { visibility: hidden; }
