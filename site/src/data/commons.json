@@ -610,5 +610,16 @@
   "a": "Rithwik",
   "local": "photos/jowar-nidhi-rithwik.webp",
   "own": true
+ },
+ "jowar-yellow-rithwik": {
+  "t": "Yellow jowar",
+  "u": "",
+  "w": 648,
+  "h": 486,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/jowar-yellow-rithwik.webp",
+  "own": true
  }
 }
