@@ -1223,12 +1223,12 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
 .perch__img {
   position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: auto; cursor: pointer;
   /* a thin warm rim and a faint glow, so dark and blue feathers never sink into the navy page */
-  filter: drop-shadow(0 0 1.2px rgba(255, 244, 222, .6)) drop-shadow(0 0 9px rgba(255, 236, 200, .16)) drop-shadow(0 6px 8px rgba(0, 0, 0, .35));
+  filter: drop-shadow(0 0 10px rgba(255, 236, 200, .14)) drop-shadow(0 6px 8px rgba(0, 0, 0, .35));
   transform-origin: calc(var(--fx) * 100%) calc(var(--fy) * 100%);
   animation: perch-breathe 2.6s ease-in-out infinite;
 }
 /* the flying pose used while it arrives or leaves: hidden while it sits */
-.perch__fly { position: absolute; max-width: none; opacity: 0; pointer-events: none; filter: drop-shadow(0 0 1.2px rgba(255, 244, 222, .55)) drop-shadow(0 10px 12px rgba(0, 0, 0, .3)); }
+.perch__fly { position: absolute; max-width: none; opacity: 0; pointer-events: none; filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .3)); }
 .perch__flap { background-repeat: no-repeat; background-size: 300% 400%; }
 .perch__shadow {
   position: absolute; left: calc(var(--fx) * 100%); top: calc(var(--fy) * 100%); width: 46%; min-width: 40px; height: 10px; transform: translate(-50%, -40%);
