@@ -120,6 +120,8 @@ export const CONTACT = {
   office: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost, Kurnool, Andhra Pradesh 518002',
   warehouse: '2/161, 2/162, Sanjivareddypalle, Duvvur, YSR district',
   whatsapp: '918309782770',
+  /** the number on every Call button */
+  call: { tel: '+919245555556', label: '92455 55556' },
   phones: [
     { tel: '+918309782770', label: '83097 82770', note: 'WhatsApp' },
     { tel: '+918828282823', label: '88282 82823' },

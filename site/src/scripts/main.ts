@@ -720,18 +720,17 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   });
 
   after(() => {
-    // bird site: real macaws fly across the screen as you scroll down the page, past the
-    // millets, the packs and everything else. They only set off while the page is moving and
-    // ride up with it a little slower than the content (so they read as further away); when
-    // scrolling stops they fly on out of the screen and no new ones come until you scroll.
+    // bird site: one real macaw flies with you down the page, zigzagging across the screen:
+    // its path follows the scroll (scroll back up and it flies back), its wings beat faster
+    // the faster you scroll, and it turns to face the way it is going.
     const sb = $('.scrollbird', root);
     if (sb && !reduce) {
       const near = (w: number, h: number) => (w < h ? Math.min(w * 0.44, h * 0.27, 310) : Math.min(w * 0.17, h * 0.36, 330));
-      const f = createFlock(sb, { sheets: [MACAW, SCARLET], count: innerWidth < innerHeight ? 2 : 3, near, far: (w, h) => near(w, h) * 0.5, stream: { parallax: 0.4 } });
+      const f = createFlock(sb, { sheets: [MACAW], count: 1, near, far: near, zigzag: true });
       f.setActive(false); f.play();
       // the hero has its own flock: these take over once it is scrolled past
       const hero = $<HTMLElement>('.bird__hero', root);
-      if (hero) st({ trigger: hero, start: 'bottom 55%', endTrigger: root, end: 'bottom bottom', onToggle: (s) => f.setActive(s.isActive) });
+      if (hero) st({ trigger: hero, start: 'bottom 55%', endTrigger: root, end: 'bottom top', onToggle: (s) => f.setActive(s.isActive) });
       else f.setActive(true);
     }
   });

@@ -24,14 +24,14 @@ const wa = `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(`Hello $
     {links.map((l) => <a href={`#${l.href}`} data-jump data-nav={l.href}>{l.label}</a>)}
     <!-- phones only: the menu also carries the ways to reach us and the way out -->
     <div class="sbar__more">
-      <a class="sbar__more-call" href="tel:+918309782770">Call 83097 82770</a>
+      <a class="sbar__more-call" href={`tel:${CONTACT.call.tel}`}>Call {CONTACT.call.label}</a>
       <a class="sbar__more-wa" href={wa} target="_blank" rel="noopener">WhatsApp us</a>
       <a class="sbar__more-mail" href={`mailto:${email}`}>{email}</a>
       <a class="sbar__more-sister" href={sister.href} data-switch={sister.view}>Visit {sister.text}</a>
       <a class="sbar__more-book" href="#" data-book>Back to the book</a>
     </div>
   </nav>
-  <a class="sbar__call" href="tel:+918309782770">Call 83097 82770</a>
+  <a class="sbar__call" href={`tel:${CONTACT.call.tel}`}>Call {CONTACT.call.label}</a>
   <a class="sbar__book" href="#" data-book><span>Back to the book</span></a>
   <button class="sbar__menu" type="button" aria-expanded="false" aria-controls={navId} data-menu>
     <span class="sr">Menu</span><i aria-hidden="true"></i>

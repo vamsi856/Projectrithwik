@@ -54,6 +54,9 @@ export type FlockOptions = {
    * scrolling, ride up the screen with the page (at `parallax` of its speed, so they read
    * as further away), speed up with it, and are gone soon after it stops */
   stream?: { parallax: number };
+  /** one bird that zigzags across the screen as the page scrolls: its path is tied to how
+   * far down the page you are, so scrolling down (or back up) flies it along (or back) */
+  zigzag?: boolean;
 };
 
 // Frames are decoded once and shared by every flock on the page.
@@ -153,7 +156,7 @@ export function createFlock(host: HTMLElement, o: FlockOptions) {
     const el = spare.pop() ?? document.createElement('canvas');
     el.className = 'flock__bird';
     el.setAttribute('aria-hidden', 'true');
-    el.style.cssText = `position:absolute;left:0;top:0;pointer-events:none;will-change:transform;transform-origin:${b.sheet.ax * 100}% ${b.sheet.ay * 100}%;z-index:${Math.round(b.depth * 100)}`;
+    el.style.cssText = `position:absolute;left:0;top:0;pointer-events:none;will-change:transform;transition:opacity .6s;transform-origin:${b.sheet.ax * 100}% ${b.sheet.ay * 100}%;z-index:${Math.round(b.depth * 100)}`;
     b.el = el; b.g = el.getContext('2d'); b.bw = 0; b.lastF = -1;
     host.appendChild(el);
     fit(b);
@@ -228,19 +231,43 @@ export function createFlock(host: HTMLElement, o: FlockOptions) {
     }
   }
 
+  /** zigzag mode: where on screen the bird should be for this scroll position */
+  function steer(b: Bird, dt: number) {
+    const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    // one crossing of the screen for about every one and a half screens scrolled
+    const legs = Math.max(3, Math.round(max / (H * 1.5)));
+    const t = Math.min(0.9999, Math.max(0, scrollY / max)) * legs, leg = Math.floor(t), f = t - leg;
+    const right = leg % 2 === 0, m = b.size * 0.4 + 12;
+    const tx = m + (W - 2 * m) * (right ? f : 1 - f);
+    // across with a dip, back with a rise, a small zig on the way: a zigzag down the page
+    const s = Math.sin(Math.PI * f);
+    const ty = H * (0.42 + (right ? 0.2 : -0.2) * s + 0.05 * Math.sin(3 * Math.PI * f));
+    if (!dt) { b.x = tx; b.y0 = ty; return; }
+    const k = 1 - Math.exp(-dt * 3.2), ox = b.x, oy = b.y0;
+    b.x += (tx - b.x) * k; b.y0 += (ty - b.y0) * k;
+    const vx = (b.x - ox) / dt, vy = (b.y0 - oy) / dt;
+    if (vx < -12) b.flip = true; else if (vx > 12) b.flip = false;
+    b.vdy = vy * 0.6; // banks the bird into climbs and dives
+    // wings beat faster the faster it is going, and slow to a gentle beat when you stop
+    b.rate = 0.55 + Math.min(1.6, Math.hypot(vx, vy) / 260);
+  }
+
   function draw(dt: number) {
     if (o.stream && dt) flow(dt);
+    if (o.zigzag) for (const b of birds) { steer(b, dt); if (b.el) b.el.style.opacity = active ? '1' : '0'; }
     for (const b of birds) {
       const s = b.sheet;
       if (dt) {
         b.t += dt * b.rate * (1 + b.panic * 1.6);
-        b.x += b.vx * dt * (1 + b.panic * 1.2);
+        if (!o.zigzag) b.x += b.vx * dt * (1 + b.panic * 1.2);
         b.wob += dt * 0.5;
         // scatter: spring back toward the flight line
-        b.vdx += (-b.dx * 2.2 - b.vdx * 2.4) * dt; b.vdy += (-b.dy * 2.2 - b.vdy * 2.4) * dt;
-        b.dx += b.vdx * dt; b.dy += b.vdy * dt;
+        if (!o.zigzag) {
+          b.vdx += (-b.dx * 2.2 - b.vdx * 2.4) * dt; b.vdy += (-b.dy * 2.2 - b.vdy * 2.4) * dt;
+          b.dx += b.vdx * dt; b.dy += b.vdy * dt;
+        }
         b.panic = Math.max(0, b.panic - dt * 0.6);
-        if (!o.stream && b.x - b.size > W + 40) { Object.assign(b, spawn(b, false)); fit(b); }
+        if (!o.stream && !o.zigzag && b.x - b.size > W + 40) { Object.assign(b, spawn(b, false)); fit(b); }
         if (o.pinned) b.x = W / 2;
       }
       if (!b.el || !b.g) continue;
@@ -249,7 +276,7 @@ export function createFlock(host: HTMLElement, o: FlockOptions) {
       const y = b.y0 + (o.pinned ? 0 : Math.sin(b.wob) * H * 0.03) + b.dy;
       const x = b.x + b.dx;
       const w = b.size, h = (w * s.fh) / s.fw;
-      const bank = (s.rot ?? 0) + Math.cos(b.wob) * 0.05 + gsap.utils.clamp(-0.35, 0.35, b.vdy * 0.0015);
+      const bank = ((s.rot ?? 0) + Math.cos(b.wob) * 0.05 + gsap.utils.clamp(-0.35, 0.35, b.vdy * 0.0015)) * (b.flip ? -1 : 1);
       // the wings only move on when the footage does (30 times a second)
       if (f !== b.lastF) {
         // the smaller copy only when it is still at least as big as the bird on screen:
@@ -259,7 +286,7 @@ export function createFlock(host: HTMLElement, o: FlockOptions) {
         b.g.drawImage((small ? mip.half : mip.full)!, 0, 0, b.bw, b.el.height);
         b.lastF = f;
       }
-      b.el.style.transform = `translate3d(${(x - w * s.ax).toFixed(2)}px,${(y - h * s.ay).toFixed(2)}px,0) rotate(${bank.toFixed(4)}rad)`;
+      b.el.style.transform = `translate3d(${(x - w * s.ax).toFixed(2)}px,${(y - h * s.ay).toFixed(2)}px,0) rotate(${bank.toFixed(4)}rad)${b.flip ? ' scaleX(-1)' : ''}`;
     }
   }
 
@@ -290,7 +317,7 @@ export function createFlock(host: HTMLElement, o: FlockOptions) {
     await (o.stream ? Promise.race(loads) : Promise.all(loads));
     if (softwareGL()) cap = 1;
     size();
-    for (let i = 0; i < (o.stream ? 0 : o.count); i++) {
+    for (let i = 0; i < (o.stream ? 0 : o.zigzag ? 1 : o.count); i++) {
       const sheet = o.sheets[i % o.sheets.length];
       // spread depths so the flock reads as near and far
       const depth = o.count === 1 ? 1 : i / (o.count - 1);
