@@ -637,5 +637,16 @@
   "a": "Rithwik",
   "local": "photos/jowar-red-rithwik.webp",
   "own": true
+ },
+ "little-rithwik": {
+  "t": "Little millet",
+  "u": "",
+  "w": 989,
+  "h": 742,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/little-rithwik.webp",
+  "own": true
  }
 }
