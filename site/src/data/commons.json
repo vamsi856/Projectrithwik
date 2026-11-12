@@ -590,14 +590,13 @@
  "jowar-mahendra-rithwik": {
   "t": "Mahendra jowar",
   "u": "",
-  "w": 436,
-  "h": 672,
+  "w": 284,
+  "h": 213,
   "p": "",
   "l": "",
   "a": "Rithwik",
   "local": "photos/jowar-mahendra-rithwik.webp",
-  "own": true,
-  "whole": true
+  "own": true
  },
  "jowar-red-rithwik": {
   "t": "Red jowar",
@@ -613,8 +612,8 @@
  "little-rithwik": {
   "t": "Little millet",
   "u": "",
-  "w": 989,
-  "h": 742,
+  "w": 690,
+  "h": 518,
   "p": "",
   "l": "",
   "a": "Rithwik",
