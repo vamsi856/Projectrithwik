@@ -12,7 +12,7 @@ import SIZES from './photo-sizes.json';
 
 /** `local`: our own crop of the Commons file, served from this site (public/), when only part of the photo is wanted */
 /** `own`: a photo Rithwik supplied (no outside credit needed) */
-/** `whole`: show the full photo on a card, never cropped (a blurred copy fills the spare space) */
+/** `whole`: show the full photo on a card exactly as taken, never cropped or zoomed */
 export type Remote = { t: string; u: string; w: number; h: number; p: string; l: string; a: string; local?: string; own?: boolean; whole?: boolean };
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const DATA = commons as Record<string, Remote>;
