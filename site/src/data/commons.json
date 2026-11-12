@@ -621,5 +621,16 @@
   "a": "Rithwik",
   "local": "photos/jowar-yellow-rithwik.webp",
   "own": true
+ },
+ "kodo-rithwik": {
+  "t": "Kodo millet",
+  "u": "",
+  "w": 540,
+  "h": 405,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/kodo-rithwik.webp",
+  "own": true
  }
 }
