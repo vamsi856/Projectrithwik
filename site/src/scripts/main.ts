@@ -762,6 +762,34 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
       // [x from the pin's point, y from it, size when landed]
       // (Google's pin is about 27 x 43 px with its point at the map's centre)
       const PERCH: [number, number, number][] = [[0, -49, 1], [-33, -5, 0.82], [34, -4, 0.76]];
+      // On the way down they also stop on the founders' round photo at 2022 on the family
+      // timeline: one on top, one either side on the rim, leaning with its curve; they take off
+      // again as the photo nears the top of the screen.
+      const founders = $<HTMLElement>('.legacy__dot--founders', root);
+      // [angle on the rim (degrees, -90 = top), size when landed]
+      const RIM: [number, number][] = [[-90, 1.35], [-138, 1.1], [-42, 1.05]];
+      type Spot = { L: number; at: (i: number) => [number, number, number, number]; gone: boolean };
+      const clamp01 = gsap.utils.clamp(0, 1);
+      const target = (h: number): Spot | null => {
+        const c = founders?.getBoundingClientRect();
+        if (c && c.width) {
+          // the centre doesn't move while the photo pops in (it scales about its middle)
+          const cx = c.left + c.width / 2, cy = c.top + c.height / 2, R = founders!.offsetWidth / 2;
+          const L = Math.min(clamp01((h * 0.95 - cy) / (h * 0.35)), clamp01((cy - h * 0.1) / (h * 0.22)));
+          if (L > 0) return { L, gone: false, at: (i) => {
+            const [a, sc] = RIM[i], t = (a * Math.PI) / 180, d = R + 4 + 6 * sc; // outside the gold ring
+            return [cx + d * Math.cos(t), cy + d * Math.sin(t), sc, (a + 90) * 0.6];
+          } };
+        }
+        const r = mapFrame?.getBoundingClientRect();
+        if (r && r.height) {
+          const pinX = r.left + r.width / 2, pinY = r.top + r.height / 2;
+          const L = clamp01((h * 0.95 - pinY) / (h * 0.38));
+          // while landed they ride the pin up the page, and leave with it
+          if (L > 0) return { L, gone: !(pinY > -80 && pinY < h + 80), at: (i) => [pinX + PERCH[i][0], pinY + PERCH[i][1], PERCH[i][2], 0] };
+        }
+        return null;
+      };
       const UP = 'M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z';
       const FOLDED = 'M-22 -10 Q-11 -16 0 2 Q11 -16 22 -10 Q11 -6 0 7 Q-11 -6 -22 -10Z';
       let landed = false;
@@ -771,11 +799,10 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
         trigger: root, start: 'top top', end: 'bottom bottom',
         onUpdate: (s) => {
           const w = innerWidth, h = innerHeight, k = Math.PI * 5, sd = s.direction || 1;
-          // how far the landing has got: starts as the pin comes up from the bottom of the
-          // screen, done once it is a little above the middle
-          const r = mapFrame?.getBoundingClientRect();
-          const pinX = r ? r.left + r.width / 2 : 0, pinY = r ? r.top + r.height / 2 : h * 9;
-          const L = r && r.height ? gsap.utils.clamp(0, 1, (h * 0.95 - pinY) / (h * 0.38)) : 0;
+          // how far the landing has got: starts as the founders' photo (or later the map pin)
+          // comes up from the bottom of the screen, done once it is a little above the middle
+          const spot = target(h);
+          const L = spot ? spot.L : 0;
           const E = L * L * (3 - 2 * L);
           const wasLanded = landed; landed = L >= 1;
           birds.forEach((b, i) => {
@@ -788,14 +815,13 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
             if (dir !== b.face && !landed) { b.face = dir; gsap.to(b.body, { scaleX: dir, duration: 0.25, ease: 'power2.inOut', svgOrigin: '0 0' }); }
             ang *= b.face;
             let scale = b.size, opacity = s.progress > 0.03 && s.progress < 0.98 ? 1 : 0;
-            if (E > 0) {
-              const [px, py, ps] = PERCH[i];
-              x += (pinX + px - x) * E; y += (pinY + py - y) * E;
-              ang *= 1 - E; scale += (ps - scale) * E;
-              // while landed they ride the pin up the page, and leave with it
-              opacity = pinY > -80 && pinY < h + 80 ? 1 : 0;
+            if (spot && E > 0) {
+              const [tx, ty, ts, ta] = spot.at(i);
+              x += (tx - x) * E; y += (ty - y) * E;
+              ang += (ta - ang) * E; scale += (ts - scale) * E;
+              opacity = spot.gone ? 0 : 1;
             }
-            // landed: stuck to the pin, so follow it at once; in flight: drift with a little lag
+            // landed: stuck to where they sit, so follow it at once; in flight: drift with a little lag
             gsap.to(b.el, { x, y, rotate: ang, scale, opacity, duration: landed ? 0.06 : 0.7 + i * 0.12 - 0.5 * E, ease: 'power2.out', overwrite: 'auto' });
             if (landed) { if (!wasLanded) { b.flap.pause(); gsap.to(b.near, { attr: { d: FOLDED }, duration: 0.35 + i * 0.08, ease: 'power2.out' }); } }
             else if (b.flap.paused()) b.flap.play();
