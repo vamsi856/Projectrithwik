@@ -735,7 +735,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     // banks into the turns and faces the way it is flying.
     const sb0 = $<SVGSVGElement>('svg.scrollbird', root);
     if (sb0 && !reduce) {
-      const n = innerWidth < 700 ? 4 : 5;
+      const n = innerWidth < 700 ? 2 : 3;
       // [size, lead/lag along the path, sideways offset, height offset, wingbeat speed]
       const FORM: [number, number, number, number, number][] = [
         [1.35, 0, 0, 0, 1], [1.1, -0.012, -0.07, -0.09, 1.12], [1.0, -0.02, 0.06, 0.08, 0.92],
