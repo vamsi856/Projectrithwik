@@ -47,6 +47,8 @@ export const PERCHES: Record<string, Perch[]> = {
     { bird: 'budgie-g', x: 0.8, tall: 62, arrive: 'hop' },
   ],
   'b-bajra': [{ bird: 'conure', x: 0.3, tall: 86, arrive: 'hop' }],
+  // small grain, small bird: a finch on the finger millet (mirrored, so it isn't the barnyard one's twin)
+  'b-ragi': [{ bird: 'finch', x: 0.34, tall: 64, flip: true, arrive: 'hop' }],
   // macaws love sunflower seed: this one sits on the corner, its long tail hanging off the side
   'b-sunflower': [{ bird: 'macaw-long', x: 0.86, xm: 0.8, tall: 112, arrive: 'macaw' }],
   'b-jowar': [{ bird: 'scarlet', x: 0.36, tall: 108, arrive: 'climb' }],

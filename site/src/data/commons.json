@@ -652,5 +652,16 @@
   "a": "Rithwik",
   "local": "photos/ragi-rithwik.webp",
   "own": true
+ },
+ "founders-rithwik": {
+  "t": "Bysani Vasavi and Bysani Sudheer, founders",
+  "u": "",
+  "w": 1000,
+  "h": 1250,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/founders-rithwik.webp",
+  "own": true
  }
 }

@@ -2,8 +2,9 @@
 // The family line from 1925 to today. The rail draws itself as you scroll and
 // each generation stamps in; the latest step, Rithwik, is highlighted, and on the Bird
 // Feeds site a macaw flies along the rail and lands on it.
-import { LEGACY, SINCE } from '../data/legacy';
+import { LEGACY, SINCE, FOUNDERS } from '../data/legacy';
 import Perch from './Perch.astro';
+import Photo from './Photo.astro';
 import { LEGACY_PERCH } from '../data/perches';
 interface Props { tone: 'bird' | 'food' }
 const { tone } = Astro.props;
@@ -27,6 +28,13 @@ const years = new Date().getFullYear() - SINCE;
         <span class="legacy__year">{g.year}</span>
         <span class="legacy__person">{g.person}</span>
         <span class="legacy__firm">{g.firm}</span>
+        {/* Rithwik Industries: the founders, at the step where Rithwik begins */}
+        {tone === 'food' && i === LEGACY.length - 1 && (
+          <figure class="legacy__founders">
+            <Photo name={FOUNDERS.photo} class="legacy__founders-img" alt={`${FOUNDERS.names[0]} and ${FOUNDERS.names[1]}, founders of Rithwik`} sizes="(max-width: 860px) 300px, 260px" />
+            <figcaption><b>Founders</b>{FOUNDERS.names[0]} (left) and {FOUNDERS.names[1]} (right)</figcaption>
+          </figure>
+        )}
       </li>
     ))}
   </ol>
