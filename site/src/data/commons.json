@@ -26,15 +26,6 @@
   "l": "CC BY-SA 4.0",
   "a": "Roger Culos"
  },
- "jowar": {
-  "t": "A plate of sorghum grain.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/d/dc/A_plate_of_sorghum_grain.jpg",
-  "w": 1969,
-  "h": 1861,
-  "p": "https://commons.wikimedia.org/wiki/File:A_plate_of_sorghum_grain.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "Salil Kumar Mukherjee"
- },
  "little": {
   "t": "A closeup fo Samai millet with husk.JPG",
   "u": "https://upload.wikimedia.org/wikipedia/commons/f/f8/A_closeup_fo_Samai_millet_with_husk.JPG",
@@ -631,6 +622,17 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/kodo-rithwik.webp",
+  "own": true
+ },
+ "jowar-mahendra-rithwik": {
+  "t": "Mahendra jowar",
+  "u": "",
+  "w": 436,
+  "h": 327,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/jowar-mahendra-rithwik.webp",
   "own": true
  }
 }
