@@ -177,15 +177,16 @@ function flockFor(c: HTMLElement) {
   if (flocks.has(c)) return flocks.get(c)!;
   const hero = c.classList.contains('bird__flock');
   const portrait = innerWidth < innerHeight;
-  // sizes follow the canvas: on a laptop the nearest macaw is about a third of the screen wide,
-  // on a phone about 60% of the width; far birds are about 40% of that
+  // sizes follow the canvas: in the hero the nearest macaw is about a sixth of a laptop screen
+  // (a third of a phone's width), the farthest half that
   // on the book's desk they fly behind the open book, through the margins
-  const near = (w: number, h: number) => (hero ? Math.min(w < h ? w * 0.62 : w * 0.34, h * 0.75, 620) : Math.min(w < h ? w * 0.5 : w * 0.19, h * 0.38, 380));
+  const near = (w: number, h: number) => (hero ? Math.min(w < h ? w * 0.36 : w * 0.17, h * 0.4, 300) : Math.min(w < h ? w * 0.5 : w * 0.19, h * 0.38, 380));
   const f = createFlock(c, {
     // the hero's birds are red scarlet macaws; the book's are blue-and-gold
     sheets: [hero ? SCARLET : MACAW], still: reduce,
-    count: Math.max(2, Number(c.dataset.flock) - (portrait ? 1 : 0)),
-    near, far: (w, h) => near(w, h) * 0.42,
+    // the hero: a small flock of smaller birds at different depths, like the first version
+    count: hero ? (portrait ? 4 : 5) : Math.max(2, Number(c.dataset.flock) - (portrait ? 1 : 0)),
+    near, far: (w, h) => near(w, h) * (hero ? 0.5 : 0.42),
     band: hero ? (portrait ? [0.08, 0.6] : [0.12, 0.66]) : [0.12, 0.78],
   });
   flocks.set(c, f);
