@@ -1208,8 +1208,6 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
 @media (prefers-reduced-motion: reduce) { .perch__img { animation: none; cursor: default; } .perch__bird[data-flip] { transform: scaleX(-1); } }
 
 /* the macaw on the family timeline: its feet on top of today's (2022) dot */
-.perch.perch--legacy { left: 15px; top: -7px; z-index: 3; } /* feet on top of the founders' circle */
-@media (max-width: 860px) { .perch.perch--legacy { left: -29px; top: -9px; height: calc(var(--tall) * .7 / var(--fy)); } }
 
 
 /* ---------- hero entrance: pure CSS, from the first paint ---------- */
