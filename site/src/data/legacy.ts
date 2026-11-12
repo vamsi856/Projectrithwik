@@ -8,12 +8,5 @@ export const LEGACY = [
   { year: 2022, person: 'Bysani Vasavi', firm: 'Rithwik Bird Feeds and Rithwik Industries' },
 ];
 export const SINCE = LEGACY[0].year;
-/** The founders of Rithwik, shown at the 2022 step on both timelines (left to right in the photo). */
-export const FOUNDERS = {
-  photo: 'founders-rithwik',
-  /** both faces in a circle: the 2022 dot on the timeline */
-  circle: 'founders-circle',
-  names: ['Bysani Vasavi', 'Bysani Sudheer'],
-  /** each founder's face, shown as a small app-icon tile next to the big photo */
-  people: [{ name: 'Bysani Vasavi', photo: 'founder-vasavi' }, { name: 'Bysani Sudheer', photo: 'founder-sudheer' }],
-};
+/** The founders of Rithwik, both in a circle: the 2022 dot on both timelines (left to right in the photo). */
+export const FOUNDERS = { circle: 'founders-circle', names: ['Bysani Vasavi', 'Bysani Sudheer'] };

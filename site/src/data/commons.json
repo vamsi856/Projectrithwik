@@ -653,39 +653,6 @@
   "local": "photos/ragi-rithwik.webp",
   "own": true
  },
- "founders-rithwik": {
-  "t": "Bysani Vasavi and Bysani Sudheer, founders",
-  "u": "",
-  "w": 1200,
-  "h": 900,
-  "p": "",
-  "l": "",
-  "a": "Rithwik",
-  "local": "photos/founders-rithwik.webp",
-  "own": true
- },
- "founder-vasavi": {
-  "t": "Bysani Vasavi",
-  "u": "",
-  "w": 480,
-  "h": 480,
-  "p": "",
-  "l": "",
-  "a": "Rithwik",
-  "local": "photos/founder-vasavi.webp",
-  "own": true
- },
- "founder-sudheer": {
-  "t": "Bysani Sudheer",
-  "u": "",
-  "w": 480,
-  "h": 480,
-  "p": "",
-  "l": "",
-  "a": "Rithwik",
-  "local": "photos/founder-sudheer.webp",
-  "own": true
- },
  "founders-circle": {
   "t": "Bysani Vasavi and Bysani Sudheer",
   "u": "",
