@@ -156,7 +156,7 @@ export function createFlock(host: HTMLElement, o: FlockOptions) {
     const el = spare.pop() ?? document.createElement('canvas');
     el.className = 'flock__bird';
     el.setAttribute('aria-hidden', 'true');
-    el.style.cssText = `position:absolute;left:0;top:0;pointer-events:none;will-change:transform;transition:opacity .6s;transform-origin:${b.sheet.ax * 100}% ${b.sheet.ay * 100}%;z-index:${Math.round(b.depth * 100)}`;
+    el.style.cssText = `position:absolute;left:0;top:0;pointer-events:none;will-change:transform;transform-origin:${b.sheet.ax * 100}% ${b.sheet.ay * 100}%;z-index:${Math.round(b.depth * 100)}`;
     b.el = el; b.g = el.getContext('2d'); b.bw = 0; b.lastF = -1;
     host.appendChild(el);
     fit(b);
@@ -231,30 +231,47 @@ export function createFlock(host: HTMLElement, o: FlockOptions) {
     }
   }
 
-  /** zigzag mode: where on screen the bird should be for this scroll position */
+  /** zigzag mode: one bird that really flies. It never hangs in the air: it crosses the
+   * screen in long zigzags (a climb, then a dive), banks round at the edge and comes back,
+   * rides with the page as it scrolls and speeds up with it. When the page has been still
+   * for a while it flies on out of the screen, and comes back in when you scroll again. */
+  let zLastY = scrollY, zStill = 0, zLeg = 0, zDir = 1, zOut = false;
   function steer(b: Bird, dt: number) {
-    const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
-    // one crossing of the screen for about every one and a half screens scrolled
-    const legs = Math.max(3, Math.round(max / (H * 1.5)));
-    const t = Math.min(0.9999, Math.max(0, scrollY / max)) * legs, leg = Math.floor(t), f = t - leg;
-    const right = leg % 2 === 0, m = b.size * 0.4 + 12;
-    const tx = m + (W - 2 * m) * (right ? f : 1 - f);
-    // across with a dip, back with a rise, a small zig on the way: a zigzag down the page
-    const s = Math.sin(Math.PI * f);
-    const ty = H * (0.42 + (right ? 0.2 : -0.2) * s + 0.05 * Math.sin(3 * Math.PI * f));
-    if (!dt) { b.x = tx; b.y0 = ty; return; }
-    const k = 1 - Math.exp(-dt * 3.2), ox = b.x, oy = b.y0;
-    b.x += (tx - b.x) * k; b.y0 += (ty - b.y0) * k;
-    const vx = (b.x - ox) / dt, vy = (b.y0 - oy) / dt;
-    if (vx < -12) b.flip = true; else if (vx > 12) b.flip = false;
-    b.vdy = vy * 0.6; // banks the bird into climbs and dives
-    // wings beat faster the faster it is going, and slow to a gentle beat when you stop
-    b.rate = 0.55 + Math.min(1.6, Math.hypot(vx, vy) / 260);
+    const m = b.size * 0.35;
+    if (!dt) { b.x = -b.size; b.y0 = H * 0.4; b.flip = false; zOut = true; return; }
+    const d = scrollY - zLastY; zLastY = scrollY;
+    const speedUp = Math.min(1.4, Math.abs(d) / (dt * 900));
+    zStill = Math.abs(d) > 0.5 ? 0 : zStill + dt;
+    // back in when the page moves again: enter from the side it is heading for
+    if (zOut && Math.abs(d) > 0.5 && active) {
+      zOut = false; b.flip = Math.random() < 0.5; zDir = 0; zLeg = 0;
+      b.x = b.flip ? W + b.size * 0.6 : -b.size * 0.6; b.y0 = H * (0.25 + Math.random() * 0.4);
+    }
+    const leaving = zStill > 2.2 || !active;
+    const dir = b.flip ? -1 : 1, vx = dir * (W * 0.07 + 70) * (1 + speedUp);
+    b.x += vx * dt;
+    // zigzag: alternate a gentle climb and a dive, every second or two
+    zLeg -= dt; if (zLeg <= 0) { zDir = zDir > 0 ? -1 : 1; zLeg = 1.1 + Math.random() * 0.9; }
+    let vy = zDir * H * 0.07 * (1 + speedUp * 0.5);
+    // ride with the page a little (it reads as further away than the content)
+    b.y0 -= d * 0.12;
+    if (b.y0 < H * 0.14) { zDir = 1; vy = Math.abs(vy); } else if (b.y0 > H * 0.78) { zDir = -1; vy = -Math.abs(vy); }
+    b.y0 += vy * dt;
+    // the page can carry it toward an edge of the sky, never out of it
+    b.y0 = Math.min(H * 0.8, Math.max(H * 0.12, b.y0));
+    // turn round at the edges (unless it is time to go)
+    if (!zOut && !leaving) {
+      if (!b.flip && b.x > W - m) b.flip = true;
+      else if (b.flip && b.x < m) b.flip = false;
+    }
+    if (leaving && (b.x < -b.size * 0.7 || b.x > W + b.size * 0.7)) zOut = true;
+    b.vdy = vy * 0.9; // banks into the climbs and dives
+    b.rate = 0.75 + speedUp * 0.8;
   }
 
   function draw(dt: number) {
     if (o.stream && dt) flow(dt);
-    if (o.zigzag) for (const b of birds) { steer(b, dt); if (b.el) b.el.style.opacity = active ? '1' : '0'; }
+    if (o.zigzag) for (const b of birds) { steer(b, dt); if (b.el) b.el.style.visibility = zOut ? 'hidden' : ''; }
     for (const b of birds) {
       const s = b.sheet;
       if (dt) {
