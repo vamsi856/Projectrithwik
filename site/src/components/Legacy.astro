@@ -20,7 +20,7 @@ const years = new Date().getFullYear() - SINCE;
     {LEGACY.map((g, i) => (
       <li class:list={['legacy__step', i === LEGACY.length - 1 && 'is-now']} data-legacy-step>
         {i === LEGACY.length - 1
-          ? <span class="legacy__dot legacy__dot--founders"><Photo name={FOUNDERS.circle} class="legacy__dot-img" alt={`${FOUNDERS.names[0]} and ${FOUNDERS.names[1]}, founders of Rithwik`} sizes="64px" /></span>
+          ? <span class="legacy__dot legacy__dot--founders"><Photo name={FOUNDERS.circle} class="legacy__dot-img" alt={`${FOUNDERS.names[0]} and ${FOUNDERS.names[1]}, founders of Rithwik`} sizes="152px" /></span>
           : <span class="legacy__dot" aria-hidden="true"></span>}
         <span class="legacy__year">{g.year}</span>
         <span class="legacy__person">{g.person}</span>

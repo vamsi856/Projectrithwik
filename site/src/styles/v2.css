@@ -883,11 +883,12 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 .legacy__firm { font-size: .9rem; opacity: .75; }
 .legacy__step.is-now .legacy__firm { opacity: 1; font-weight: 600; }
 /* 2022: the dot is a round icon of the two founders, sitting on the rail */
-.legacy__step.is-now { padding-top: 64px; }
-.legacy__step.is-now .legacy__dot--founders { width: 60px; height: 60px; left: -15px; top: -7px; overflow: hidden; }
+/* big: it sits centred on the rail (the line's middle is 23px down), with 2022 underneath */
+.legacy__step.is-now { --fd: clamp(116px, 11vw, 152px); padding-top: calc(var(--fd) / 2 + 37px); }
+.legacy__step.is-now .legacy__dot--founders { width: var(--fd); height: var(--fd); left: 0; top: calc(23px - var(--fd) / 2); overflow: hidden; z-index: 1; }
 .legacy__dot-img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.legacy--bird .legacy__step.is-now .legacy__dot--founders { background: var(--navy); box-shadow: 0 0 0 3px var(--marigold), 0 0 0 9px rgba(242, 178, 27, .22), 0 14px 26px -10px rgba(0, 0, 0, .6); }
-.legacy--food .legacy__step.is-now .legacy__dot--founders { background: var(--khaki); box-shadow: 0 0 0 3px var(--bronze), 0 0 0 9px rgba(var(--ink-rgb), .1), 0 14px 26px -12px rgba(0, 0, 0, .35); }
+.legacy--bird .legacy__step.is-now .legacy__dot--founders { background: var(--navy); box-shadow: 0 0 0 4px var(--marigold), 0 0 0 12px rgba(242, 178, 27, .2), 0 22px 40px -14px rgba(0, 0, 0, .7); }
+.legacy--food .legacy__step.is-now .legacy__dot--founders { background: var(--khaki); box-shadow: 0 0 0 4px var(--bronze), 0 0 0 12px rgba(var(--ink-rgb), .08), 0 22px 40px -16px rgba(0, 0, 0, .4); }
 .cover__since { margin-top: 10px; font: 600 clamp(.75rem, 1vw, .9rem)/1 var(--text); letter-spacing: .02em; color: #f0d58c; padding: 7px 12px; border: 1px solid rgba(201, 162, 74, .5); border-radius: 999px; }
 @media (max-width: 860px) {
   .legacy__head { grid-template-columns: 1fr; }
@@ -899,8 +900,9 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
   .legacy__step { padding-top: 0; }
   .legacy__dot { left: -40px; top: 4px; }
   .legacy__step.is-now .legacy__dot { left: -44px; top: 0; }
-  .legacy__step.is-now { padding-top: 0; }
-  .legacy__step.is-now .legacy__dot--founders { width: 50px; height: 50px; left: -54px; top: -9px; }
+  /* phones: the vertical line runs through the circle's left side, 2022 goes under it */
+  .legacy__step.is-now { --fd: 124px; padding-top: calc(var(--fd) + 12px); }
+  .legacy__step.is-now .legacy__dot--founders { left: -48px; top: -8px; }
 }
 @media (max-width: 760px), (max-aspect-ratio: 4/5) { .cover__since { grid-column: 2; margin-top: 4px; } }
 
