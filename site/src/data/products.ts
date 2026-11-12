@@ -132,6 +132,10 @@ export const CONTACT = {
   officeAt: '15.794046,78.053707',
   map: 'https://maps.google.com/maps?q=15.794046,78.053707&z=17&output=embed',
   directions: 'https://www.google.com/maps/dir/?api=1&destination=15.794046,78.053707',
+  // the warehouse pin: Sanjivareddypalle, Duvvur (14°49'45.8"N 78°39'07.9"E)
+  warehouseAt: '14.829389,78.652194',
+  warehouseMap: 'https://maps.google.com/maps?q=14.829389,78.652194&z=16&output=embed',
+  warehouseDirections: 'https://www.google.com/maps/dir/?api=1&destination=14.829389,78.652194',
 };
 
 export const BRANDS = {

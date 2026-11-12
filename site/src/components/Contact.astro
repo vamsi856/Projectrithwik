@@ -29,11 +29,20 @@ const { id, tone, brand, email, options, label, qtyHint, msgHint } = Astro.props
       </div>
     </form>
   </div>
-  <div class="map">
+  <!-- the office and the warehouse, one map: the tabs switch the pin and the directions -->
+  <div class="map" data-map>
+    <div class="map__tabs" role="group" aria-label="Show on the map">
+      <button type="button" class="map__tab is-on" aria-pressed="true" data-map-pick
+        data-map-src={CONTACT.map} data-map-dir={CONTACT.directions} data-map-label="Directions to our office"
+        data-map-title="Map with the Rithwik office pinned, Dhanalakshmi Nagar, near Nandyal Checkpost, Kurnool">Office, Kurnool</button>
+      <button type="button" class="map__tab" aria-pressed="false" data-map-pick
+        data-map-src={CONTACT.warehouseMap} data-map-dir={CONTACT.warehouseDirections} data-map-label="Directions to our warehouse"
+        data-map-title="Map with the Rithwik warehouse pinned, Sanjivareddypalle, Duvvur">Warehouse, Duvvur</button>
+    </div>
     <iframe title="Map with the Rithwik office pinned, Dhanalakshmi Nagar, near Nandyal Checkpost, Kurnool" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src={CONTACT.map}></iframe>
     <a class="map__go" href={CONTACT.directions} target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>
-      Directions to our office
+      <span>Directions to our office</span>
     </a>
   </div>
 </section>

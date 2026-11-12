@@ -325,6 +325,15 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   }));
 
   // maps load only when close
+  // map: office or warehouse
+  $$('[data-map]', root).forEach((m) => {
+    const frame = $<HTMLIFrameElement>('iframe', m)!, go = $<HTMLAnchorElement>('.map__go', m)!;
+    $$<HTMLButtonElement>('[data-map-pick]', m).forEach((b) => b.addEventListener('click', () => {
+      $$('[data-map-pick]', m).forEach((x) => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+      frame.dataset.src = b.dataset.mapSrc!; frame.src = b.dataset.mapSrc!; frame.title = b.dataset.mapTitle!;
+      go.href = b.dataset.mapDir!; $('span', go)!.textContent = b.dataset.mapLabel!;
+    }));
+  });
   $$<HTMLIFrameElement>('iframe[data-src]', root).forEach((f) => new IntersectionObserver(([en], o) => { if (en.isIntersecting) { f.src = f.dataset.src!; o.disconnect(); } }, { rootMargin: '600px' }).observe(f));
 
   // flock + canvases
@@ -720,24 +729,34 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
   });
 
   after(() => {
-    // bird site: a paper bird zigzags down the page with your scroll, flapping while the page
-    // moves and gliding when it stops; it banks into each turn of the zigzag
+    // bird site: a folded-paper bird zigzags down the page with your scroll. Its wings beat
+    // while the page moves and it glides (wings spread) when you stop; it banks into each
+    // turn and always faces the way it is flying.
     const sb = $<SVGSVGElement>('svg.scrollbird', root);
     if (sb && !reduce) {
-      const wing = $('path', sb)!;
-      const UP = 'M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z';
-      const DOWN = 'M-30 11 Q-17 3 0 2 Q17 3 30 11 Q17 5 0 7 Q-17 5 -30 11Z';
-      wing.setAttribute('d', UP);
-      const flap = gsap.to(wing, { attr: { d: DOWN }, duration: 0.14, repeat: -1, yoyo: true, ease: 'sine.inOut', paused: true });
-      let still = 0;
+      const body = $('.pb', sb)!, near = $('.pb__wing--near', sb)!, far = $('.pb__wing--far', sb)!;
+      gsap.set([near, far], { svgOrigin: '2 0' });
+      // one wingbeat: wings sweep down past the body and back up
+      const flap = gsap.timeline({ repeat: -1, paused: true })
+        .to(near, { scaleY: -0.7, duration: 0.13, ease: 'sine.in' })
+        .to(far, { scaleY: -0.55, duration: 0.13, ease: 'sine.in' }, 0.02)
+        .to(near, { scaleY: 1, duration: 0.17, ease: 'sine.out' })
+        .to(far, { scaleY: 1, duration: 0.17, ease: 'sine.out' }, '<0.02');
+      const glide = () => { flap.pause(); gsap.to([near, far], { scaleY: 0.8, duration: 0.4, ease: 'power2.out' }); };
+      glide();
+      let still = 0, face = 1;
       st({
         trigger: root, start: 'top top', end: 'bottom bottom',
         onUpdate: (s) => {
-          const p = s.progress, w = innerWidth, h = innerHeight;
-          const x = w * (0.5 + 0.42 * Math.sin(p * Math.PI * 5)), y = h * (0.25 + 0.5 * p) + Math.cos(p * Math.PI * 9) * 30;
-          const ang = Math.cos(p * Math.PI * 5) * 25 * Math.sign(s.direction || 1);
-          gsap.to(sb, { x, y, rotate: ang, opacity: p > 0.04 && p < 0.97 ? 0.95 : 0, duration: 0.6, ease: 'power2.out', overwrite: 'auto' });
-          flap.play(); clearTimeout(still); still = window.setTimeout(() => { flap.pause(); gsap.to(wing, { attr: { d: UP }, duration: 0.3 }); }, 220);
+          const p = s.progress, w = innerWidth, h = innerHeight, k = Math.PI * 5;
+          const x = w * (0.5 + 0.42 * Math.sin(p * k)), y = h * (0.25 + 0.5 * p) + Math.cos(p * Math.PI * 9) * 30;
+          // which way it is heading across the screen right now
+          const dir = Math.sign(Math.cos(p * k) * (s.direction || 1)) || face;
+          if (dir !== face) { face = dir; gsap.to(body, { scaleX: face, duration: 0.25, ease: 'power2.inOut', svgOrigin: '0 0' }); }
+          const ang = gsap.utils.clamp(-28, 28, Math.cos(p * Math.PI * 9) * -14 * (s.direction || 1)) * face;
+          gsap.to(sb, { x, y, rotate: ang, opacity: p > 0.03 && p < 0.98 ? 1 : 0, duration: 0.7, ease: 'power2.out', overwrite: 'auto' });
+          if (flap.paused()) flap.play();
+          clearTimeout(still); still = window.setTimeout(glide, 260);
         },
       });
     }
