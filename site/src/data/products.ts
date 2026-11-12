@@ -41,7 +41,7 @@ export const BIRD: Product[] = [
   { id: 'b-kodo', name: 'Kodo millet', group: 'millets', photo: 'kodo', swatch: s('#a9824e', '#7d5a2e', 7), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-little', name: 'Little millet', group: 'millets', photo: 'little', swatch: s('#d8c48a', '#b29e60', 6), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-proso', name: 'Proso millet', group: 'millets', photo: 'proso', swatch: s('#e6d39a', '#c4ac68', 8),
-    variants: [tint('Green', '0%', '#c3c27a', '#8f8f48', 8), { label: 'Yellow', gst: '0%' }] },
+    variants: [{ label: 'Green', gst: '0%', photo: 'proso-green-rithwik', swatch: s('#c3c27a', '#8f8f48', 8) }, { label: 'Yellow', gst: '0%' }] },
   { id: 'b-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra-rithwik', swatch: s('#9aa197', '#6e776c', 8), variants: [{ label: 'Bajra', gst: '0%' }] },
   { id: 'b-jowar', name: 'Jowar', group: 'grains', photo: 'jowar', swatch: s('#eadfc6', '#c7b896', 9),
     variants: [{ label: 'Mahendra', gst: '0%' }, { label: 'Milky white', gst: '0%' }, { label: 'Nidhi', gst: '0%' }, { label: 'Red', gst: '0%', photo: 'jowar-red', swatch: s('#a4552f', '#6e3418', 9) }, tint('Yellow', '0%', '#e2c164', '#b38f34', 9)] },
