@@ -29,7 +29,8 @@ const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 export const MACAW: Sheet = { src: [0, 1, 2].map((k) => `${BASE}birds/macaw-hq-${k}.webp`), per: 12, fw: 1062, fh: 725, cols: 3, frames: 27, fps: 30, ax: 0.704, ay: 0.708, rot: -0.1 };
 /** Scarlet macaw: the same wingbeat, with the gold plumage turned to scarlet (the blue
  * flight and tail feathers kept), so the sky has more than one kind of macaw. */
-export const SCARLET: Sheet = { ...MACAW, src: [0, 1, 2].map((k) => `${BASE}birds/scarlet-hq-${k}.webp`), lite: true };
+// the red (scarlet) macaw: the Bird Feeds hero flock, behind the pack
+export const SCARLET: Sheet = { ...MACAW, src: [0, 1, 2].map((k) => `${BASE}birds/scarlet-hq-${k}.webp`) };
 
 type Bird = {
   sheet: Sheet; img: Mip[];

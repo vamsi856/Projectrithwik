@@ -6,7 +6,7 @@ import Lenis from 'lenis';
 import { sfx, setMode, setEnabled, isEnabled, wantedBefore } from './sound';
 import { applyFestive } from './festive';
 import { MONTHS_LONG } from '../data/seasons';
-import { createFlock, MACAW } from './flock';
+import { createFlock, MACAW, SCARLET } from './flock';
 import { initPerches } from './perch';
 import { softwareGL } from './gpu';
 
@@ -182,7 +182,8 @@ function flockFor(c: HTMLElement) {
   // on the book's desk they fly behind the open book, through the margins
   const near = (w: number, h: number) => (hero ? Math.min(w < h ? w * 0.62 : w * 0.34, h * 0.75, 620) : Math.min(w < h ? w * 0.5 : w * 0.19, h * 0.38, 380));
   const f = createFlock(c, {
-    sheets: [MACAW], still: reduce,
+    // the hero's birds are red scarlet macaws; the book's are blue-and-gold
+    sheets: [hero ? SCARLET : MACAW], still: reduce,
     count: Math.max(2, Number(c.dataset.flock) - (portrait ? 1 : 0)),
     near, far: (w, h) => near(w, h) * 0.42,
     band: hero ? (portrait ? [0.08, 0.6] : [0.12, 0.66]) : [0.12, 0.78],
