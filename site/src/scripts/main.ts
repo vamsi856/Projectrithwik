@@ -177,10 +177,10 @@ function flockFor(c: HTMLElement) {
   if (flocks.has(c)) return flocks.get(c)!;
   const hero = c.classList.contains('bird__flock');
   const portrait = innerWidth < innerHeight;
-  // sizes follow the canvas: on a laptop the nearest macaw is about half the screen wide,
-  // on a phone it nearly fills the width; far birds are about 40% of that
+  // sizes follow the canvas: on a laptop the nearest macaw is about a third of the screen wide,
+  // on a phone about 60% of the width; far birds are about 40% of that
   // on the book's desk they fly behind the open book, through the margins
-  const near = (w: number, h: number) => (hero ? Math.min(w < h ? w * 0.9 : w * 0.5, h * 1.05, 900) : Math.min(w < h ? w * 0.7 : w * 0.26, h * 0.5, 520));
+  const near = (w: number, h: number) => (hero ? Math.min(w < h ? w * 0.62 : w * 0.34, h * 0.75, 620) : Math.min(w < h ? w * 0.5 : w * 0.19, h * 0.38, 380));
   const f = createFlock(c, {
     sheets: [MACAW], still: reduce,
     count: Math.max(2, Number(c.dataset.flock) - (portrait ? 1 : 0)),
@@ -726,7 +726,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     // scrolling stops they fly on out of the screen and no new ones come until you scroll.
     const sb = $('.scrollbird', root);
     if (sb && !reduce) {
-      const near = (w: number, h: number) => (w < h ? Math.min(w * 0.6, h * 0.36, 420) : Math.min(w * 0.24, h * 0.5, 460));
+      const near = (w: number, h: number) => (w < h ? Math.min(w * 0.44, h * 0.27, 310) : Math.min(w * 0.17, h * 0.36, 330));
       const f = createFlock(sb, { sheets: [MACAW, SCARLET], count: innerWidth < innerHeight ? 2 : 3, near, far: (w, h) => near(w, h) * 0.5, stream: { parallax: 0.4 } });
       f.setActive(false); f.play();
       // the hero has its own flock: these take over once it is scrolled past

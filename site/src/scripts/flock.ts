@@ -136,6 +136,9 @@ export function createFlock(host: HTMLElement, o: FlockOptions) {
   // one canvas the size of the sky cost a phone (and a GPU-less laptop) millions of pixels a
   // frame even when it only held three birds.
   host.style.overflow = 'hidden';
+  // the birds' own depth order stays inside the flock: the flock as a whole sits where the page
+  // puts it (behind the hero text and pack), as the single canvas did
+  host.style.isolation = 'isolate';
   const band = o.band ?? [0.08, 0.72];
   let W = 0, H = 0, dpr = 1, running = false, visible = false, wanted = false, last = 0;
   // stream mode: page scroll since the last frame, how stirred the sky is, and whether new
