@@ -43,6 +43,7 @@ export const BIRD: Product[] = [
   { id: 'b-proso', name: 'Proso millet', group: 'millets', photo: 'proso-yellow-rithwik', swatch: s('#e6d39a', '#c4ac68', 8),
     variants: [{ label: 'Green', gst: '0%', photo: 'proso-green-rithwik', swatch: s('#c3c27a', '#8f8f48', 8) }, { label: 'Yellow', gst: '0%' }] },
   { id: 'b-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra-rithwik', swatch: s('#9aa197', '#6e776c', 8), variants: [{ label: 'Bajra', gst: '0%' }] },
+  { id: 'b-ragi', name: 'Finger millet', group: 'millets', photo: 'ragi-rithwik', swatch: s('#c0603a', '#7a3020', 6), variants: [{ label: 'Ragi', gst: '0%' }] },
   { id: 'b-jowar', name: 'Jowar', group: 'grains', photo: 'jowar-mahendra-rithwik', swatch: s('#eadfc6', '#c7b896', 9),
     variants: [{ label: 'Mahendra', gst: '0%' }, { label: 'Milky white', gst: '0%', photo: 'jowar-milky-rithwik' }, { label: 'Nidhi', gst: '0%', photo: 'jowar-nidhi-rithwik' }, { label: 'Red', gst: '0%', photo: 'jowar-red-rithwik', swatch: s('#a4552f', '#6e3418', 9) }, { label: 'Yellow', gst: '0%', photo: 'jowar-yellow-rithwik', swatch: s('#e2c164', '#b38f34', 9) }] },
   { id: 'b-maize', name: 'Maize', group: 'grains', photo: 'maize-rithwik', swatch: s('#f2a654', '#c97a30', 12), variants: [{ label: '', gst: '0%' }] },
