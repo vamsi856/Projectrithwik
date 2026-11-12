@@ -18,12 +18,11 @@
 ]
 },
 "barnyard-rithwik": {
-"h": 960,
-"w": 1280,
+"h": 532,
+"w": 710,
 "widths": [
 480,
-800,
-1280
+710
 ]
 },
 "basil-rithwik": {
@@ -89,12 +88,11 @@
 ]
 },
 "browntop-rithwik": {
-"h": 903,
-"w": 1204,
+"h": 562,
+"w": 750,
 "widths": [
 480,
-800,
-1204
+750
 ]
 },
 "buckwheat": {
@@ -206,21 +204,21 @@
 ]
 },
 "foxtail-summer-rithwik": {
-"h": 1198,
-"w": 1600,
+"h": 870,
+"w": 1160,
 "widths": [
 480,
 800,
-1280
+1160
 ]
 },
 "foxtail-winter-rithwik": {
-"h": 1087,
-"w": 1449,
+"h": 630,
+"w": 840,
 "widths": [
 480,
 800,
-1280
+840
 ]
 },
 "groundnut": {
@@ -472,21 +470,19 @@
 ]
 },
 "proso-green-rithwik": {
-"h": 720,
-"w": 960,
+"h": 442,
+"w": 590,
 "widths": [
 480,
-800,
-960
+590
 ]
 },
 "proso-yellow-rithwik": {
-"h": 674,
-"w": 899,
+"h": 412,
+"w": 550,
 "widths": [
 480,
-800,
-899
+550
 ]
 },
 "pumpkin-rithwik": {
