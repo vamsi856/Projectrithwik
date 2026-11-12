@@ -542,5 +542,16 @@
   "a": "Rithwik",
   "local": "photos/foxtail-summer-rithwik.webp",
   "own": true
+ },
+ "barnyard-rithwik": {
+  "t": "Barnyard millet",
+  "u": "",
+  "w": 1280,
+  "h": 960,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/barnyard-rithwik.webp",
+  "own": true
  }
 }
