@@ -37,7 +37,7 @@ export const BIRD: Product[] = [
       { label: 'Winter crop', gst: '0%', photo: 'foxtail-winter-rithwik' },
     ] },
   { id: 'b-barnyard', name: 'Barnyard millet', group: 'millets', photo: 'barnyard-rithwik', swatch: s('#e8dcb8', '#c6b78a', 7), variants: [{ label: '', gst: '0%' }] },
-  { id: 'b-browntop', name: 'Browntop millet', group: 'millets', photo: 'browntop', swatch: s('#c59a5a', '#996e34', 7), variants: [{ label: '', gst: '0%' }] },
+  { id: 'b-browntop', name: 'Browntop millet', group: 'millets', photo: 'browntop-rithwik', swatch: s('#c59a5a', '#996e34', 7), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-kodo', name: 'Kodo millet', group: 'millets', photo: 'kodo', swatch: s('#a9824e', '#7d5a2e', 7), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-little', name: 'Little millet', group: 'millets', photo: 'little', swatch: s('#d8c48a', '#b29e60', 6), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-proso', name: 'Proso millet', group: 'millets', photo: 'proso', swatch: s('#e6d39a', '#c4ac68', 8),
