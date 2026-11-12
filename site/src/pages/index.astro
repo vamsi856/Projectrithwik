@@ -215,7 +215,7 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
 
       <div class="facts" aria-label="Rithwik Bird Feeds at a glance">
         <div class="fact"><b data-count={BIRD.length}>{BIRD.length}</b><span>feeds in {nBird} grades</span></div>
-        <div class="fact"><b>Summer &amp; winter</b><span>foxtail crops, processed or unprocessed</span></div>
+        <div class="fact"><b>Summer &amp; winter</b><span>two foxtail crops</span></div>
         <div class="fact"><b>Since 1925</b><span>a family grain trade</span></div>
         <div class="fact fact--code"><b>{BRANDS.bird.gstin}</b><span>GSTIN</span></div>
       </div>
@@ -280,13 +280,13 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
       <Certifications id="b-certs" tone="bird" regs={held('bird')} photo="bird-plumhead" photoAlt="A plum-headed parakeet feeding" />
 
       <Steps id="b-order" tone="bird" steps={[
-        { title: 'Pick your feeds', body: 'Choose from the cards above. For foxtail, pick the summer or winter crop, processed or unprocessed.' },
+        { title: 'Pick your feeds', body: 'Choose from the cards above. For foxtail, pick the summer or winter crop.' },
         { title: 'Send it on WhatsApp', body: 'Use the form below or message 92455 55556 with the quantity and your town.' },
         { title: "Get today's price", body: 'We reply with the current rate and work out packing and delivery with you.' },
       ]} />
 
       <Contact id="b-contact" tone="bird" brand={BRANDS.bird.name} email={BRANDS.bird.email} options={birdOptions}
-        label="Feed" qtyHint="For example, 50 bags or 2 tonnes" msgHint="Delivery town, processed or unprocessed, packing" />
+        label="Feed" qtyHint="For example, 50 bags or 2 tonnes" msgHint="Delivery town, packing" />
     </main>
 
     <Footer logo={birdLogo} tone="bird" brand={BRANDS.bird.name} gstin={BRANDS.bird.gstin} email={BRANDS.bird.email} top="b-top"

@@ -2,8 +2,8 @@ import { BIRD, FOOD, lineName } from './products';
 import { photoSmall } from './photos';
 import type { Product } from './products';
 
-// One pack per line: Foxtail millet comes as four packs (summer or winter crop, processed or
-// unprocessed), jowar as five, and so on. The line's name is printed on its pack.
+// One pack per line: Foxtail millet comes as two packs (summer or winter crop), jowar as
+// five, and so on. The line's name is printed on its pack.
 const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 export const packItems = (list: Product[]) => list.flatMap((p) => p.variants.map((v) => {
   const photo = v.photo === undefined ? p.photo : v.photo ?? undefined;

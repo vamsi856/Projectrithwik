@@ -32,15 +32,9 @@ export const BIRD_GROUPS = [
 // Bird feed lines, from the owner's list (Nov 2026).
 export const BIRD: Product[] = [
   { id: 'b-foxtail', name: 'Foxtail millet', group: 'millets', photo: 'foxtail', swatch: s('#d9b24a', '#b48a2c', 7),
-    axes: [
-      { name: 'Crop', options: ['Summer crop', 'Winter crop'] },
-      { name: 'Type', options: ['Processed', 'Unprocessed'] },
-    ],
     variants: [
-      { label: 'Summer crop, processed', gst: '0%', photo: 'foxtail-hulled' },
-      { label: 'Summer crop, unprocessed', gst: '0%' },
-      { label: 'Winter crop, processed', gst: '0%', photo: 'foxtail-winter-rithwik' },
-      { label: 'Winter crop, unprocessed', gst: '0%' },
+      { label: 'Summer crop', gst: '0%', photo: 'foxtail-hulled' },
+      { label: 'Winter crop', gst: '0%', photo: 'foxtail-winter-rithwik' },
     ] },
   { id: 'b-barnyard', name: 'Barnyard millet', group: 'millets', photo: 'barnyard', swatch: s('#e8dcb8', '#c6b78a', 7), variants: [{ label: '', gst: '0%' }] },
   { id: 'b-browntop', name: 'Browntop millet', group: 'millets', photo: 'browntop', swatch: s('#c59a5a', '#996e34', 7), variants: [{ label: '', gst: '0%' }] },
