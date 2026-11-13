@@ -327,16 +327,6 @@
   "a": "blairingmedia",
   "local": "photos/quinoa-red.webp"
  },
- "chana-white": {
-  "t": "Chickpeas (49683603473).jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chickpeas_%2849683603473%29.jpg",
-  "w": 5184,
-  "h": 2916,
-  "p": "https://commons.wikimedia.org/wiki/File:Chickpeas_%2849683603473%29.jpg",
-  "l": "CC BY 2.0",
-  "a": "Ajay Suresh",
-  "local": "photos/chana-white.webp"
- },
  "sesame-white": {
   "t": "Sa white sesame seeds.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/6/69/Sa_white_sesame_seeds.jpg",
@@ -733,6 +723,17 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/quinoa-black-rithwik.webp",
+  "own": true
+ },
+ "kabuli-rithwik": {
+  "t": "White chana (kabuli)",
+  "u": "",
+  "w": 1280,
+  "h": 960,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/kabuli-rithwik.webp",
   "own": true
  }
 }
