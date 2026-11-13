@@ -11,7 +11,7 @@
 type Mode = 'book' | 'bird' | 'food' | 'off';
 export type Sfx = 'turn' | 'whoosh' | 'tick' | 'rattle' | 'pop' | 'chirp';
 
-const KEY = 'rithwik-sound';
+const KEY = 'rithwik-sound-v2'; // v2: an "off" saved before Nov 2026 no longer keeps sound off; it is on by default
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const FILES = { birds: `${BASE}sound/birds.mp3` };
 
