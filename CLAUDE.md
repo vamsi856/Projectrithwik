@@ -56,8 +56,9 @@ If a push doesn't trigger Pages, push an empty commit.
   and land on the map pin at the end.
 - Founders: Bysani Vasavi (left) and Bysani Sudheer (right), shown only as the big round photo on the 2022 dot, on both
   timelines. No macaw on the timeline, and no extra founders photos.
-- Human Food sound is the sound of grain being poured (generated in `sound.ts`: tiny taps that swell and pause like a
-  pour, over a low rustle). No music, no birdsong, no click/whoosh effects there. Bird Feeds is the recorded birdsong.
+- Human Food sound is a soft wind (generated) with the recorded birdsong kept quiet and far away, swelling now and then
+  (client's choice, 13 Nov: "wind with occasional soft birdsong"). No music, no click/whoosh effects there. Bird Feeds is
+  the full recorded birdsong.
 - Seeds (chia, quinoa, pumpkin, hulled sunflower, flax, basil) sit in Super foods, not Oil seeds.
 - Names: "Sunflower seeds", "Safflower seeds". Ragi: "Ragi" on Human Food; on Bird Feeds "Finger millet" (option "Ragi"),
   right after Pearl millet.

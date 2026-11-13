@@ -4,7 +4,7 @@
 // Bird Feeds and the book: a real dawn chorus, recorded in France by Joseph Sardin
 // ("Réveil des oiseaux", Wikimedia Commons, CC0). It is looped with a slow
 // equal-power crossfade so the seam is never heard.
-// Human Food: the sound of grain being poured, generated live. No birds and no effect sounds there.
+// Human Food: a soft wind with the birdsong kept quiet and far away. No effect sounds there.
 // The small interface sounds (page turn, seed rattle, chirp) are generated live too.
 
 type Mode = 'book' | 'bird' | 'food' | 'off';
@@ -80,51 +80,38 @@ async function startBirds() {
   play(ctx.currentTime + 0.05, rand(0, buf.duration - 20));
 }
 
-/* ---------------------------------------------------------------- grain (Human Food) */
-// Human Food's sound is grain being poured: a steady trickle of tiny hard taps as the grains land on
-// the heap, swelling and thinning as the pour changes, with short pauses between pours, over a soft
-// low rustle. All of it is made from the noise buffer, so there is nothing to download.
-let grainTimer = 0, rustle: GainNode | null = null, pourUntil = 0, pauseUntil = 0, pourPhase = 0;
-function grainTap(t: number) {
-  // one grain landing: a very short bright click, each a little different
-  const f0 = rand(1600, 5200);
-  noiseHitTo(musicBus, t, rand(0.008, 0.022), 'bandpass', f0, f0 * 0.55, rand(2, 5), rand(0.06, 0.26), rand(-0.6, 0.6));
-  if (Math.random() < 0.06) note(t, rand(700, 1100), 420, 0.035, 0.05, musicBus, 'triangle'); // a bigger grain hitting the side
-}
-function startRustle() {
-  if (rustle) return;
+/* ---------------------------------------------------------------- wind (Human Food) */
+// Human Food's sound is a soft wind over the fields (filtered noise that slowly breathes), with the
+// birdsong kept far away and quiet, swelling a little now and then, as if a few birds pass over.
+let wind: { gain: GainNode } | null = null, windTimer = 0;
+function startWind() {
+  if (wind) return;
   const src = ctx!.createBufferSource(); src.buffer = noise; src.loop = true;
-  const lp = ctx!.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420;
-  const hp = ctx!.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 90;
-  rustle = ctx!.createGain(); rustle.gain.value = 0;
-  src.connect(hp).connect(lp).connect(rustle).connect(musicBus); src.start();
+  const bp = ctx!.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 650; bp.Q.value = 0.7;
+  const lfo = ctx!.createOscillator(), lg = ctx!.createGain(); lfo.frequency.value = 0.07; lg.gain.value = 320; lfo.connect(lg).connect(bp.frequency);
+  const gain = ctx!.createGain(); gain.gain.value = 0;
+  src.connect(bp).connect(gain).connect(master); src.start(); lfo.start();
+  wind = { gain };
 }
-/** Keeps the grain pouring while Human Food is open with sound on. */
+/** While Human Food is open with sound on: the wind stays, the birds come and go softly. */
 function scheduleMusic() {
-  clearTimeout(grainTimer);
+  clearTimeout(windTimer);
   if (!enabled || mode !== 'food' || !ctx) return;
-  startRustle();
-  const now = ctx.currentTime;
-  if (now > pourUntil && now > pauseUntil) { pourUntil = now + rand(4, 9); pauseUntil = pourUntil + rand(1.2, 3.5); pourPhase = rand(0, 6.28); }
-  const pouring = now < pourUntil;
-  // how thick the stream is: rises as the pour starts, wanders, thins out at the end
-  const edge = Math.min(1, (now - (pourUntil - 9)) / 1.2, Math.max(0.15, (pourUntil - now) / 1.5));
-  const density = pouring ? (5 + 7 * (0.5 + 0.5 * Math.sin(now * 0.7 + pourPhase))) * edge : 0;
-  const step = 0.2, n = Math.round(density * (0.7 + Math.random() * 0.6));
-  for (let i = 0; i < n; i++) grainTap(now + Math.random() * step + 0.02);
-  if (pouring && Math.random() < 0.08) for (let i = 0; i < 6; i++) grainTap(now + rand(0, 0.12)); // a small clump
-  rustle!.gain.setTargetAtTime(pouring ? 0.05 * Math.max(0.3, edge) : 0.008, now, 0.4);
-  grainTimer = window.setTimeout(scheduleMusic, step * 1000);
+  startWind();
+  const t = ctx.currentTime;
+  wind!.gain.gain.setTargetAtTime(0.12, t, 1.5);
+  // a quiet bed of birdsong, with a gentle swell for a few seconds now and then
+  birdBus.gain.setTargetAtTime(Math.random() < 0.45 ? rand(0.22, 0.34) : 0.1, t, 2.5);
+  windTimer = window.setTimeout(scheduleMusic, rand(6000, 14000));
 }
-const musicTimerClear = () => clearTimeout(grainTimer);
+const musicTimerClear = () => { clearTimeout(windTimer); if (wind && ctx) wind.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.6); };
 
 function levels() {
   if (!ctx) return;
   const t = ctx.currentTime;
-  const birds = !enabled ? 0 : mode === 'bird' ? 1 : mode === 'book' ? 0.6 : 0; // Human Food: its music alone
-  const music = enabled && mode === 'food' ? 0.9 : 0;
+  const birds = !enabled ? 0 : mode === 'bird' ? 1 : mode === 'book' ? 0.6 : 0.1; // Human Food: faint, the wind schedule swells it
   birdBus.gain.setTargetAtTime(birds, t, 0.9);
-  musicBus.gain.setTargetAtTime(music, t, mode === 'food' ? 1.2 : 0.35);
+  musicBus.gain.setTargetAtTime(0, t, 0.35);
 }
 
 /* ---------------------------------------------------------------- effects */
