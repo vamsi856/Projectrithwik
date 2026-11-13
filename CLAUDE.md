@@ -67,7 +67,8 @@ If a push doesn't trigger Pages, push an empty commit.
   more than four).
 - Bird Feeds "Who we are" shows the client's claim "No. 1 foxtail millet supplier in India": a 3D gold 1 (no "No."/"India" beside it) (CSS) that counts
   down from 50, then sways with a sheen and sparkles (paused off screen).
-- Bird Feeds facts row (client's figures): Since 1925 · Annual production 20,000 MT+ · 3,000+ customers · GSTIN (label above).
+- Bird Feeds facts row (client's figures): Since 1925 · 20,000MT+ annual production · 3,000+ customers · 20+ range of products
+  (GSTIN only in the footer on Bird Feeds). Numbers count up, no highlight bar.
 - Certification seals show on both sites (owner's request).
 - Mission and "Our goal is simple" on both Vision sections are the client's own words (from Sudheer): keep them as written.
 - Certification seals sit centred (a short row stays in the middle), cards in a row share one height.
