@@ -119,11 +119,11 @@ async function paintPouch(ctx: CanvasRenderingContext2D, item: PackItem, logo: H
   [118, 132].forEach((y) => { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(TW, y); ctx.stroke(); });
 
   if (back) {
-    ctx.textAlign = 'center'; ctx.fillStyle = '#0f2a20';
+    ctx.textAlign = 'center'; ctx.fillStyle = '#1c2533';
     ctx.font = '400 120px Anton'; ctx.fillText('RITHWIK', TW / 2, 520);
     ctx.font = '400 92px Anton'; ctx.fillText('INDUSTRIES', TW / 2, 630);
     ctx.fillStyle = '#7a5a20'; ctx.font = 'italic 500 42px "Instrument Sans"'; ctx.fillText("Nature's grain, nurtured for you", TW / 2, 720);
-    ctx.fillStyle = '#0f2a20'; ctx.font = '600 38px "Instrument Sans"';
+    ctx.fillStyle = '#1c2533'; ctx.font = '600 38px "Instrument Sans"';
     ['Kurnool, Andhra Pradesh', 'WhatsApp 92455 55556', 'rithwikindustries@gmail.com'].forEach((l, i) => ctx.fillText(l, TW / 2, 880 + i * 62));
     ctx.textAlign = 'left';
     return;
@@ -131,7 +131,7 @@ async function paintPouch(ctx: CanvasRenderingContext2D, item: PackItem, logo: H
 
   // emblem and brand
   if (logo) { const h = 290, w = h * (logo.naturalWidth / logo.naturalHeight); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(logo, TW / 2 - w / 2, 165, w, h); ctx.globalCompositeOperation = 'source-over'; }
-  ctx.textAlign = 'center'; ctx.fillStyle = '#0f2a20'; ctx.font = '400 78px Anton'; ctx.fillText('RITHWIK INDUSTRIES', TW / 2, 548);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#1c2533'; ctx.font = '400 78px Anton'; ctx.fillText('RITHWIK INDUSTRIES', TW / 2, 548);
   ctx.fillStyle = '#6b4a14'; ctx.font = 'italic 500 36px "Instrument Sans"'; ctx.fillText("Nature's grain, nurtured for you", TW / 2, 598);
 
   // clear window
@@ -140,14 +140,14 @@ async function paintPouch(ctx: CanvasRenderingContext2D, item: PackItem, logo: H
   if (photo) cover(ctx, photo, cx - rx, cy - ry, rx * 2, ry * 2); else seedPattern(ctx, cx - rx, cy - ry, rx * 2, ry * 2, item.c1, item.c2);
   const gl = ctx.createLinearGradient(cx - rx, cy - ry, cx + rx * 0.2, cy + ry); gl.addColorStop(0, 'rgba(255,255,255,.35)'); gl.addColorStop(0.35, 'rgba(255,255,255,0)'); gl.addColorStop(1, 'rgba(0,0,0,.18)');
   ctx.fillStyle = gl; ctx.fillRect(cx - rx, cy - ry, rx * 2, ry * 2); ctx.restore();
-  ctx.strokeStyle = 'rgba(15,42,32,.55)'; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(cx, cy, rx + 3, ry + 3, 0, 0, 6.283); ctx.stroke();
+  ctx.strokeStyle = 'rgba(28,37,51,.55)'; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(cx, cy, rx + 3, ry + 3, 0, 0, 6.283); ctx.stroke();
 
   // name
-  ctx.fillStyle = '#0f2a20';
+  ctx.fillStyle = '#1c2533';
   fitText(ctx, item.name.toUpperCase(), (px) => `400 ${px}px Anton`, 860, 128);
   ctx.fillText(item.name.toUpperCase(), TW / 2, 1185);
-  if (item.variant) variantPill(ctx, item.variant, 1208, '#2f7a52', '#fffbf2');
-  ctx.fillStyle = 'rgba(15,42,32,.75)'; ctx.font = '600 32px "Instrument Sans"'; ctx.fillText('Kurnool, Andhra Pradesh', TW / 2, TH - 70);
+  if (item.variant) variantPill(ctx, item.variant, 1208, '#5c7f4c', '#efeadb');
+  ctx.fillStyle = 'rgba(28,37,51,.75)'; ctx.font = '600 32px "Instrument Sans"'; ctx.fillText('Kurnool, Andhra Pradesh', TW / 2, TH - 70);
   ctx.textAlign = 'left';
 }
 

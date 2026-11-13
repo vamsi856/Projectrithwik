@@ -1022,70 +1022,9 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 
 
 /* =========================================================
-   HUMAN FOOD: forest & turmeric
-   Deep forest green, warm ivory and turmeric gold, with a fresh leaf green. Set as
-   variables on the food site, so every section, card, seal and chart follows.
+   HUMAN FOOD colours: the original cream, ink and bronze palette from :root (site.css).
+   The client asked (Nov 2026) for the dark forest-green theme to be removed everywhere.
    ========================================================= */
-.site--food {
-  --ink: #0f2a20;            --ink-rgb: 15, 42, 32;
-  --khaki: #f4eddb;          --khaki-rgb: 244, 237, 219;
-  --khaki-2: #e8dcc0;
-  --paper: #fffbf2;          --paper-rgb: 255, 251, 242;
-  --bronze: #a76c06;         --bronze-rgb: 167, 108, 6;
-  --bronze-2: #eaa93a;       --bronze2-rgb: 234, 169, 58;
-  --bronze-ink: #7a4f05;
-  --leaf: #2f7a52;
-  --forest-2: #163a2c; --forest-3: #1f4d3a;
-}
-.site--food .pill--ink:hover { background: var(--forest-3); }
-.site--food .sbar { background: rgba(var(--khaki-rgb), .98); }
-.site--food .strip { background: var(--ink); color: var(--bronze-2); }
-
-/* the hero becomes a full-width forest band: ivory headline, turmeric accents */
-.food-hero { isolation: isolate; color: var(--khaki); }
-.food-hero::before {
-  content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
-  background:
-    radial-gradient(60% 70% at 78% 40%, rgba(var(--bronze2-rgb), .22), transparent 60%),
-    radial-gradient(70% 90% at 0% 100%, #24563f 0%, transparent 55%),
-    linear-gradient(160deg, #13362a 0%, var(--ink) 55%, #0a1f17 100%);
-}
-.food-hero::after {
-  /* a soft grain-field texture of tiny dots */
-  content: ""; position: absolute; z-index: -1; inset: 0 calc(50% - 50vw); opacity: .35; pointer-events: none;
-  background-image: radial-gradient(rgba(var(--bronze2-rgb), .28) 1px, transparent 1.4px); background-size: 22px 22px;
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent); mask-image: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
-}
-.food-hero .food-hero__brand { color: var(--bronze-2); letter-spacing: .02em; }
-.food-hero .display--food { color: var(--khaki); }
-.food-hero .display--food .grainword { color: var(--bronze-2); font-style: normal; }
-.food-hero .hpack__name, .food-hero .hpack__count { color: var(--khaki); }
-.food-hero .food-hero__lede { color: rgba(var(--khaki-rgb), .82); }
-.food-hero .ghost--food { color: rgba(var(--bronze2-rgb), .07); }
-.food-hero .pill--ink { background: var(--bronze-2); color: var(--ink); }
-.food-hero .pill--ink:hover { background: #f6c262; }
-.food-hero .pill--line-ink { border-color: rgba(var(--khaki-rgb), .45); color: var(--khaki); }
-.food-hero .pill--line-ink:hover { border-color: var(--khaki); }
-.food-hero .trust a { background: rgba(var(--khaki-rgb), .07); box-shadow: inset 0 0 0 1px rgba(var(--khaki-rgb), .16); color: var(--khaki); }
-.food-hero .trust__mark { background: var(--bronze-2); color: var(--ink); }
-.food-hero .hpack__bar { background: rgba(var(--khaki-rgb), .08); box-shadow: inset 0 0 0 1px rgba(var(--khaki-rgb), .16); color: var(--khaki); }
-.food-hero .hpack__bar button { background: var(--bronze-2); color: var(--ink); }
-
-/* section accents */
-.site--food .section-title--food { color: var(--ink); }
-.site--food .marquee--food { background: var(--ink); border-color: transparent; }
-.site--food .marquee--food span { color: var(--khaki); }
-.site--food .marquee--food span:nth-child(odd) { -webkit-text-stroke-color: var(--bronze-2); }
-.site--food .marquee--food span::after { background: var(--bronze-2); }
-.site--food .pcard__wa { background: var(--leaf); }
-.site--food .pcard__ask { background: var(--ink); color: var(--khaki); }
-.vision--food { background: radial-gradient(80% 70% at 85% 10%, var(--forest-3), transparent 60%), var(--ink); }
-.foot--food { background: #0a1f17; }
-
-/* the book's Human Food page picks up the same accents */
-.page--food .page__title { color: #0f2a20; }
-.page--food .page__kicker { color: #a76c06; }
-.page--food .page__cta { background: #0f2a20; color: #f4eddb; }
 
 /* ---------- Human Food certifications: a clean wall of the official marks ---------- */
 .certs--food { grid-template-columns: 1fr; gap: 34px; text-align: center; }
@@ -1151,7 +1090,7 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
    ========================================================= */
 .site .sbar { background-color: var(--sbar-bg); }
 .site--bird { --sbar-bg: #0b1924; }
-.site--food { --sbar-bg: #f4eddb; }
+.site--food { --sbar-bg: #e4dfc1; }
 .site--bird .sbar, .site--food .sbar { background: var(--sbar-bg); }
 
 .studio {
