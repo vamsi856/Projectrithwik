@@ -98,7 +98,7 @@ function pluck(t: number, f: number, vol: number, dur: number, pan: number) {
 function chime(t: number) {
   const f = SA * 4 * pick(MOHANAM);
   const o = ctx!.createOscillator(), g = ctx!.createGain();
-  o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.018, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.6);
+  o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.14, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.6);
   o.connect(g).connect(panner(rand(-0.7, 0.7))).connect(musicBus); o.start(t); o.stop(t + 2.7);
 }
 let lastDeg = 0;
@@ -109,7 +109,7 @@ function phrase() {
     // mostly step to a neighbouring note, like a slow alaap
     lastDeg = Math.max(0, Math.min(7, lastDeg + pick([-1, -1, 1, 1, 2, -2, 0])));
     const oct = lastDeg >= 5 ? 2 : 1, f = SA * oct * MOHANAM[lastDeg % 5];
-    pluck(t, f, 0.05, rand(1.8, 3), rand(-0.35, 0.35));
+    pluck(t, f, 0.42, rand(1.8, 3), rand(-0.35, 0.35));
     t += rand(0.45, 0.9);
   }
   if (Math.random() < 0.35) chime(t + rand(0.2, 1));
@@ -117,14 +117,16 @@ function phrase() {
 let drone = false, musicTimer = 0;
 function startDrone() {
   if (drone) return; drone = true;
-  const gain = ctx!.createGain(); gain.gain.value = 0.022;
-  const lp = ctx!.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900;
-  ([[SA / 2, 'sine', 0.6], [SA / 2 * 1.5, 'triangle', 0.25], [SA / 2 * 1.003, 'sine', 0.4], [SA, 'sine', 0.15]] as [number, OscillatorType, number][]).forEach(([f, type, v]) => {
+  // (levels set so the music sits as loud as the Bird Feeds birdsong, about -20 dB; the upper voices let
+  // phone and laptop speakers, which can't play the low drone, still carry it)
+  const gain = ctx!.createGain(); gain.gain.value = 0.15;
+  const lp = ctx!.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400;
+  ([[SA / 2, 'sine', 0.45], [SA / 2 * 1.5, 'triangle', 0.25], [SA / 2 * 1.003, 'sine', 0.3], [SA, 'sine', 0.45], [SA * 1.5, 'sine', 0.12]] as [number, OscillatorType, number][]).forEach(([f, type, v]) => {
     const o = ctx!.createOscillator(), g = ctx!.createGain(); o.type = type; o.frequency.value = f; g.gain.value = v;
     o.connect(g).connect(lp); o.start();
   });
   // a slow swell, like the strings of a tanpura being plucked in turn
-  const lfo = ctx!.createOscillator(), lg = ctx!.createGain(); lfo.frequency.value = 0.12; lg.gain.value = 0.006; lfo.connect(lg).connect(gain.gain); lfo.start();
+  const lfo = ctx!.createOscillator(), lg = ctx!.createGain(); lfo.frequency.value = 0.12; lg.gain.value = 0.04; lfo.connect(lg).connect(gain.gain); lfo.start();
   lp.connect(gain).connect(musicBus);
 }
 /** Plays a phrase every few seconds while Human Food is open with sound on. */
