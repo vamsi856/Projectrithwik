@@ -382,12 +382,13 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
               return n > 0 && (
                 <figure class="range__banner range__banner--slices" data-curtain aria-hidden="true" style={`--n:${n};--prows:${rows};--ext:${waveExt(WAVE.desk)};--pext:${waveExt(WAVE.phone)}`}>
                   {items.map((p, i) => {
-                    // phones: each row is cut into as many slices as it holds (5 = 3 on top, 2 below)
+                    // phones: each row is cut into as many slices as it holds (5 = 3 on top, 2 below).
+                    // `sizes` matches the product cards, so a slice and its card share one downloaded file
                     const pr = Math.floor(i / cols), pc = i % cols, rowN = pr === 0 ? cols : n - cols;
                     const m = waveMask(n, i === 0, i === n - 1, WAVE.desk), pm = waveMask(rowN, pc === 0, pc === rowN - 1, WAVE.phone);
                     return (
                       <span class="slice" style={`--i:${i};--pc:${pc};--pr:${pr};--pn:${rowN};--m:${m};--pm:${pm}`}>
-                        <Photo name={p.photo!} alt="" sizes={`(max-width: 760px) ${Math.round(100 / rowN) + 15}vw, ${Math.round(1240 / n) + 160}px`} />
+                        <Photo name={p.photo!} alt="" sizes={`(max-width: 640px) 66vw, (max-width: 1100px) 46vw, ${n >= 4 ? 380 : Math.round(1240 / n) + 160}px`} />
                         <span class="slice__name">{p.name}</span>
                       </span>
                     );

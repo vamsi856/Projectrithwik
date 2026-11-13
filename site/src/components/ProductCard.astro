@@ -32,6 +32,8 @@ const firstLine = lineName(p, first);
 // real birds sitting on the card's top edge (Bird Feeds only)
 const perches = tone === 'bird' ? PERCHES[p.id] ?? [] : [];
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+// phones get the 800px file even on 3x screens (still over 2x sharp): far less to download and decode
+const CARD_SIZES = '(max-width: 640px) 66vw, (max-width: 1100px) 46vw, 380px';
 ---
 <article class:list={['pcard', `pcard--${tone}`]} data-group={p.group} data-card data-name={axes.length ? p.name : undefined}>
   {perches.map((q) => <Perch perch={q} />)}
@@ -39,7 +41,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
     {looks.map((l) => (
       <div class:list={['pcard__look', l.lines.includes(firstLine) && 'is-shown', l.photo && photo(l.photo)?.credit.whole && 'pcard__look--whole']} data-look={l.lines.join('|')}>
         {l.photo ? (
-          <Photo name={l.photo} class="pcard__img" alt={l.lines.length === 1 ? l.lines[0] : p.name} sizes="(max-width: 640px) 92vw, (max-width: 1100px) 46vw, 380px" />
+          <Photo name={l.photo} class="pcard__img" alt={l.lines.length === 1 ? l.lines[0] : p.name} sizes={CARD_SIZES} />
         ) : (
           <div class="pcard__plate"><span class="seed seed--plate" style={`--c1:${l.sw.c1};--c2:${l.sw.c2};--g:${l.sw.grain}px`} aria-hidden="true"></span></div>
         )}
