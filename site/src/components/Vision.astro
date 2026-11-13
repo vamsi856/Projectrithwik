@@ -1,8 +1,9 @@
 ---
 import Photo from './Photo.astro';
 import { photo } from '../data/photos';
-interface Props { id: string; tone: 'bird' | 'food'; vision: string; mission: string; image?: string; imageAlt?: string }
-const { id, tone, vision, mission, image, imageAlt = '' } = Astro.props;
+interface Props { id: string; tone: 'bird' | 'food'; vision: string; mission: string | string[]; goal?: string; image?: string; imageAlt?: string }
+const { id, tone, vision, mission, goal, image, imageAlt = '' } = Astro.props;
+const missionParas = Array.isArray(mission) ? mission : [mission];
 const img = photo(image);
 ---
 <section class:list={['vision', `vision--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
@@ -27,8 +28,14 @@ const img = photo(image);
       </div>
       <div class="vm__item" data-reveal>
         <h3>Our mission</h3>
-        <p>{mission}</p>
+        {missionParas.map((m) => <p>{m}</p>)}
       </div>
+      {goal && (
+        <div class="vm__item vm__item--goal" data-reveal>
+          <h3>Our goal is simple</h3>
+          <p>{goal}</p>
+        </div>
+      )}
     </div>
     <p class="vision__where" data-reveal>Where we're heading next: the Gulf, Europe, East and Southeast Asia, and North America.</p>
     {img && (

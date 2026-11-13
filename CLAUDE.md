@@ -65,6 +65,7 @@ If a push doesn't trigger Pages, push an empty commit.
 - Each Human Food section opens with a cover cut by **wavy** slanted lines into one slice per product, each slice showing
   that product's photo (built from the products in `index.astro` with SVG masks; phones use two rows when a section has
   more than four).
+- Mission and "Our goal is simple" on both Vision sections are the client's own words (from Sudheer): keep them as written.
 - Certification seals sit centred (a short row stays in the middle), cards in a row share one height.
 - Quinoa uses the client's own Regular, Bold and Black photos; Red and Tricolor are still stock.
 - Product photos show the product only: **no bowls, jars or plates** (stock photos are cropped inside the pile).

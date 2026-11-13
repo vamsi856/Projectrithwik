@@ -322,6 +322,11 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .vm__item h3 { margin: 0 0 6px; font: 400 1.5rem/1 var(--display); text-transform: uppercase; color: var(--sky); }
 .vision--food .vm__item h3 { color: var(--khaki); }
 .vm__item p { margin: 0; font-size: 1.08rem; line-height: 1.5; max-width: 48ch; }
+.vm__item p + p { margin-top: 10px; }
+/* the goal: one short line, set larger, with a coloured rule on the left */
+.vm__item--goal p { font-size: 1.22rem; font-weight: 600; line-height: 1.4; }
+.vision--bird .vm__item--goal { box-shadow: inset 4px 0 0 var(--sky), inset 0 0 0 1px rgba(124, 196, 234, .16); }
+.vision--food .vm__item--goal { box-shadow: inset 4px 0 0 var(--khaki), inset 0 0 0 1px rgba(var(--khaki-rgb), .14); }
 .vision__where { margin: 0 0 24px; opacity: .75; max-width: 52ch; }
 .vision__photo { margin: 0; border-radius: 22px; overflow: hidden; aspect-ratio: 16 / 9; }
 .vision__photo img, .vision__photo picture { display: block; width: 100%; height: 100%; object-fit: cover; }
