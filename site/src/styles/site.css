@@ -440,7 +440,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .section-title--food { color: var(--ink); }
 
-.facts--food { padding-bottom: clamp(72px, 10vw, 130px); }
+.facts--food { margin-top: clamp(8px, 2vw, 20px); margin-bottom: clamp(36px, 5vw, 64px); }
 /* Human Food keeps its own theme here: dark ink blocks, cream words, bronze numbers */
 .facts--food .fact { background: var(--ink); color: var(--khaki); }
 .facts--food .fact b { color: var(--bronze-2); }

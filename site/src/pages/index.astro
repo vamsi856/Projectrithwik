@@ -196,7 +196,6 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
 
   <div class="turn" id="turn" aria-hidden="true"></div>
 
-
   <!-- ================= SITE 1: RITHWIK BIRD FEEDS ================= -->
   <div class="site site--bird" id="bird-feeds" data-site="bird" hidden>
     <a class="skip" href="#b-main" data-skip>Skip to content</a>
@@ -271,7 +270,6 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
 
       <Legacy tone="bird" />
 
-
       <PackStudio id="b-packs" kind="sack" tone="bird" logo={birdLogoTex} items={BIRD_PACKS} contact="b-contact"
         title="Our packs" lede="Every feed line in its own Rithwik sack." />
 
@@ -325,7 +323,6 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
     <svg class="scrollbird" viewBox="-40 -24 80 48" aria-hidden="true"><g class="pb"><path d="M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z" /></g></svg>
   </div>
 
-
   <!-- ================= SITE 2: RITHWIK INDUSTRIES ================= -->
   <div class="site site--food" id="human-food" data-site="food" hidden>
     <a class="skip" href="#f-main" data-skip>Skip to content</a>
@@ -353,6 +350,14 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         </div>
       </section>
 
+      {/* same place as on Bird Feeds: right under the hero */}
+      <div class="facts facts--food" aria-label="Rithwik Industries at a glance">
+        <div class="fact fact--num"><b><small>Since</small><span data-count="1925" data-count-from="1900">1925</span></b><span>a family grain trade</span></div>
+        <div class="fact fact--num"><b><span data-count="20000" data-count-sep>20,000</span><i class="fact__unit">MT</i><i>+</i></b><span>annual production</span></div>
+        <div class="fact fact--num"><b><span data-count="3000" data-count-sep>3,000</span><i>+</i></b><span>customers</span></div>
+        <div class="fact fact--num"><b><span data-count={FOOD.length}>{FOOD.length}</span><i>+</i></b><span>range of products</span></div>
+      </div>
+
       <div class="marquee marquee--food" aria-hidden="true"><div class="marquee__track">
         {[0, 1].map(() => marquee(FOOD.map((f) => f.name)).map((n) => <span>{n}</span>))}
       </div></div>
@@ -373,7 +378,6 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
       </section>
 
       <Legacy tone="food" />
-
 
       <PackStudio id="f-packs" kind="pouch" tone="food" logo={foodLogoTex} items={FOOD_PACKS} contact="f-contact"
         title="Our packs" lede="Kraft pouches with a clear window, so you can see the grain." />
@@ -414,13 +418,6 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
             </div>
           </section>
         ))}
-      </div>
-
-      <div class="facts facts--food" aria-label="Rithwik Industries at a glance">
-        <div class="fact fact--num"><b><small>Since</small><span data-count="1925" data-count-from="1900">1925</span></b><span>a family grain trade</span></div>
-        <div class="fact fact--num"><b><span data-count="20000" data-count-sep>20,000</span><i class="fact__unit">MT</i><i>+</i></b><span>annual production</span></div>
-        <div class="fact fact--num"><b><span data-count="3000" data-count-sep>3,000</span><i>+</i></b><span>customers</span></div>
-        <div class="fact fact--num"><b><span data-count={FOOD.length}>{FOOD.length}</span><i>+</i></b><span>range of products</span></div>
       </div>
 
       <SeedToSack id="f-story" tone="food" title="Field to pack" packWord="bags and pouches"
