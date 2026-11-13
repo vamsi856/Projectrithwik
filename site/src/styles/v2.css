@@ -169,8 +169,8 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .fact__key { font: 400 clamp(1.5rem, 2.4vw, 2.2rem)/1 var(--display) !important; text-transform: uppercase; }
 .fact--num b small { font-size: .42em; margin: .18em .22em 0 0; }
 .fact--num > span { font-size: 1rem !important; font-weight: 600 !important; }
-.fact--num b i { font-style: normal; font-size: .62em; margin-left: 2px; }
-.fact--num b .fact__unit { font-size: .5em; align-self: flex-end; margin: 0 1px .12em 6px; }
+/* the unit and the plus are part of the figure: same font, same size */
+.fact--num b i { font: inherit; font-style: normal; }
 @media (max-width: 640px) { .fact--num b { font-size: clamp(1.55rem, 7.2vw, 2.4rem) !important; } }
 /* "No. 1 foxtail millet supplier in India": a 3D gold numeral beside its label */
 .rank { display: flex; align-items: center; gap: clamp(10px, 1.6vw, 20px); margin-top: clamp(22px, 3vw, 34px); padding: 16px 30px 16px 22px;
