@@ -67,7 +67,8 @@ If a push doesn't trigger Pages, push an empty commit.
   more than four).
 - Mission and "Our goal is simple" on both Vision sections are the client's own words (from Sudheer): keep them as written.
 - Certification seals sit centred (a short row stays in the middle), cards in a row share one height.
-- Quinoa uses the client's own Regular, Bold and Black photos; Red and Tricolor are still stock.
+- Quinoa: client-supplied Regular, Bold, Black and Red photos; Tricolor is still stock. Sesame Z-black and Chana White
+  also use client-supplied photos (the Black sesame option keeps the credited stock photo).
 - Product photos show the product only: **no bowls, jars or plates** (stock photos are cropped inside the pile).
 - Never use watermarked stock previews (Bigstock, Shutterstock...) the client forwards: ask for the licensed file.
 - The plant/warehouse photo section was removed on purpose. The warehouse is a map tab (Duvvur, 14.829389, 78.652194).
@@ -76,7 +77,6 @@ If a push doesn't trigger Pages, push an empty commit.
 
 ## Still open
 
-- Red quinoa: the client sent a Bigstock-watermarked photo, which can't be used. Waiting for a licensed or own photo.
 - Human Food millets show the client's hulled-grain photos (`*-hulled-rithwik`); Bird Feeds shows whole grain.
   The unlabeled bright-yellow photo was taken as hulled proso: confirm with the client.
 - Small client photos were AI-upscaled (EDSR) to ~1100-1280px; originals are in git history. Real sharper close-ups

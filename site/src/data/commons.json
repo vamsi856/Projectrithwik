@@ -317,16 +317,6 @@
   "l": "CC BY-SA 4.0",
   "a": "Yonygg"
  },
- "quinoa-red": {
-  "t": "Red quinoa.png",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/4/43/Red_quinoa.png",
-  "w": 1500,
-  "h": 1000,
-  "p": "https://commons.wikimedia.org/wiki/File:Red_quinoa.png",
-  "l": "CC BY-SA 3.0",
-  "a": "blairingmedia",
-  "local": "photos/quinoa-red.webp"
- },
  "sesame-white": {
   "t": "Sa white sesame seeds.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/6/69/Sa_white_sesame_seeds.jpg",
@@ -734,6 +724,28 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/kabuli-rithwik.webp",
+  "own": true
+ },
+ "zblack-rithwik": {
+  "t": "Z-black sesame",
+  "u": "",
+  "w": 1040,
+  "h": 780,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/zblack-rithwik.webp",
+  "own": true
+ },
+ "quinoa-red-rithwik": {
+  "t": "Red quinoa",
+  "u": "",
+  "w": 976,
+  "h": 732,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/quinoa-red-rithwik.webp",
   "own": true
  }
 }
