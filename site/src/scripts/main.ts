@@ -919,8 +919,8 @@ const reflectSound = () => {
   const on = isEnabled() || soundPending;
   soundBtn.setAttribute('aria-pressed', String(on));
   const food = document.documentElement.dataset.view === 'food';
-  soundLabel.textContent = `${food ? 'Wind' : 'Birdsong'} ${on ? 'on' : 'off'}`;
-  nudge.textContent = food ? 'Tap to hear the wind' : 'Tap to hear the birds';
+  soundLabel.textContent = `${food ? 'Music' : 'Birdsong'} ${on ? 'on' : 'off'}`;
+  nudge.textContent = food ? 'Tap to hear the music' : 'Tap to hear the birds';
 };
 document.addEventListener('rithwik:view', reflectSound);
 // sound left on last visit (it shows as on): browsers only let it start after a real tap,
