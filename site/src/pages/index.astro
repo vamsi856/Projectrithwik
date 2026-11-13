@@ -345,11 +345,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
             <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>
             <a class="pill pill--line-ink" href={`${base}Rithwik-Catalogue.pdf`} download>Download catalogue (PDF)</a>
           </div>
-          <ul class="trust" data-rise style="--i:3" aria-label="Certifications">
-            {held('food').filter((r) => r.mark !== 'GST').map((r) => (
-              <li><a href="#f-certs" data-jump title={`${r.name}, ${r.status.toLowerCase()}`}>{r.logo ? <img class="trust__logo" src={`${base}certs/${r.logo}`} alt={r.name} width="40" height="40" loading="lazy" /> : <span class="trust__mark">{r.mark}</span>}</a></li>
-            ))}
-          </ul>
+          {/* the certification logos under the hero were removed at the client's request; the seals stay in #f-certs */}
         </div>
         <div class="food-hero__art food-hero__art--pack">
           <canvas class="grainpour" aria-hidden="true"></canvas>

@@ -69,7 +69,7 @@ If a push doesn't trigger Pages, push an empty commit.
   down from 50, then sways with a sheen and sparkles (paused off screen).
 - Bird Feeds facts row (client's figures): Since 1925 · 20,000MT+ annual production · 3,000+ customers · 20+ range of products
   (GSTIN only in the footer on Bird Feeds). Numbers count up, no highlight bar.
-- Certification seals show on both sites (owner's request), including ISO as a text seal: ISO's rules don't allow
+- Certification seals show on both sites (owner's request; not under the Human Food hero), including ISO as a text seal: ISO's rules don't allow
   certified companies to use the ISO logo. No caption on the Bird Feeds certs photo.
 - Vision section (both sites): an animated India map (official India outline, Natural Earth India view) of where we
   operate, from `site/src/data/network.ts`: Duvvur (main warehouse), Kurnool, Nandyal, Allagadda, Ballari, Challageri (Haveri dist.),
