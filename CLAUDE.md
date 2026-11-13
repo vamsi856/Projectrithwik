@@ -69,10 +69,14 @@ If a push doesn't trigger Pages, push an empty commit.
   down from 50, then sways with a sheen and sparkles (paused off screen).
 - Bird Feeds facts row (client's figures): Since 1925 · 20,000MT+ annual production · 3,000+ customers · 20+ range of products
   (GSTIN only in the footer on Bird Feeds). Numbers count up, no highlight bar.
-- Certification seals show on both sites (owner's request).
+- Certification seals show on both sites (owner's request), including ISO as a text seal: ISO's rules don't allow
+  certified companies to use the ISO logo. No caption on the Bird Feeds certs photo.
 - Vision section (both sites): an animated India map (official India outline, Natural Earth India view) of where we
   operate, from `site/src/data/network.ts`: Duvvur (main warehouse), Kurnool, Nandyal, Allagadda, Ballari, Challageri (Haveri dist.),
-  Bangarpet, Hyderabad, Delhi, Neemuch, Rajkot, Kolkata. It replaced the 3D globe.
+  Bangarpet, Hyderabad, Delhi, Neemuch, Rajkot, Kolkata. Map pins, no route lines; the Kurnool cluster is shown in a
+  magnified circle. It replaced the 3D globe.
+- Human Food facts row mirrors Bird Feeds (Since 1925 · 20,000MT+ · 3,000+ · 31+ range of products). Human Food copy
+  says "retail packers, traders and bulk buyers".
 - No real birds perched on the Bird Feeds cards (removed at the client's request; `SHOW_PERCHES` in ProductCard.astro).
 - Human Food uses the original cream, ink and bronze colours: the dark forest-green theme was removed at the client's
   request (Nov 2026). Don't bring the green back.

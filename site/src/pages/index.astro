@@ -65,7 +65,7 @@ const schema = {
   '@graph': [
     { '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: 'Rithwik, Kurnool', inLanguage: 'en-IN' },
     business('bird', '#bird-feeds', birdLogoUrl, 'Bird feed grains from Kurnool: foxtail, proso, little, kodo, barnyard and browntop millets, jowar, bajra, ragi, maize, sunflower and safflower, processed or unprocessed.', BIRD),
-    business('food', '#human-food', foodLogoUrl, 'Food staples from Kurnool: millets, super foods, oil seeds, pulses, spices and cereals for homes, shops and bulk buyers.', FOOD),
+    business('food', '#human-food', foodLogoUrl, 'Food staples from Kurnool: millets, super foods, oil seeds, pulses, spices and cereals for retail packers, traders and bulk buyers.', FOOD),
   ],
 };
 void photo;
@@ -340,7 +340,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         <div class="food-hero__copy">
           <p class="food-hero__brand" data-rise style="--i:0">Rithwik Industries</p>
           <h1 class="display display--food" id="food-title"><W t="Nature's" d={0} /> <em class="grainword"><W t="grain," d={1} /></em> <W t="nurtured" d={2} /> <W t="for" d={3} /> <W t="you" d={4} /></h1>
-          <p class="food-hero__lede" data-rise style="--i:1">Millets, super foods, oil seeds, pulses, spices and cereals for homes, shops and bulk buyers.</p>
+          <p class="food-hero__lede" data-rise style="--i:1">Millets, super foods, oil seeds, pulses, spices and cereals for retail packers, traders and bulk buyers.</p>
           <div class="actions" data-rise style="--i:2">
             <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>
             <a class="pill pill--line-ink" href={`${base}Rithwik-Catalogue.pdf`} download>Download catalogue (PDF)</a>
@@ -364,7 +364,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
       <section class="about about--food" id="f-about" aria-labelledby="f-about-title">
         <div class="about__copy">
           <h2 class="section-title section-title--food" id="f-about-title" data-split>Who we are</h2>
-          <p class="about__lead" data-reveal>Rithwik Industries carries forward a family grain trade that began in 1925, bringing millets, super foods, oil seeds, pulses and spices to homes, shops and bulk buyers.</p>
+          <p class="about__lead" data-reveal>Rithwik Industries carries forward a family grain trade that began in 1925, bringing millets, super foods, oil seeds, pulses and spices to retail packers, traders and bulk buyers.</p>
           <p data-reveal>We work from our office in Kurnool and our warehouse at Duvvur, keeping eight millets, super foods like chia and five kinds of quinoa, oil seeds, pulses, whole spices, buckwheat and oats. Tell us the pack size you need and we'll quote for it.</p>
         </div>
         <div class="about__media">
@@ -421,10 +421,10 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
       </div>
 
       <div class="facts facts--food" aria-label="Rithwik Industries at a glance">
-        <div class="fact"><b data-count={nFood}>{nFood}</b><span>products on the list</span></div>
-        <div class="fact"><b>Kurnool</b><span>office, near Nandyal Checkpost</span></div>
-        <div class="fact"><b>Since 1925</b><span>a family grain trade</span></div>
-        <div class="fact fact--code"><b>{BRANDS.food.gstin}</b><span>GSTIN</span></div>
+        <div class="fact fact--num"><b><small>Since</small><span data-count="1925" data-count-from="1900">1925</span></b><span>a family grain trade</span></div>
+        <div class="fact fact--num"><b><span data-count="20000" data-count-sep>20,000</span><i class="fact__unit">MT</i><i>+</i></b><span>annual production</span></div>
+        <div class="fact fact--num"><b><span data-count="3000" data-count-sep>3,000</span><i>+</i></b><span>customers</span></div>
+        <div class="fact fact--num"><b><span data-count={FOOD.length}>{FOOD.length}</span><i>+</i></b><span>range of products</span></div>
       </div>
 
       <SeedToSack id="f-story" tone="food" title="Field to pack" packWord="bags and pouches"
