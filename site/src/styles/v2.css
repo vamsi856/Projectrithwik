@@ -262,6 +262,36 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .range:last-child { padding-bottom: clamp(56px, 8vw, 110px); }
 .range__banner { margin: 0 0 clamp(28px, 4vw, 48px); height: clamp(200px, 32vw, 420px); border-radius: 28px; overflow: hidden; }
 .range__banner img, .range__banner picture { display: block; width: 100%; height: 125%; object-fit: cover; }
+/* the cover cut into diagonal slices, one per product: each slice is a parallelogram, the gaps
+   between them show the page as thin slashes, and the two outer edges stay straight */
+.range__banner--slices { position: relative; --d: clamp(40px, 5.5vw, 84px); --gap: 4px; background: transparent; }
+.slice { position: absolute; top: 0; height: 100%; overflow: hidden;
+  left: calc(var(--i) * 100% / var(--n) - var(--d) / 2); width: calc(100% / var(--n) + var(--d));
+  clip-path: polygon(calc(var(--d) + var(--gap)) 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, var(--gap) 100%);
+  transition: filter .35s var(--ease); }
+.slice.slice--df { clip-path: polygon(0 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, 0 100%); }
+.slice.slice--dl { clip-path: polygon(calc(var(--d) + var(--gap)) 0, 100% 0, 100% 100%, var(--gap) 100%); }
+.slice.slice--df.slice--dl { clip-path: none; }
+.range__banner--slices picture { height: 100%; }
+.slice img { display: block; width: 100%; height: 125%; object-fit: cover; }
+.slice__name { position: absolute; left: calc(var(--d) * .3 + 14px); right: 10px; bottom: 14px; color: #fff; font-weight: 600; font-size: .86rem; line-height: 1.2;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .7); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s var(--ease); pointer-events: none; }
+@media (hover: hover) {
+  .range__banner--slices:hover .slice { filter: saturate(.75) brightness(.8); }
+  .range__banner--slices .slice:hover { filter: none; }
+  .slice:hover .slice__name { opacity: 1; transform: none; }
+}
+@media (max-width: 760px) {
+  /* phones: two rows when there are more than four, each row sliced the same way */
+  .range__banner--slices { --d: 30px; --gap: 3px; height: calc(170px * var(--prows)); }
+  .slice { left: calc(var(--pc) * 100% / var(--pn) - var(--d) / 2); width: calc(100% / var(--pn) + var(--d));
+    top: calc(var(--pr) * (100% / var(--prows)) + var(--pr) * var(--gap)); height: calc(100% / var(--prows) - (var(--prows) - 1) * var(--gap));
+    clip-path: polygon(calc(var(--d) + var(--gap)) 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, var(--gap) 100%); }
+  .slice.slice--df, .slice.slice--dl { clip-path: polygon(calc(var(--d) + var(--gap)) 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, var(--gap) 100%); }
+  .slice.slice--pf { clip-path: polygon(0 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, 0 100%); }
+  .slice.slice--pl { clip-path: polygon(calc(var(--d) + var(--gap)) 0, 100% 0, 100% 100%, var(--gap) 100%); }
+  .slice.slice--pf.slice--pl { clip-path: none; }
+}
 .range__head { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 48px; align-items: end; margin-bottom: 28px; }
 .range__head .section-title { margin: 0; }
 .range__head p { margin: 0; max-width: 50ch; color: rgba(var(--ink-rgb), .78); }

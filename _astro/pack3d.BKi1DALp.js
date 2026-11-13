@@ -1,4 +1,4 @@
-import{s as Co,g as yt}from"./main.DnHNkTsR.js";import"./index.astro_astro_type_script_index_0_lang.C9-4owRN.js";/**
+import{s as Co,g as yt}from"./main.CUhvEbZH.js";import"./index.astro_astro_type_script_index_0_lang.B630MUQX.js";/**
  * @license
  * Copyright 2010-2025 Three.js Authors
  * SPDX-License-Identifier: MIT

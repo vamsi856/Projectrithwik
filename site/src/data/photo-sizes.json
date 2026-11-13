@@ -516,13 +516,18 @@
 599
 ]
 },
-"quinoa-bold": {
-"h": 765,
-"w": 1020,
+"quinoa-black-rithwik": {
+"h": 321,
+"w": 428,
 "widths": [
-480,
-800,
-1020
+428
+]
+},
+"quinoa-bold-rithwik": {
+"h": 306,
+"w": 408,
+"widths": [
+408
 ]
 },
 "quinoa-red": {
@@ -534,17 +539,16 @@
 1280
 ]
 },
-"quinoab": {
-"h": 853,
-"w": 1280,
+"quinoa-regular-rithwik": {
+"h": 429,
+"w": 572,
 "widths": [
 480,
-800,
-1280
+572
 ]
 },
-"quinoaw": {
-"h": 857,
+"quinoab": {
+"h": 853,
 "w": 1280,
 "widths": [
 480,

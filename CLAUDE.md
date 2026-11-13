@@ -62,12 +62,14 @@ If a push doesn't trigger Pages, push an empty commit.
 - Names: "Sunflower seeds", "Safflower seeds". Ragi: "Ragi" on Human Food; on Bird Feeds "Finger millet" (option "Ragi"),
   right after Pearl millet.
 - Foxtail has only Summer crop / Winter crop (no processed/unprocessed choice). Chia (Human Food) has Black and White.
+- Each Human Food section opens with a cover cut by diagonal slashes into one slice per product, each slice showing
+  that product's photo (built from the products in `index.astro`; phones use two rows when a section has more than four).
+- Quinoa uses the client's own Regular, Bold and Black photos; Red and Tricolor are still stock.
 - The plant/warehouse photo section was removed on purpose. The warehouse is a map tab (Duvvur, 14.829389, 78.652194).
 - Client grain photos show grain only: no hands, paper or background.
 
 ## Still open
 
-- Real photos for **Black quinoa** and **White chia** (both show a colour swatch for now).
 - Human Food millets show the client's hulled-grain photos (`*-hulled-rithwik`); Bird Feeds shows whole grain.
   The unlabeled bright-yellow photo was taken as hulled proso: confirm with the client.
 - Some client photos are small after cropping (Mahendra jowar original was replaced; Pearl millet ~400px, Nidhi ~440px).

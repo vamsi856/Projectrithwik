@@ -44,15 +44,6 @@
   "l": "CC BY-SA 4.0",
   "a": "Papori Bora"
  },
- "quinoaw": {
-  "t": "Quinoa closeup.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Quinoa_closeup.jpg",
-  "w": 3872,
-  "h": 2592,
-  "p": "https://commons.wikimedia.org/wiki/File:Quinoa_closeup.jpg",
-  "l": "CC BY-SA 3.0",
-  "a": "Pom²"
- },
  "quinoab": {
   "t": "White, red, and black quinoa.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/c/c0/White%2C_red%2C_and_black_quinoa.jpg",
@@ -705,14 +696,37 @@
   "local": "photos/chia-white-rithwik.webp",
   "own": true
  },
- "quinoa-bold": {
-  "t": "QuinoaGrains.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/f/f5/QuinoaGrains.jpg",
-  "w": 1024,
-  "h": 767,
-  "p": "https://commons.wikimedia.org/wiki/File:QuinoaGrains.jpg",
-  "l": "Public domain",
-  "a": "Ben_pcc",
-  "local": "photos/quinoa-bold.webp"
+ "quinoa-regular-rithwik": {
+  "t": "Quinoa (regular)",
+  "u": "",
+  "w": 572,
+  "h": 429,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/quinoa-regular-rithwik.webp",
+  "own": true
+ },
+ "quinoa-bold-rithwik": {
+  "t": "Quinoa (bold)",
+  "u": "",
+  "w": 408,
+  "h": 306,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/quinoa-bold-rithwik.webp",
+  "own": true
+ },
+ "quinoa-black-rithwik": {
+  "t": "Quinoa (black)",
+  "u": "",
+  "w": 428,
+  "h": 321,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/quinoa-black-rithwik.webp",
+  "own": true
  }
 }

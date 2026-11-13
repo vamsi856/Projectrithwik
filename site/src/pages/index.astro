@@ -72,7 +72,6 @@ void photo;
 const birdAboutPhoto = photo('bird-on-millet');
 const birdFlightPhoto = photo('bird-parakeet-flight');
 const fieldPhoto = photo('foxtail-field');
-const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab', spices: 'clove' };
 ---
 <!doctype html>
 <html lang="en">
@@ -355,11 +354,27 @@ const scenes: Record<string, string> = { millets: 'little', superfoods: 'quinoab
       <div id="f-range">
         {FOOD_GROUPS.map((g) => (
           <section class="range" id={`f-${g.id}`} aria-labelledby={`f-${g.id}-title`}>
-            {scenes[g.id] && (
-              <figure class="range__banner" data-curtain>
-                <Photo name={scenes[g.id]} alt="" sizes="(max-width: 1240px) 100vw, 1240px" />
-              </figure>
-            )}
+            {/* cover: one diagonal slice per product in the section, each with that product's photo
+                (phones: two rows when there are more than four) */}
+            {(() => {
+              const items = FOOD.filter((p) => p.group === g.id && p.photo);
+              const n = items.length, rows = n > 4 ? 2 : 1, cols = Math.ceil(n / rows);
+              return n > 0 && (
+                <figure class="range__banner range__banner--slices" data-curtain aria-hidden="true" style={`--n:${n};--pn:${cols};--prows:${rows}`}>
+                  {items.map((p, i) => {
+                    // phones: each row is cut into as many slices as it holds (5 = 3 on top, 2 below)
+                    const pr = Math.floor(i / cols), pc = i % cols, rowN = pr === 0 ? cols : n - cols;
+                    const edge = [i === 0 && 'slice--df', i === n - 1 && 'slice--dl', pc === 0 && 'slice--pf', pc === rowN - 1 && 'slice--pl'];
+                    return (
+                      <span class:list={['slice', ...edge]} style={`--i:${i};--pc:${pc};--pr:${pr};--pn:${rowN}`}>
+                        <Photo name={p.photo!} alt="" sizes={`(max-width: 760px) ${Math.round(100 / rowN) + 15}vw, ${Math.round(1240 / n) + 160}px`} />
+                        <span class="slice__name">{p.name}</span>
+                      </span>
+                    );
+                  })}
+                </figure>
+              );
+            })()}
             <div class="range__head">
               <h2 class="section-title section-title--food" id={`f-${g.id}-title`} data-split>{g.label}</h2>
               <p>{g.note}</p>

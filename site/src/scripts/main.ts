@@ -668,6 +668,14 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
 
   // photo curtains
   $$('[data-curtain]', root).forEach((fig) => lazy(fig, () => {
+    // a sliced cover: each product's photo rises into its slice, one after another
+    const slices = $$('.slice picture', fig);
+    if (slices.length) {
+      tw(gsap.timeline({ scrollTrigger: { trigger: fig, start: 'top 85%', once: true } })
+        .from(slices, { yPercent: 101, duration: 1.2, ease: 'expo.out', stagger: 0.08 })
+        .from($$('img', fig), { scale: 1.3, duration: 1.7, ease: 'expo.out', stagger: 0.08 }, 0.05));
+      return;
+    }
     const img = $('img', fig);
     tw(gsap.timeline({ scrollTrigger: { trigger: fig, start: 'top 85%', once: true } })
       .fromTo(fig, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'expo.inOut' })
