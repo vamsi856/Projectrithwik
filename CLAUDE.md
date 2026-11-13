@@ -76,7 +76,7 @@ If a push doesn't trigger Pages, push an empty commit.
   operate, from `site/src/data/network.ts`: Duvvur (main warehouse), Kurnool, Nandyal, Allagadda, Ballari, Challageri (Haveri dist.),
   Bangarpet, Hyderabad, Delhi, Neemuch, Rajkot, Kolkata. Dots with gold routes drawn out from Duvvur (the client chose this
   over a pins version). It replaced the 3D globe.
-- Human Food facts row sits right under the hero like Bird Feeds, in its own theme: dark ink blocks, bronze numbers (Since 1925 · 20,000MT+ · 3,000+ · 31+ range of products). Human Food copy
+- Human Food facts row sits right under the hero like Bird Feeds, in its own theme: dark ink blocks, bronze numbers (Since 1925 · 20,000MT+ · 3,000+ · 40+ range of products). Human Food copy
   says "retail packers, traders and bulk buyers".
 - No real birds perched on the Bird Feeds cards (removed at the client's request; `SHOW_PERCHES` in ProductCard.astro).
 - Human Food uses the original cream, ink and bronze colours: the dark forest-green theme was removed at the client's
