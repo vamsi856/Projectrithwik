@@ -78,8 +78,8 @@ If a push doesn't trigger Pages, push an empty commit.
 - Red quinoa: the client sent a Bigstock-watermarked photo, which can't be used. Waiting for a licensed or own photo.
 - Human Food millets show the client's hulled-grain photos (`*-hulled-rithwik`); Bird Feeds shows whole grain.
   The unlabeled bright-yellow photo was taken as hulled proso: confirm with the client.
-- Some client photos are small after cropping (Mahendra jowar original was replaced; Pearl millet ~400px, Nidhi ~440px).
-  Sharper close-ups would help.
+- Small client photos were AI-upscaled (EDSR) to ~1100-1280px; originals are in git history. Real sharper close-ups
+  from the client would still beat upscaling.
 
 ## Hosting
 
