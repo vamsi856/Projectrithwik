@@ -72,6 +72,23 @@ void photo;
 const birdAboutPhoto = photo('bird-on-millet');
 const birdFlightPhoto = photo('bird-parakeet-flight');
 const fieldPhoto = photo('foxtail-field');
+// Section covers are cut into one slice per product by wavy slanted lines. Every size here is a share of
+// the banner's width (the height is stretched), so one mask fits every screen. All the cut lines are the
+// same wave shifted along, so a slice's mask only depends on how many slices share the row and whether
+// it is the first or last one. Desktop is one row; phones use their own, stronger wave.
+const WAVE = { desk: { D: 0.06, A: 0.013, g: 0.0042, F: 1.5 }, phone: { D: 0.07, A: 0.022, g: 0.0085, F: 1 } };
+const waveExt = (w: typeof WAVE.desk) => w.D / 2 + w.A + w.g / 2;
+const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk) => {
+  const ext = waveExt(w), wd = 1 / n + 2 * ext, steps = 28;
+  const cut = (y: number) => w.D * (0.5 - y) + w.A * Math.sin(2 * Math.PI * w.F * y) + ext; // a cut line, in slice units * wd
+  const u = (x: number) => Math.round((x / wd) * 1000);
+  const ys = Array.from({ length: steps + 1 }, (_, k) => k / steps);
+  const left = ys.map((y) => [first ? 0 : u(cut(y) + w.g / 2), Math.round(y * 1000)]);
+  const right = ys.slice().reverse().map((y) => [last ? 1000 : u(cut(y) + 1 / n - w.g / 2), Math.round(y * 1000)]);
+  const d = 'M' + [...left, ...right].map(([x, y]) => `${x} ${y}`).join('L') + 'Z';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none"><path d="${d}"/></svg>`;
+  return `url('data:image/svg+xml,${encodeURIComponent(svg)}')`;
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -354,19 +371,19 @@ const fieldPhoto = photo('foxtail-field');
       <div id="f-range">
         {FOOD_GROUPS.map((g) => (
           <section class="range" id={`f-${g.id}`} aria-labelledby={`f-${g.id}-title`}>
-            {/* cover: one diagonal slice per product in the section, each with that product's photo
-                (phones: two rows when there are more than four) */}
+            {/* cover: one slice per product in the section, cut by wavy slanted lines, each with that
+                product's photo (phones: two rows when there are more than four) */}
             {(() => {
               const items = FOOD.filter((p) => p.group === g.id && p.photo);
               const n = items.length, rows = n > 4 ? 2 : 1, cols = Math.ceil(n / rows);
               return n > 0 && (
-                <figure class="range__banner range__banner--slices" data-curtain aria-hidden="true" style={`--n:${n};--pn:${cols};--prows:${rows}`}>
+                <figure class="range__banner range__banner--slices" data-curtain aria-hidden="true" style={`--n:${n};--prows:${rows};--ext:${waveExt(WAVE.desk)};--pext:${waveExt(WAVE.phone)}`}>
                   {items.map((p, i) => {
                     // phones: each row is cut into as many slices as it holds (5 = 3 on top, 2 below)
                     const pr = Math.floor(i / cols), pc = i % cols, rowN = pr === 0 ? cols : n - cols;
-                    const edge = [i === 0 && 'slice--df', i === n - 1 && 'slice--dl', pc === 0 && 'slice--pf', pc === rowN - 1 && 'slice--pl'];
+                    const m = waveMask(n, i === 0, i === n - 1, WAVE.desk), pm = waveMask(rowN, pc === 0, pc === rowN - 1, WAVE.phone);
                     return (
-                      <span class:list={['slice', ...edge]} style={`--i:${i};--pc:${pc};--pr:${pr};--pn:${rowN}`}>
+                      <span class="slice" style={`--i:${i};--pc:${pc};--pr:${pr};--pn:${rowN};--m:${m};--pm:${pm}`}>
                         <Photo name={p.photo!} alt="" sizes={`(max-width: 760px) ${Math.round(100 / rowN) + 15}vw, ${Math.round(1240 / n) + 160}px`} />
                         <span class="slice__name">{p.name}</span>
                       </span>

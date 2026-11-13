@@ -262,19 +262,16 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .range:last-child { padding-bottom: clamp(56px, 8vw, 110px); }
 .range__banner { margin: 0 0 clamp(28px, 4vw, 48px); height: clamp(200px, 32vw, 420px); border-radius: 28px; overflow: hidden; }
 .range__banner img, .range__banner picture { display: block; width: 100%; height: 125%; object-fit: cover; }
-/* the cover cut into diagonal slices, one per product: each slice is a parallelogram, the gaps
-   between them show the page as thin slashes, and the two outer edges stay straight */
-.range__banner--slices { position: relative; --d: clamp(40px, 5.5vw, 84px); --gap: 4px; background: transparent; }
+/* the cover cut into slices, one per product: wavy slanted cuts (SVG masks made in index.astro, sized
+   as shares of the banner width) leave thin gaps that show the page; the outer edges stay straight */
+.range__banner--slices { position: relative; background: transparent; }
 .slice { position: absolute; top: 0; height: 100%; overflow: hidden;
-  left: calc(var(--i) * 100% / var(--n) - var(--d) / 2); width: calc(100% / var(--n) + var(--d));
-  clip-path: polygon(calc(var(--d) + var(--gap)) 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, var(--gap) 100%);
+  left: calc((var(--i) / var(--n) - var(--ext)) * 100%); width: calc((1 / var(--n) + 2 * var(--ext)) * 100%);
+  -webkit-mask: var(--m) 0 0 / 100% 100% no-repeat; mask: var(--m) 0 0 / 100% 100% no-repeat;
   transition: filter .35s var(--ease); }
-.slice.slice--df { clip-path: polygon(0 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, 0 100%); }
-.slice.slice--dl { clip-path: polygon(calc(var(--d) + var(--gap)) 0, 100% 0, 100% 100%, var(--gap) 100%); }
-.slice.slice--df.slice--dl { clip-path: none; }
 .range__banner--slices picture { height: 100%; }
 .slice img { display: block; width: 100%; height: 125%; object-fit: cover; }
-.slice__name { position: absolute; left: calc(var(--d) * .3 + 14px); right: 10px; bottom: 14px; color: #fff; font-weight: 600; font-size: .86rem; line-height: 1.2;
+.slice__name { position: absolute; left: calc(var(--ext) / (1 / var(--n) + 2 * var(--ext)) * 100% + 12px); right: 10px; bottom: 14px; color: #fff; font-weight: 600; font-size: .86rem; line-height: 1.2;
   text-shadow: 0 1px 8px rgba(0, 0, 0, .7); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .3s var(--ease); pointer-events: none; }
 @media (hover: hover) {
   .range__banner--slices:hover .slice { filter: saturate(.75) brightness(.8); }
@@ -282,15 +279,11 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
   .slice:hover .slice__name { opacity: 1; transform: none; }
 }
 @media (max-width: 760px) {
-  /* phones: two rows when there are more than four, each row sliced the same way */
-  .range__banner--slices { --d: 30px; --gap: 3px; height: calc(170px * var(--prows)); }
-  .slice { left: calc(var(--pc) * 100% / var(--pn) - var(--d) / 2); width: calc(100% / var(--pn) + var(--d));
-    top: calc(var(--pr) * (100% / var(--prows)) + var(--pr) * var(--gap)); height: calc(100% / var(--prows) - (var(--prows) - 1) * var(--gap));
-    clip-path: polygon(calc(var(--d) + var(--gap)) 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, var(--gap) 100%); }
-  .slice.slice--df, .slice.slice--dl { clip-path: polygon(calc(var(--d) + var(--gap)) 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, var(--gap) 100%); }
-  .slice.slice--pf { clip-path: polygon(0 0, calc(100% - var(--gap)) 0, calc(100% - var(--d) - var(--gap)) 100%, 0 100%); }
-  .slice.slice--pl { clip-path: polygon(calc(var(--d) + var(--gap)) 0, 100% 0, 100% 100%, var(--gap) 100%); }
-  .slice.slice--pf.slice--pl { clip-path: none; }
+  /* phones: two rows when there are more than four, each row cut the same way */
+  .range__banner--slices { --rg: 6px; height: calc(170px * var(--prows)); }
+  .slice { left: calc((var(--pc) / var(--pn) - var(--pext)) * 100%); width: calc((1 / var(--pn) + 2 * var(--pext)) * 100%);
+    top: calc(var(--pr) * (100% + var(--rg)) / var(--prows)); height: calc((100% - (var(--prows) - 1) * var(--rg)) / var(--prows));
+    -webkit-mask-image: var(--pm); mask-image: var(--pm); }
 }
 .range__head { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 48px; align-items: end; margin-bottom: 28px; }
 .range__head .section-title { margin: 0; }
@@ -1064,9 +1057,12 @@ html.fest-sankranti .site--food .strip { background: linear-gradient(90deg, #7a2
 .food-hero .trust a:has(.trust__mark) { width: auto; padding: 0 12px; border-radius: 999px; }
 .food-hero .trust__logo { width: 40px; height: 40px; object-fit: contain; }
 .food-hero .trust__mark { background: none; color: var(--ink); min-width: 0; padding: 0; }
-.certs--food .certs__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-@media (min-width: 1100px) { .certs--food .certs__grid { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 14px; } }
-@media (max-width: 560px) { .certs--food .certs__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* the seals sit centred, whatever their number: a short last row stays in the middle too,
+   and the cards in a row share one height */
+.certs--food .certs__grid { --cols: 4; --cg: 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--cg); }
+.certs--food .certs__grid li { display: flex; flex: 0 0 calc((100% - (var(--cols) - 1) * var(--cg)) / var(--cols)); min-width: 0; }
+@media (min-width: 1100px) { .certs--food .certs__grid { --cols: 8; --cg: 14px; } }
+@media (max-width: 560px) { .certs--food .certs__grid { --cols: 2; } }
 
 /* ---------- Our packs: title, then the ring, then the names right under it ---------- */
 .studio { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "stage" "panel"; row-gap: 0; text-align: center; }
