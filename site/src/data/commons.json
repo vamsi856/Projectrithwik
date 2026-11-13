@@ -704,5 +704,15 @@
   "a": "Rithwik",
   "local": "photos/chia-white-rithwik.webp",
   "own": true
+ },
+ "quinoa-bold": {
+  "t": "QuinoaGrains.jpg",
+  "u": "https://upload.wikimedia.org/wikipedia/commons/f/f5/QuinoaGrains.jpg",
+  "w": 1024,
+  "h": 767,
+  "p": "https://commons.wikimedia.org/wiki/File:QuinoaGrains.jpg",
+  "l": "Public domain",
+  "a": "Ben_pcc",
+  "local": "photos/quinoa-bold.webp"
  }
 }
