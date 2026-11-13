@@ -62,14 +62,20 @@ If a push doesn't trigger Pages, push an empty commit.
 - Names: "Sunflower seeds", "Safflower seeds". Ragi: "Ragi" on Human Food; on Bird Feeds "Finger millet" (option "Ragi"),
   right after Pearl millet.
 - Foxtail has only Summer crop / Winter crop (no processed/unprocessed choice). Chia (Human Food) has Black and White.
-- Each Human Food section opens with a cover cut by diagonal slashes into one slice per product, each slice showing
-  that product's photo (built from the products in `index.astro`; phones use two rows when a section has more than four).
+- Each Human Food section opens with a cover cut by **wavy** slanted lines into one slice per product, each slice showing
+  that product's photo (built from the products in `index.astro` with SVG masks; phones use two rows when a section has
+  more than four).
+- Certification seals sit centred (a short row stays in the middle), cards in a row share one height.
 - Quinoa uses the client's own Regular, Bold and Black photos; Red and Tricolor are still stock.
+- Product photos show the product only: **no bowls, jars or plates** (stock photos are cropped inside the pile).
+- Never use watermarked stock previews (Bigstock, Shutterstock...) the client forwards: ask for the licensed file.
 - The plant/warehouse photo section was removed on purpose. The warehouse is a map tab (Duvvur, 14.829389, 78.652194).
 - Client grain photos show grain only: no hands, paper or background.
+- Photos under ~760px wide are upscaled with OpenCV EDSR (x2/x4) before `make_photos.py`; keep the original crop too.
 
 ## Still open
 
+- Red quinoa: the client sent a Bigstock-watermarked photo, which can't be used. Waiting for a licensed or own photo.
 - Human Food millets show the client's hulled-grain photos (`*-hulled-rithwik`); Bird Feeds shows whole grain.
   The unlabeled bright-yellow photo was taken as hulled proso: confirm with the client.
 - Some client photos are small after cropping (Mahendra jowar original was replaced; Pearl millet ~400px, Nidhi ~440px).
