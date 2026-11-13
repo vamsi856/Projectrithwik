@@ -68,9 +68,8 @@ If a push doesn't trigger Pages, push an empty commit.
 ## Still open
 
 - Real photos for **Black quinoa** and **White chia** (both show a colour swatch for now).
-- The Human Food **kodo** card still uses a stock photo (Human Food shows hulled grain; the client's hulled photos are
-  on foxtail, barnyard, browntop, little and proso there). The unlabeled bright-yellow photo was taken
-  as hulled proso: confirm with the client.
+- Human Food millets show the client's hulled-grain photos (`*-hulled-rithwik`); Bird Feeds shows whole grain.
+  The unlabeled bright-yellow photo was taken as hulled proso: confirm with the client.
 - Some client photos are small after cropping (Mahendra jowar original was replaced; Pearl millet ~400px, Nidhi ~440px).
   Sharper close-ups would help.
 

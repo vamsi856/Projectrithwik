@@ -17,15 +17,6 @@
   "l": "CC BY-SA 3.0",
   "a": "Thamizhpparithi Maari"
  },
- "kodo": {
-  "t": "Paspalum scrobiculatum 224164066.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Paspalum_scrobiculatum_224164066.jpg",
-  "w": 2048,
-  "h": 1366,
-  "p": "https://commons.wikimedia.org/wiki/File:Paspalum_scrobiculatum_224164066.jpg",
-  "l": "CC BY 4.0",
-  "a": "Kevin Faccenda"
- },
  "chia": {
   "t": "Mexican chia seeds (2).jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Mexican_chia_seeds_%282%29.jpg",
@@ -690,6 +681,17 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/proso-hulled-rithwik.webp",
+  "own": true
+ },
+ "kodo-hulled-rithwik": {
+  "t": "Kodo millet (unpolished)",
+  "u": "",
+  "w": 640,
+  "h": 480,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/kodo-hulled-rithwik.webp",
   "own": true
  }
 }
