@@ -375,7 +375,9 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
             {/* cover: one slice per product in the section, cut by wavy slanted lines, each with that
                 product's photo (phones: two rows when there are more than four) */}
             {(() => {
-              const items = FOOD.filter((p) => p.group === g.id && p.photo);
+              // each slice shows the photo the product's card opens with (its first option's photo)
+              const cover = (p: (typeof FOOD)[number]) => { const v = p.variants[0]; return v.photo === undefined ? p.photo : v.photo ?? p.photo; };
+              const items = FOOD.filter((p) => p.group === g.id && cover(p)).map((p) => ({ ...p, photo: cover(p) }));
               const n = items.length, rows = n > 4 ? 2 : 1, cols = Math.ceil(n / rows);
               return n > 0 && (
                 <figure class="range__banner range__banner--slices" data-curtain aria-hidden="true" style={`--n:${n};--prows:${rows};--ext:${waveExt(WAVE.desk)};--pext:${waveExt(WAVE.phone)}`}>

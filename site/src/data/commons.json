@@ -54,16 +54,6 @@
   "a": "Vladimirf7",
   "local": "photos/quinoab.webp"
  },
- "chana": {
-  "t": "Chana Ko Dal.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Chana_Ko_Dal.jpg",
-  "w": 3024,
-  "h": 4032,
-  "p": "https://commons.wikimedia.org/wiki/File:Chana_Ko_Dal.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "Gaurav Dhwaj Khadka",
-  "local": "photos/chana.webp"
- },
  "toor": {
   "t": "Split pigeon peas.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/4/46/Split_pigeon_peas.jpg",
@@ -279,7 +269,8 @@
   "h": 4000,
   "p": "https://commons.wikimedia.org/wiki/File:Mung_beans_(Vigna_radiata).jpg",
   "l": "CC BY-SA 4.0",
-  "a": "Ivar Leidus"
+  "a": "Ivar Leidus",
+  "local": "photos/moong.webp"
  },
  "cardamom": {
   "t": "Elettaria cardamomum Capsules and seeds.jpg",
@@ -351,7 +342,8 @@
   "h": 3072,
   "p": "https://commons.wikimedia.org/wiki/File:Sea_Island_red_peas.jpg",
   "l": "CC BY-SA 4.0",
-  "a": "Roemj9999"
+  "a": "Roemj9999",
+  "local": "photos/lobia-red.webp"
  },
  "chana-brown": {
   "t": "Black chickpeas in Village Market.jpg",
