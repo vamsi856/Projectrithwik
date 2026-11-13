@@ -70,11 +70,14 @@ If a push doesn't trigger Pages, push an empty commit.
 - Bird Feeds facts row (client's figures): Since 1925 · 20,000MT+ annual production · 3,000+ customers · 20+ range of products
   (GSTIN only in the footer on Bird Feeds). Numbers count up, no highlight bar.
 - Certification seals show on both sites (owner's request).
+- Vision section (both sites): an animated India map (official India outline, Natural Earth India view) of where we
+  operate, from `site/src/data/network.ts`: Duvvur (main warehouse), Kurnool, Nandyal, Allagadda, Ballari, Challakere,
+  Bangarapet, Hyderabad, Delhi, Neemuch, Rajkot, Kolkata. It replaced the 3D globe.
 - No real birds perched on the Bird Feeds cards (removed at the client's request; `SHOW_PERCHES` in ProductCard.astro).
 - Human Food uses the original cream, ink and bronze colours: the dark forest-green theme was removed at the client's
   request (Nov 2026). Don't bring the green back.
-- Bird Feeds "Who we are": processing centre (not "Duvvur warehouse"), processed or unprocessed, sold to traders, pet
-  shops, bird keepers and export houses.
+- Bird Feeds "Who we are" is the client's text: processing unit, processed and unprocessed, traders, pet shops, bird
+  keepers and export houses.
 - Mission and "Our goal is simple" on both Vision sections are the client's own words (from Sudheer): keep them as written.
 - Certification seals sit centred (a short row stays in the middle), cards in a row share one height.
 - Quinoa: client-supplied Regular, Bold, Black and Red photos; Tricolor is still stock. Sesame Z-black and Chana White

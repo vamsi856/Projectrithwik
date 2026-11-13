@@ -355,6 +355,12 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     }, { rootMargin: '150px' }).observe(c);
   });
 
+  // India map: routes draw out from Duvvur when it scrolls in; the pulses and glints run only while it is on screen
+  $$('[data-imap]', root).forEach((m) => {
+    if (reduce) { m.classList.add('is-in'); return; }
+    new IntersectionObserver(([en]) => { m.classList.toggle('is-live', en.isIntersecting); if (en.intersectionRatio > 0.25) m.classList.add('is-in'); }, { threshold: [0, 0.25] }).observe(m);
+  });
+
   // filters
   const cards = $$('[data-card]', root);
   $$<HTMLButtonElement>('.chip', root).forEach((chip) => chip.addEventListener('click', () => {
@@ -760,7 +766,7 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
 
   after(() => {
     // vision: legend fades in under the globe
-    $$('.vision', root).forEach((v) => tw(gsap.from($('.vision__legend', v), { opacity: 0, y: 16, duration: 0.8, delay: 0.6, scrollTrigger: { trigger: v, start: 'top 60%', once: true } })));
+    // (the India map's legend shows with the map)
 
     // magnetic primary buttons
     if (fine) $$('[data-magnetic]', root).forEach((b) => {

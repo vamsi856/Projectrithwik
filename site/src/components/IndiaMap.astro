@@ -1,0 +1,49 @@
+---
+// India with the places Rithwik operates from: Duvvur (main warehouse) pulses, a route draws
+// out from it to every other place, and a small light keeps running along the routes.
+// The southern places sit close together, so their names are set off the coast with leader lines.
+import outline from '../data/india-outline.json';
+import { NETWORK } from '../data/network';
+interface Props { tone: 'bird' | 'food'; id: string }
+const { tone, id } = Astro.props;
+const P = (lon: number, lat: number) => [(lon - outline.lon0) * outline.k * outline.c, (outline.lat1 - lat) * outline.k] as const;
+const main = NETWORK.find((p) => p.main)!;
+const [mx, my] = P(main.lon, main.lat);
+const places = NETWORK.map((p, i) => {
+  const [x, y] = P(p.lon, p.lat);
+  const off = !!p.lx; // name set off to the side with a leader line
+  const lx = p.lx ?? (p.side === 'end' ? x - 12 : x + 12), ly = p.ly ?? y + 5;
+  // the route from Duvvur bows out a little to one side
+  const dx = x - mx, dy = y - my, d = Math.hypot(dx, dy);
+  const cx = mx + dx / 2 - dy * 0.18, cy = my + dy / 2 + dx * 0.18;
+  return { ...p, i, x, y, off, lx, ly, route: d > 1 ? `M${mx.toFixed(1)} ${my.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}` : '' };
+});
+const others = places.filter((p) => !p.main);
+const label = `Map of India showing where Rithwik operates: ${main.name} (${main.note?.toLowerCase()}), ${others.map((p) => p.name).join(', ')}.`;
+---
+<figure class:list={['imap', `imap--${tone}`]} data-imap>
+  <svg viewBox={`0 0 ${outline.w} ${outline.h}`} role="img" aria-label={label}>
+    <defs>
+      <pattern id={`${id}-dots`} width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.1" class="imap__dot" /></pattern>
+    </defs>
+    <path class="imap__land" d={outline.d} />
+    <path class="imap__grid" d={outline.d} fill={`url(#${id}-dots)`} />
+    <g class="imap__routes">
+      {others.map((p) => <path class="imap__route" d={p.route} pathLength="1" style={`--i:${p.i}`} />)}
+      {others.map((p) => <path class="imap__glint" d={p.route} pathLength="1" style={`--i:${p.i}`} />)}
+    </g>
+    {places.map((p) => (
+      <g class:list={['imap__place', p.main && 'is-main']} style={`--i:${p.i}`}>
+        {p.off && <path class="imap__lead" d={`M${p.x.toFixed(1)} ${p.y.toFixed(1)}L${(p.side === 'end' ? p.lx + 4 : p.lx - 4).toFixed(1)} ${(p.ly - 5).toFixed(1)}`} />}
+        <circle class="imap__ring" cx={p.x} cy={p.y} r={p.main ? 9 : 6} />
+        <circle class="imap__pin" cx={p.x} cy={p.y} r={p.main ? 7 : 4.2} />
+        <text class="imap__name" x={p.lx} y={p.ly} text-anchor={p.side ?? 'start'}>{p.name}</text>
+        {p.note && <text class="imap__note" x={p.lx} y={p.ly + 18} text-anchor={p.side ?? 'start'}>{p.note}</text>}
+      </g>
+    ))}
+  </svg>
+  <figcaption class="imap__legend">
+    <span><i class="is-main"></i>{main.name}, {main.note?.toLowerCase()}</span>
+    <span><i class="is-op"></i>Where we operate</span>
+  </figcaption>
+</figure>
