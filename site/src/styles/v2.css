@@ -1222,8 +1222,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
 .pcard--bird { overflow: visible; }
 .pcard--bird .pcard__media { border-radius: 26px 26px 0 0; }
 .pcard__shine { border-radius: inherit; }
-/* room above the first row for the tallest bird (the macaw, 124px), so it never covers the filter chips */
-#b-feeds .pgrid { row-gap: clamp(104px, 9vw, 132px); padding-top: 138px; }
+/* the perched birds were removed (Nov 2026), so the feed cards use the normal grid spacing again */
 .perch {
   position: absolute; z-index: 6; top: 0; left: calc(var(--x) * 100%); pointer-events: none;
   height: calc(var(--tall) / var(--fy)); aspect-ratio: var(--ar);
@@ -1248,7 +1247,6 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
 @keyframes perch-breathe { 50% { transform: scale(1.012, 1.03); } }
 #b-feeds .pgrid { overflow: visible; }
 @media (max-width: 640px) {
-  #b-feeds .pgrid { row-gap: 104px; padding-top: 112px; }
   .perch { height: calc(var(--tall) * .8 / var(--fy)); left: calc(var(--xm, var(--x)) * 100%); }
 }
 @media (prefers-reduced-motion: reduce) { .perch__img { animation: none; cursor: default; } .perch__bird[data-flip] { transform: scaleX(-1); } }

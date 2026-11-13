@@ -29,8 +29,9 @@ for (const v of p.variants) {
   if (hit) hit.lines.push(lineName(p, v)); else looks.push({ key, photo: real, sw, lines: [lineName(p, v)] });
 }
 const firstLine = lineName(p, first);
-// real birds sitting on the card's top edge (Bird Feeds only)
-const perches = tone === 'bird' ? PERCHES[p.id] ?? [] : [];
+// real birds sitting on the card's top edge: removed at the client's request (Nov 2026); the data stays in perches.ts
+const SHOW_PERCHES = false;
+const perches = SHOW_PERCHES && tone === 'bird' ? PERCHES[p.id] ?? [] : [];
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 // phones get the 800px file even on 3x screens (still over 2x sharp): far less to download and decode
 const CARD_SIZES = '(max-width: 640px) 66vw, (max-width: 1100px) 46vw, 380px';
