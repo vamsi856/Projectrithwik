@@ -161,11 +161,12 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .about__copy .rank p { opacity: 1; max-width: none; }
 /* facts row with the client's figures: a small caption, then the number big and bold */
 .fact--num { gap: 6px; }
-.fact__pre { font-size: .78rem !important; font-weight: 800 !important; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
 .fact--num b { display: inline-flex; align-items: flex-start; width: fit-content; font-size: clamp(2.6rem, 4.6vw, 3.9rem) !important; line-height: .95 !important;
   font-variant-numeric: tabular-nums; padding: 2px 10px 0; margin-left: -10px; border-radius: 12px;
   background: linear-gradient(transparent 58%, rgba(255, 255, 255, .5) 58%, rgba(255, 255, 255, .5) 90%, transparent 90%); }
 .fact--num b span { font: inherit; }
+.fact--num b small { font-size: .42em; margin: .18em .22em 0 0; }
+.fact--num > span { font-size: 1rem !important; font-weight: 600 !important; }
 .fact--num b i { font-style: normal; font-size: .62em; margin-left: 2px; }
 @media (max-width: 640px) { .fact--num b { font-size: clamp(2rem, 9vw, 2.6rem) !important; } }
 /* "No. 1 foxtail millet supplier in India": a 3D gold numeral beside its label */
