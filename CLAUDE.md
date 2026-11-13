@@ -71,8 +71,8 @@ If a push doesn't trigger Pages, push an empty commit.
   (GSTIN only in the footer on Bird Feeds). Numbers count up, no highlight bar.
 - Certification seals show on both sites (owner's request).
 - Vision section (both sites): an animated India map (official India outline, Natural Earth India view) of where we
-  operate, from `site/src/data/network.ts`: Duvvur (main warehouse), Kurnool, Nandyal, Allagadda, Ballari, Challakere,
-  Bangarapet, Hyderabad, Delhi, Neemuch, Rajkot, Kolkata. It replaced the 3D globe.
+  operate, from `site/src/data/network.ts`: Duvvur (main warehouse), Kurnool, Nandyal, Allagadda, Ballari, Challageri (Haveri dist.),
+  Bangarpet, Hyderabad, Delhi, Neemuch, Rajkot, Kolkata. It replaced the 3D globe.
 - No real birds perched on the Bird Feeds cards (removed at the client's request; `SHOW_PERCHES` in ProductCard.astro).
 - Human Food uses the original cream, ink and bronze colours: the dark forest-green theme was removed at the client's
   request (Nov 2026). Don't bring the green back.
