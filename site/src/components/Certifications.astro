@@ -27,19 +27,8 @@ const lede = 'Our food safety and export credentials. Tap a seal for the details
             <span class="cert__seal" aria-hidden="true">
               {r.logo ? (
                 <img src={`${base}certs/${r.logo}`} alt="" loading="lazy" />
-              ) : tone === 'food' ? (
-                <span class="cert__word">{r.mark}</span>
               ) : (
-                <svg viewBox="0 0 200 200">
-                  <defs><path id={`${id}-ring-${i}`} d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0" /></defs>
-                  <g class="cert__teeth">{Array.from({ length: 36 }, (_, k) => <circle cx={100 + 94 * Math.cos((k * Math.PI) / 18)} cy={100 + 94 * Math.sin((k * Math.PI) / 18)} r="7" />)}</g>
-                  <circle class="cert__disc" cx="100" cy="100" r="92" />
-                  <circle class="cert__ring" cx="100" cy="100" r="84" />
-                  <circle class="cert__ring cert__ring--in" cx="100" cy="100" r="60" />
-                  <text class="cert__around"><textPath href={`#${id}-ring-${i}`} startOffset="0">{`${r.status.toUpperCase()} · ${r.name.toUpperCase()} · ${r.status.toUpperCase()} · ${r.name.toUpperCase()} ·`}</textPath></text>
-                  <text class="cert__mark" x="100" y={r.mark.length > 4 ? 110 : 114} text-anchor="middle" font-size={r.mark.length > 5 ? 26 : r.mark.length > 3 ? 34 : 44}>{r.mark}</text>
-                  <path class="cert__star" d="M100 136 l3 6 6 1 -4.5 4 1 6 -5.5 -3 -5.5 3 1 -6 -4.5 -4 6 -1z" />
-                </svg>
+                <span class="cert__word">{r.mark}</span>
               )}
             </span>
             <span class="cert__name">{r.name}</span>
