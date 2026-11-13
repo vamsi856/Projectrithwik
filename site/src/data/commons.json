@@ -8,15 +8,6 @@
   "l": "CC BY-SA 4.0",
   "a": "Roger Culos"
  },
- "proso": {
-  "t": "Panicum miliaceum MHNT.BOT.2015.34.20.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Panicum_miliaceum_MHNT.BOT.2015.34.20.jpg",
-  "w": 5184,
-  "h": 3456,
-  "p": "https://commons.wikimedia.org/wiki/File:Panicum_miliaceum_MHNT.BOT.2015.34.20.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "Roger Culos"
- },
  "little": {
   "t": "A closeup fo Samai millet with husk.JPG",
   "u": "https://upload.wikimedia.org/wikipedia/commons/f/f8/A_closeup_fo_Samai_millet_with_husk.JPG",
@@ -25,24 +16,6 @@
   "p": "https://commons.wikimedia.org/wiki/File:A_closeup_fo_Samai_millet_with_husk.JPG",
   "l": "CC BY-SA 3.0",
   "a": "Thamizhpparithi Maari"
- },
- "barnyard": {
-  "t": "Echinochloa frumentacea seeds, by Omar Hoftun.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/3/32/Echinochloa_frumentacea_seeds%2C_by_Omar_Hoftun.jpg",
-  "w": 3392,
-  "h": 4472,
-  "p": "https://commons.wikimedia.org/wiki/File:Echinochloa_frumentacea_seeds,_by_Omar_Hoftun.jpg",
-  "l": "CC BY-SA 4.0",
-  "a": "Omar Hoftun"
- },
- "browntop": {
-  "t": "Urochloa ramosa 252758711.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Urochloa_ramosa_252758711.jpg",
-  "w": 2048,
-  "h": 1366,
-  "p": "https://commons.wikimedia.org/wiki/File:Urochloa_ramosa_252758711.jpg",
-  "l": "CC BY 4.0",
-  "a": "Kevin Faccenda"
  },
  "kodo": {
   "t": "Paspalum scrobiculatum 224164066.jpg",
@@ -662,6 +635,61 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/founders-circle.webp",
+  "own": true
+ },
+ "browntop-hulled-rithwik": {
+  "t": "Browntop millet (hulled)",
+  "u": "",
+  "w": 560,
+  "h": 420,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/browntop-hulled-rithwik.webp",
+  "own": true
+ },
+ "foxtail-hulled-rithwik": {
+  "t": "Foxtail millet (hulled)",
+  "u": "",
+  "w": 600,
+  "h": 450,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/foxtail-hulled-rithwik.webp",
+  "own": true
+ },
+ "barnyard-hulled-rithwik": {
+  "t": "Barnyard millet (hulled)",
+  "u": "",
+  "w": 580,
+  "h": 435,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/barnyard-hulled-rithwik.webp",
+  "own": true
+ },
+ "little-hulled-rithwik": {
+  "t": "Little millet (hulled)",
+  "u": "",
+  "w": 600,
+  "h": 450,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/little-hulled-rithwik.webp",
+  "own": true
+ },
+ "proso-hulled-rithwik": {
+  "t": "Proso millet (hulled)",
+  "u": "",
+  "w": 660,
+  "h": 495,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/proso-hulled-rithwik.webp",
   "own": true
  }
 }

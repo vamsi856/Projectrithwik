@@ -6,13 +6,12 @@
 400
 ]
 },
-"barnyard": {
-"h": 1688,
-"w": 1280,
+"barnyard-hulled-rithwik": {
+"h": 435,
+"w": 580,
 "widths": [
 480,
-800,
-1280
+580
 ]
 },
 "barnyard-rithwik": {
@@ -76,13 +75,12 @@
 1280
 ]
 },
-"browntop": {
-"h": 854,
-"w": 1280,
+"browntop-hulled-rithwik": {
+"h": 420,
+"w": 560,
 "widths": [
 480,
-800,
-1280
+560
 ]
 },
 "browntop-rithwik": {
@@ -208,6 +206,14 @@
 1280
 ]
 },
+"foxtail-hulled-rithwik": {
+"h": 450,
+"w": 600,
+"widths": [
+480,
+600
+]
+},
 "foxtail-summer-rithwik": {
 "h": 870,
 "w": 1160,
@@ -301,6 +307,14 @@
 480,
 800,
 1280
+]
+},
+"little-hulled-rithwik": {
+"h": 450,
+"w": 600,
+"widths": [
+480,
+600
 ]
 },
 "little-rithwik": {
@@ -463,21 +477,20 @@
 1280
 ]
 },
-"proso": {
-"h": 853,
-"w": 1280,
-"widths": [
-480,
-800,
-1280
-]
-},
 "proso-green-rithwik": {
 "h": 442,
 "w": 590,
 "widths": [
 480,
 590
+]
+},
+"proso-hulled-rithwik": {
+"h": 495,
+"w": 660,
+"widths": [
+480,
+660
 ]
 },
 "proso-yellow-rithwik": {

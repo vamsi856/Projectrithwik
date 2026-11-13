@@ -65,12 +65,12 @@ const many = (...labels: string[]): Product['variants'] => labels.map((label) =>
 
 // Rithwik Industries lines, from the owner's list (Nov 2026).
 export const FOOD: Product[] = [
-  { id: 'f-foxtail', name: 'Foxtail millet', group: 'millets', photo: 'foxtail', swatch: s('#d9b24a', '#b48a2c', 7), variants: one() },
-  { id: 'f-barnyard', name: 'Barnyard millet', group: 'millets', photo: 'barnyard', swatch: s('#e8dcb8', '#c6b78a', 7), variants: one() },
-  { id: 'f-browntop', name: 'Browntop millet', group: 'millets', photo: 'browntop', swatch: s('#c59a5a', '#996e34', 7), variants: one() },
+  { id: 'f-foxtail', name: 'Foxtail millet', group: 'millets', photo: 'foxtail-hulled-rithwik', swatch: s('#d9b24a', '#b48a2c', 7), variants: one() },
+  { id: 'f-barnyard', name: 'Barnyard millet', group: 'millets', photo: 'barnyard-hulled-rithwik', swatch: s('#e8dcb8', '#c6b78a', 7), variants: one() },
+  { id: 'f-browntop', name: 'Browntop millet', group: 'millets', photo: 'browntop-hulled-rithwik', swatch: s('#bfae62', '#8c7c38', 7), variants: one() },
   { id: 'f-kodo', name: 'Kodo millet', group: 'millets', photo: 'kodo', swatch: s('#a9824e', '#7d5a2e', 7), variants: one() },
-  { id: 'f-little', name: 'Little millet', group: 'millets', photo: 'little', swatch: s('#d8c48a', '#b29e60', 6), variants: one() },
-  { id: 'f-proso', name: 'Proso millet', group: 'millets', photo: 'proso', swatch: s('#e6d39a', '#c4ac68', 8), variants: one() },
+  { id: 'f-little', name: 'Little millet', group: 'millets', photo: 'little-hulled-rithwik', swatch: s('#d8c48a', '#b29e60', 6), variants: one() },
+  { id: 'f-proso', name: 'Proso millet', group: 'millets', photo: 'proso-hulled-rithwik', swatch: s('#e8cf52', '#bfa232', 8), variants: one() },
   { id: 'f-bajra', name: 'Pearl millet', group: 'millets', photo: 'bajra-rithwik', swatch: s('#9aa197', '#6e776c', 8), variants: one('Bajra') },
   { id: 'f-ragi', name: 'Ragi', group: 'millets', photo: 'ragi-rithwik', swatch: s('#c0603a', '#7a3020', 6), variants: one('Finger millet') },
 
