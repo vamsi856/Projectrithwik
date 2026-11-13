@@ -307,15 +307,6 @@
   "l": "CC BY-SA 4.0",
   "a": "Yonygg"
  },
- "sesame-white": {
-  "t": "Sa white sesame seeds.jpg",
-  "u": "https://upload.wikimedia.org/wikipedia/commons/6/69/Sa_white_sesame_seeds.jpg",
-  "w": 3504,
-  "h": 2336,
-  "p": "https://commons.wikimedia.org/wiki/File:Sa_white_sesame_seeds.jpg",
-  "l": "CC BY-SA 3.0",
-  "a": "Sanjay ach"
- },
  "pepper-white": {
   "t": "White peppercorns.jpg",
   "u": "https://upload.wikimedia.org/wikipedia/commons/4/42/White_peppercorns.jpg",
@@ -737,6 +728,17 @@
   "l": "",
   "a": "Rithwik",
   "local": "photos/quinoa-red-rithwik.webp",
+  "own": true
+ },
+ "sesame-white-rithwik": {
+  "t": "White sesame",
+  "u": "",
+  "w": 1000,
+  "h": 750,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/sesame-white-rithwik.webp",
   "own": true
  }
 }

@@ -85,7 +85,7 @@ export const FOOD: Product[] = [
   { id: 'f-safflower', name: 'Safflower seeds', group: 'oilseeds', photo: 'safflower-rithwik', swatch: s('#f2ede1', '#cfc6b0', 10), variants: one() },
   { id: 'f-castor', name: 'Castor seeds', group: 'oilseeds', photo: 'castor', swatch: s('#8c6a58', '#4a362c', 12), variants: one() },
   { id: 'f-groundnut', name: 'Groundnuts', group: 'oilseeds', photo: 'groundnut', swatch: s('#e2b98c', '#b07f52', 12), variants: one() },
-  { id: 'f-sesame', name: 'Sesame seeds', group: 'oilseeds', photo: 'sesame', swatch: s('#262423', '#4a4542', 6), variants: [{ label: 'Black', gst: '' }, { label: 'Z-black', gst: '', photo: 'zblack-rithwik', swatch: s('#1f2230', '#3b3f52', 5) }, { label: 'White', gst: '', photo: 'sesame-white', swatch: s('#f1ead8', '#d3c7a9', 6) }] },
+  { id: 'f-sesame', name: 'Sesame seeds', group: 'oilseeds', photo: 'sesame', swatch: s('#262423', '#4a4542', 6), variants: [{ label: 'Black', gst: '' }, { label: 'Z-black', gst: '', photo: 'zblack-rithwik', swatch: s('#1f2230', '#3b3f52', 5) }, { label: 'White', gst: '', photo: 'sesame-white-rithwik', swatch: s('#f1ead8', '#d3c7a9', 6) }] },
 
   { id: 'f-chana', name: 'Chana', group: 'pulses', photo: 'kabuli-rithwik', swatch: s('#e9c25a', '#c29a35', 9), variants: [{ label: 'White', gst: '', photo: 'kabuli-rithwik', swatch: s('#e9d6a6', '#c8ad73', 11) }, { label: 'Brown', gst: '', photo: 'chana-brown', swatch: s('#8a5a34', '#5b371c', 11) }] },
   { id: 'f-toor', name: 'Toor dal', group: 'pulses', photo: 'toor', swatch: s('#e6b33c', '#bf8b1d', 9), variants: one() },
