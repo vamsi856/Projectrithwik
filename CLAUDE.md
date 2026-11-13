@@ -65,10 +65,9 @@ If a push doesn't trigger Pages, push an empty commit.
 - Each Human Food section opens with a cover cut by **wavy** slanted lines into one slice per product, each slice showing
   that product's photo (built from the products in `index.astro` with SVG masks; phones use two rows when a section has
   more than four).
-- Bird Feeds "Who we are" shows the client's claim "No. 1 foxtail millet supplier in India": a 3D gold 1 (CSS) that counts
+- Bird Feeds "Who we are" shows the client's claim "No. 1 foxtail millet supplier in India": a 3D gold 1 (no "No."/"India" beside it) (CSS) that counts
   down from 50, then sways with a sheen and sparkles (paused off screen).
-- Bird Feeds facts row (client's figures): Since 1925 · Annual production 20,000+ · 3,000+ customers · GSTIN. The unit of
-  production (tonnes?) is still to confirm.
+- Bird Feeds facts row (client's figures): Since 1925 · Annual production 20,000 MT+ · 3,000+ customers · GSTIN (label above).
 - Certification seals show on both sites (owner's request).
 - Mission and "Our goal is simple" on both Vision sections are the client's own words (from Sudheer): keep them as written.
 - Certification seals sit centred (a short row stays in the middle), cards in a row share one height.
