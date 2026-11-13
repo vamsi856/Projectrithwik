@@ -241,6 +241,11 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
           <h2 class="section-title" id="b-about-title" data-split>Who we are</h2>
           <p class="about__lead" data-reveal>Rithwik Bird Feeds carries forward a family grain trade that began in 1925.</p>
           <p data-reveal>We bring in seven millets, five kinds of jowar, maize, sunflower and safflower, clean and sort them at our Duvvur warehouse, and supply them processed or unprocessed to traders, pet shops and bird keepers. Foxtail comes from both the summer and winter crops.</p>
+          {/* the client's claim, as a rank that counts down to 1 when it scrolls in */}
+          <div class="rank" data-reveal>
+            <p class="rank__fig" aria-label="Number 1"><span class="rank__no" aria-hidden="true">No.</span><b class="rank__n" data-count="1" data-count-from="50" data-count-ease="expo.out" aria-hidden="true">1</b></p>
+            <p class="rank__label"><strong>Foxtail millet supplier</strong><span>Summer and winter crops, cleaned and sorted in Kurnool</span></p>
+          </div>
         </div>
         <div class="about__media">
           {birdAboutPhoto && (

@@ -65,6 +65,8 @@ If a push doesn't trigger Pages, push an empty commit.
 - Each Human Food section opens with a cover cut by **wavy** slanted lines into one slice per product, each slice showing
   that product's photo (built from the products in `index.astro` with SVG masks; phones use two rows when a section has
   more than four).
+- Bird Feeds "Who we are" shows the client's claim "No. 1 foxtail millet supplier" as a rank that counts down 50 to 1.
+- Certification seals show on both sites (owner's request).
 - Mission and "Our goal is simple" on both Vision sections are the client's own words (from Sudheer): keep them as written.
 - Certification seals sit centred (a short row stays in the middle), cards in a row share one height.
 - Quinoa: client-supplied Regular, Bold, Black and Red photos; Tricolor is still stock. Sesame Z-black and Chana White
