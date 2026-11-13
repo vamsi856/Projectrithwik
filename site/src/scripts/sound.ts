@@ -4,8 +4,7 @@
 // Bird Feeds and the book: a real dawn chorus, recorded in France by Joseph Sardin
 // ("Réveil des oiseaux", Wikimedia Commons, CC0). It is looped with a slow
 // equal-power crossfade so the seam is never heard.
-// Human Food: its own calm music only, generated live (a tanpura-style drone, slow notes in
-// raga Mohanam and soft chimes). No birds and no effect sounds there.
+// Human Food: the sound of grain being poured, generated live. No birds and no effect sounds there.
 // The small interface sounds (page turn, seed rattle, chirp) are generated live too.
 
 type Mode = 'book' | 'bird' | 'food' | 'off';
@@ -81,60 +80,43 @@ async function startBirds() {
   play(ctx.currentTime + 0.05, rand(0, buf.duration - 20));
 }
 
-/* ---------------------------------------------------------------- calm music (Human Food) */
-// Mohanam, a five-note raga (Sa Ri Ga Pa Dha), played slowly like a distant flute or veena
-// over a soft tanpura-style drone, with now and then a small chime.
-const SA = 261.63;
-const MOHANAM = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3];
-function pluck(t: number, f: number, vol: number, dur: number, pan: number) {
-  const o1 = ctx!.createOscillator(), o2 = ctx!.createOscillator(), g = ctx!.createGain(), lp = ctx!.createBiquadFilter();
-  o1.type = 'sine'; o2.type = 'triangle'; o1.frequency.value = f; o2.frequency.value = f * 2.001;
-  const g2 = ctx!.createGain(); g2.gain.value = 0.18;
-  lp.type = 'lowpass'; lp.frequency.setValueAtTime(f * 6, t); lp.frequency.exponentialRampToValueAtTime(f * 1.5, t + dur);
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.06); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o1.connect(g); o2.connect(g2).connect(g); g.connect(lp).connect(panner(pan)).connect(musicBus);
-  o1.start(t); o2.start(t); o1.stop(t + dur + 0.1); o2.stop(t + dur + 0.1);
+/* ---------------------------------------------------------------- grain (Human Food) */
+// Human Food's sound is grain being poured: a steady trickle of tiny hard taps as the grains land on
+// the heap, swelling and thinning as the pour changes, with short pauses between pours, over a soft
+// low rustle. All of it is made from the noise buffer, so there is nothing to download.
+let grainTimer = 0, rustle: GainNode | null = null, pourUntil = 0, pauseUntil = 0, pourPhase = 0;
+function grainTap(t: number) {
+  // one grain landing: a very short bright click, each a little different
+  const f0 = rand(1600, 5200);
+  noiseHitTo(musicBus, t, rand(0.008, 0.022), 'bandpass', f0, f0 * 0.55, rand(2, 5), rand(0.06, 0.26), rand(-0.6, 0.6));
+  if (Math.random() < 0.06) note(t, rand(700, 1100), 420, 0.035, 0.05, musicBus, 'triangle'); // a bigger grain hitting the side
 }
-function chime(t: number) {
-  const f = SA * 4 * pick(MOHANAM);
-  const o = ctx!.createOscillator(), g = ctx!.createGain();
-  o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.018, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.6);
-  o.connect(g).connect(panner(rand(-0.7, 0.7))).connect(musicBus); o.start(t); o.stop(t + 2.7);
+function startRustle() {
+  if (rustle) return;
+  const src = ctx!.createBufferSource(); src.buffer = noise; src.loop = true;
+  const lp = ctx!.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420;
+  const hp = ctx!.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 90;
+  rustle = ctx!.createGain(); rustle.gain.value = 0;
+  src.connect(hp).connect(lp).connect(rustle).connect(musicBus); src.start();
 }
-let lastDeg = 0;
-function phrase() {
-  let t = ctx!.currentTime + 0.1;
-  const n = 2 + ((Math.random() * 3) | 0);
-  for (let i = 0; i < n; i++) {
-    // mostly step to a neighbouring note, like a slow alaap
-    lastDeg = Math.max(0, Math.min(7, lastDeg + pick([-1, -1, 1, 1, 2, -2, 0])));
-    const oct = lastDeg >= 5 ? 2 : 1, f = SA * oct * MOHANAM[lastDeg % 5];
-    pluck(t, f, 0.05, rand(1.8, 3), rand(-0.35, 0.35));
-    t += rand(0.45, 0.9);
-  }
-  if (Math.random() < 0.35) chime(t + rand(0.2, 1));
-}
-let drone = false, musicTimer = 0;
-function startDrone() {
-  if (drone) return; drone = true;
-  const gain = ctx!.createGain(); gain.gain.value = 0.022;
-  const lp = ctx!.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900;
-  ([[SA / 2, 'sine', 0.6], [SA / 2 * 1.5, 'triangle', 0.25], [SA / 2 * 1.003, 'sine', 0.4], [SA, 'sine', 0.15]] as [number, OscillatorType, number][]).forEach(([f, type, v]) => {
-    const o = ctx!.createOscillator(), g = ctx!.createGain(); o.type = type; o.frequency.value = f; g.gain.value = v;
-    o.connect(g).connect(lp); o.start();
-  });
-  // a slow swell, like the strings of a tanpura being plucked in turn
-  const lfo = ctx!.createOscillator(), lg = ctx!.createGain(); lfo.frequency.value = 0.12; lg.gain.value = 0.006; lfo.connect(lg).connect(gain.gain); lfo.start();
-  lp.connect(gain).connect(musicBus);
-}
-/** Plays a phrase every few seconds while Human Food is open with sound on. */
+/** Keeps the grain pouring while Human Food is open with sound on. */
 function scheduleMusic() {
-  clearTimeout(musicTimer);
+  clearTimeout(grainTimer);
   if (!enabled || mode !== 'food' || !ctx) return;
-  startDrone();
-  phrase();
-  musicTimer = window.setTimeout(scheduleMusic, rand(2600, 5200));
+  startRustle();
+  const now = ctx.currentTime;
+  if (now > pourUntil && now > pauseUntil) { pourUntil = now + rand(4, 9); pauseUntil = pourUntil + rand(1.2, 3.5); pourPhase = rand(0, 6.28); }
+  const pouring = now < pourUntil;
+  // how thick the stream is: rises as the pour starts, wanders, thins out at the end
+  const edge = Math.min(1, (now - (pourUntil - 9)) / 1.2, Math.max(0.15, (pourUntil - now) / 1.5));
+  const density = pouring ? (5 + 7 * (0.5 + 0.5 * Math.sin(now * 0.7 + pourPhase))) * edge : 0;
+  const step = 0.2, n = Math.round(density * (0.7 + Math.random() * 0.6));
+  for (let i = 0; i < n; i++) grainTap(now + Math.random() * step + 0.02);
+  if (pouring && Math.random() < 0.08) for (let i = 0; i < 6; i++) grainTap(now + rand(0, 0.12)); // a small clump
+  rustle!.gain.setTargetAtTime(pouring ? 0.05 * Math.max(0.3, edge) : 0.008, now, 0.4);
+  grainTimer = window.setTimeout(scheduleMusic, step * 1000);
 }
+const musicTimerClear = () => clearTimeout(grainTimer);
 
 function levels() {
   if (!ctx) return;
@@ -157,7 +139,8 @@ function note(t: number, f0: number, f1: number, dur: number, vol: number, out: 
   o.connect(g).connect(out); o.start(t); o.stop(t + dur + 0.02);
 }
 function panner(x: number) { const p = ctx!.createStereoPanner(); p.pan.value = x; return p; }
-function noiseHit(t: number, dur: number, type: BiquadFilterType, f0: number, f1: number, q: number, vol: number, pan = 0) {
+function noiseHit(t: number, dur: number, type: BiquadFilterType, f0: number, f1: number, q: number, vol: number, pan = 0) { noiseHitTo(sfxBus, t, dur, type, f0, f1, q, vol, pan); }
+function noiseHitTo(out: AudioNode, t: number, dur: number, type: BiquadFilterType, f0: number, f1: number, q: number, vol: number, pan = 0) {
   const s = ctx!.createBufferSource(); s.buffer = noise; s.playbackRate.value = rand(0.9, 1.1);
   const f = ctx!.createBiquadFilter(); f.type = type; f.Q.value = q;
   f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
@@ -199,7 +182,7 @@ export function setMode(m: Mode) {
   mode = m;
   levels();
   if (enabled && mode === 'food') scheduleMusic();
-  else clearTimeout(musicTimer);
+  else musicTimerClear();
 }
 
 export async function setEnabled(on: boolean) {
@@ -216,7 +199,7 @@ export async function setEnabled(on: boolean) {
     if (mode === 'food') scheduleMusic();
   } else if (ctx) {
     master.gain.setTargetAtTime(0, ctx.currentTime, 0.25);
-    clearTimeout(musicTimer);
+    musicTimerClear();
     levels();
     // let the fade finish, then stop the audio clock so nothing runs while muted
     setTimeout(() => { if (!enabled && ctx) ctx.suspend(); }, 900);

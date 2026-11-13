@@ -56,8 +56,8 @@ If a push doesn't trigger Pages, push an empty commit.
   and land on the map pin at the end.
 - Founders: Bysani Vasavi (left) and Bysani Sudheer (right), shown only as the big round photo on the 2022 dot, on both
   timelines. No macaw on the timeline, and no extra founders photos.
-- Human Food sound is its original generated calm music only (tanpura-style drone, slow raga Mohanam notes, soft
-  chimes, in `sound.ts`): no birdsong, no recorded flute, no click/whoosh effects. Bird Feeds is the recorded birdsong.
+- Human Food sound is the sound of grain being poured (generated in `sound.ts`: tiny taps that swell and pause like a
+  pour, over a low rustle). No music, no birdsong, no click/whoosh effects there. Bird Feeds is the recorded birdsong.
 - Seeds (chia, quinoa, pumpkin, hulled sunflower, flax, basil) sit in Super foods, not Oil seeds.
 - Names: "Sunflower seeds", "Safflower seeds". Ragi: "Ragi" on Human Food; on Bird Feeds "Finger millet" (option "Ragi"),
   right after Pearl millet.
@@ -73,8 +73,8 @@ If a push doesn't trigger Pages, push an empty commit.
   certified companies to use the ISO logo. No caption on the Bird Feeds certs photo.
 - Vision section (both sites): an animated India map (official India outline, Natural Earth India view) of where we
   operate, from `site/src/data/network.ts`: Duvvur (main warehouse), Kurnool, Nandyal, Allagadda, Ballari, Challageri (Haveri dist.),
-  Bangarpet, Hyderabad, Delhi, Neemuch, Rajkot, Kolkata. Map pins, no route lines; the Kurnool cluster is shown in a
-  magnified circle. It replaced the 3D globe.
+  Bangarpet, Hyderabad, Delhi, Neemuch, Rajkot, Kolkata. Dots with gold routes drawn out from Duvvur (the client chose this
+  over a pins version). It replaced the 3D globe.
 - Human Food facts row mirrors Bird Feeds (Since 1925 · 20,000MT+ · 3,000+ · 31+ range of products). Human Food copy
   says "retail packers, traders and bulk buyers".
 - No real birds perched on the Bird Feeds cards (removed at the client's request; `SHOW_PERCHES` in ProductCard.astro).

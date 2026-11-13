@@ -1,23 +1,25 @@
 ---
-// India with the places Rithwik operates from: a map pin on each, a bigger pin with a warehouse
-// mark on Duvvur. Pins drop in when the map scrolls into view; Duvvur keeps a soft pulse.
+// India with the places Rithwik operates from: Duvvur (main warehouse) pulses, a route draws
+// out from it to every other place, and a small light keeps running along the routes.
+// The southern places sit close together, so their names are set off the coast with leader lines.
 import outline from '../data/india-outline.json';
 import { NETWORK } from '../data/network';
 interface Props { tone: 'bird' | 'food'; id: string }
 const { tone, id } = Astro.props;
 const P = (lon: number, lat: number) => [(lon - outline.lon0) * outline.k * outline.c, (outline.lat1 - lat) * outline.k] as const;
-const places = NETWORK.map((p, i) => { const [x, y] = P(p.lon, p.lat); return { ...p, i, x, y }; });
-const main = places.find((p) => p.main)!;
-const others = places.filter((p) => !p.main && !p.zoom);
-// the Kurnool cluster: a magnifying circle beside the map, 5x, with the real pins inside
-const zoomed = places.filter((p) => p.zoom);
-const Z = 4.6, zr = 92, zc = { x: 420, y: 500 };
-const zmid = { x: zoomed.reduce((s, p) => s + p.x, 0) / zoomed.length, y: zoomed.reduce((s, p) => s + p.y, 0) / zoomed.length };
-const zpos = (p: { x: number; y: number }) => ({ x: zc.x + (p.x - zmid.x) * Z, y: zc.y + (p.y - zmid.y) * Z + 14 });
-const pinOf = (p: typeof places[number], at: { x: number; y: number }, big = false) => ({ ...p, x: at.x, y: at.y, big });
+const main = NETWORK.find((p) => p.main)!;
+const [mx, my] = P(main.lon, main.lat);
+const places = NETWORK.map((p, i) => {
+  const [x, y] = P(p.lon, p.lat);
+  const off = !!p.lx; // name set off to the side with a leader line
+  const lx = p.lx ?? (p.side === 'end' ? x - 12 : x + 12), ly = p.ly ?? y + 5;
+  // the route from Duvvur bows out a little to one side
+  const dx = x - mx, dy = y - my, d = Math.hypot(dx, dy);
+  const cx = mx + dx / 2 - dy * 0.18, cy = my + dy / 2 + dx * 0.18;
+  return { ...p, i, x, y, off, lx, ly, route: d > 1 ? `M${mx.toFixed(1)} ${my.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}` : '' };
+});
+const others = places.filter((p) => !p.main);
 const label = `Map of India showing where Rithwik operates: ${main.name} (${main.note?.toLowerCase()}), ${others.map((p) => p.name).join(', ')}.`;
-// a map pin with its point at 0,0
-const PIN = 'M0 0C-4.5 -7 -8.5 -10.5 -8.5 -15.5a8.5 8.5 0 1 1 17 0c0 5-4 8.5-8.5 15.5Z';
 ---
 <figure class:list={['imap', `imap--${tone}`]} data-imap>
   <svg viewBox={`0 0 ${outline.w} ${outline.h}`} role="img" aria-label={label}>
@@ -26,43 +28,19 @@ const PIN = 'M0 0C-4.5 -7 -8.5 -10.5 -8.5 -15.5a8.5 8.5 0 1 1 17 0c0 5-4 8.5-8.5
     </defs>
     <path class="imap__land" d={outline.d} />
     <path class="imap__grid" d={outline.d} fill={`url(#${id}-dots)`} />
-    {others.map((p) => (
-      <g class="imap__place" style={`--i:${p.i}`} transform={`translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`}>
-        <ellipse class="imap__shadow" cx="0" cy="1" rx="4" ry="1.6" />
-        <g class="imap__drop"><path class="imap__pin" d={PIN} /><circle class="imap__hole" cx="0" cy="-15.5" r="3.4" /></g>
-        <text class="imap__name" x={p.dx} y={p.dy} text-anchor={p.side}>{p.name}</text>
+    <g class="imap__routes">
+      {others.map((p) => <path class="imap__route" d={p.route} pathLength="1" style={`--i:${p.i}`} />)}
+      {others.map((p) => <path class="imap__glint" d={p.route} pathLength="1" style={`--i:${p.i}`} />)}
+    </g>
+    {places.map((p) => (
+      <g class:list={['imap__place', p.main && 'is-main']} style={`--i:${p.i}`}>
+        {p.off && <path class="imap__lead" d={`M${p.x.toFixed(1)} ${p.y.toFixed(1)}L${(p.side === 'end' ? p.lx + 4 : p.lx - 4).toFixed(1)} ${(p.ly - 5).toFixed(1)}`} />}
+        <circle class="imap__ring" cx={p.x} cy={p.y} r={p.main ? 9 : 6} />
+        <circle class="imap__pin" cx={p.x} cy={p.y} r={p.main ? 7 : 4.2} />
+        <text class="imap__name" x={p.lx} y={p.ly} text-anchor={p.side ?? 'start'}>{p.name}</text>
+        {p.note && <text class="imap__note" x={p.lx} y={p.ly + 18} text-anchor={p.side ?? 'start'}>{p.note}</text>}
       </g>
     ))}
-    {/* on the India map the cluster is a ring of small dots; the circle beside it shows them up close */}
-    <g class="imap__cluster" style="--i:1">
-      <circle class="imap__zoomring" cx={zmid.x} cy={zmid.y} r="17" />
-      {zoomed.map((p) => <circle class={p.main ? 'imap__pin' : 'imap__hole-dot'} cx={p.x} cy={p.y} r={p.main ? 3.2 : 2.2} />)}
-    </g>
-    <g class="imap__zoom" style="--i:3">
-      <circle class="imap__zoomlens" cx={zc.x} cy={zc.y} r={zr} />
-      <text class="imap__zoomtitle" x={zc.x} y={zc.y - zr + 22} text-anchor="middle">Around Kurnool</text>
-      {zoomed.filter((p) => !p.main).map((p) => { const at = zpos(p); return (
-        <g class="imap__place" style={`--i:${p.i}`} transform={`translate(${at.x.toFixed(1)} ${at.y.toFixed(1)})`}>
-          <ellipse class="imap__shadow" cx="0" cy="1" rx="4" ry="1.6" />
-          <g class="imap__drop"><path class="imap__pin" d={PIN} /><circle class="imap__hole" cx="0" cy="-15.5" r="3.4" /></g>
-          <text class="imap__name" x={p.dx} y={p.dy} text-anchor={p.side}>{p.name}</text>
-        </g>
-      ); })}
-      {(() => { const at = zpos(main); return (
-    <g class="imap__place is-main" style={`--i:${main.i}`} transform={`translate(${at.x.toFixed(1)} ${at.y.toFixed(1)})`}>
-      <circle class="imap__ring" cx="0" cy="0" r="7" />
-      <ellipse class="imap__shadow" cx="0" cy="1.5" rx="6" ry="2.4" />
-      <g class="imap__drop" transform="scale(1.75)">
-        <path class="imap__pin" d={PIN} />
-        {/* warehouse: roof, walls and a door, drawn inside the pin head */}
-        <path class="imap__house" d="M-5.2 -14.2 L0 -18.6 L5.2 -14.2 L5.2 -10.6 L-5.2 -10.6 Z" />
-        <rect class="imap__door" x="-1.6" y="-13.2" width="3.2" height="2.6" />
-      </g>
-      <text class="imap__name" x={main.dx} y={main.dy} text-anchor={main.side}>{main.name}</text>
-      <text class="imap__note" x={main.dx} y={main.dy! + 15} text-anchor={main.side}>{main.note}</text>
-    </g>
-      ); })()}
-    </g>
   </svg>
   <figcaption class="imap__legend">
     <span><i class="is-main"></i>{main.name}, {main.note?.toLowerCase()}</span>
