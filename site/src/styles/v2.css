@@ -165,6 +165,7 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
   font-variant-numeric: tabular-nums; padding: 2px 10px 0; margin-left: -10px; border-radius: 12px;
   background: linear-gradient(transparent 58%, rgba(255, 255, 255, .5) 58%, rgba(255, 255, 255, .5) 90%, transparent 90%); }
 .fact--num b span { font: inherit; }
+.fact__key { font: 400 clamp(1.5rem, 2.4vw, 2.2rem)/1 var(--display) !important; text-transform: uppercase; }
 .fact--num b small { font-size: .42em; margin: .18em .22em 0 0; }
 .fact--num > span { font-size: 1rem !important; font-weight: 600 !important; }
 .fact--num b i { font-style: normal; font-size: .62em; margin-left: 2px; }
