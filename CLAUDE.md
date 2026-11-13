@@ -34,7 +34,7 @@ If a push doesn't trigger Pages, push an empty commit.
 - `site/src/data/legacy.ts`: the family timeline 1925 to 2022 and `FOUNDERS` (round photo on the 2022 dot).
 - `site/src/data/perches.ts`: the real birds that hop onto product cards.
 - `site/src/scripts/main.ts`: page behaviour and animation (views, menus, paper birds, map tabs, forms, sound button).
-  `flock.ts` is the hero macaw flock, `sound.ts` the birdsong and flute, `pack3d.ts` the 3D packs.
+  `flock.ts` is the hero macaw flock, `sound.ts` the birdsong and Human Food music, `pack3d.ts` the 3D packs.
 - `site/src/styles/v2.css`: all styles. Components are in `site/src/components/`.
 
 ## Adding a client photo
@@ -56,7 +56,8 @@ If a push doesn't trigger Pages, push an empty commit.
   and land on the map pin at the end.
 - Founders: Bysani Vasavi (left) and Bysani Sudheer (right), shown only as the big round photo on the 2022 dot, on both
   timelines. No macaw on the timeline, and no extra founders photos.
-- Human Food sound is the flute alone (no birdsong); Bird Feeds is birdsong.
+- Human Food sound is its original generated calm music only (tanpura-style drone, slow raga Mohanam notes, soft
+  chimes, in `sound.ts`): no birdsong, no recorded flute, no click/whoosh effects. Bird Feeds is the recorded birdsong.
 - Seeds (chia, quinoa, pumpkin, hulled sunflower, flax, basil) sit in Super foods, not Oil seeds.
 - Names: "Sunflower seeds", "Safflower seeds". Ragi: "Ragi" on Human Food; on Bird Feeds "Finger millet" (option "Ragi"),
   right after Pearl millet.
