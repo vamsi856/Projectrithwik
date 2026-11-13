@@ -726,9 +726,13 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     // counters
     $$('[data-count]', root).forEach((el) => {
       const n = Number(el.dataset.count); const o = { v: Number(el.dataset.countFrom || 0) };
-      if (el.dataset.countFrom && !reduce && el.getBoundingClientRect().top > innerHeight) el.textContent = el.dataset.countFrom; // start from it, no flash of the end value
-      tw(gsap.to(o, { v: n, duration: el.dataset.countEase ? 2.4 : 1.6, ease: el.dataset.countEase || 'power2.out', onUpdate: () => (el.textContent = String(Math.round(o.v))), scrollTrigger: { trigger: el, start: 'top 90%', once: true } }));
+      const fmt = (v: number) => (el.dataset.countSep !== undefined ? Math.round(v).toLocaleString('en-IN') : String(Math.round(v)));
+      if (el.dataset.countFrom && !reduce && el.getBoundingClientRect().top > innerHeight) el.textContent = el.dataset.n = el.dataset.countFrom; // start from it, no flash of the end value
+      tw(gsap.to(o, { v: n, duration: el.dataset.countEase ? 2.4 : 1.6, ease: el.dataset.countEase || 'power2.out', onUpdate: () => { el.textContent = el.dataset.n = fmt(o.v); }, onComplete: () => el.parentElement?.classList.add('is-counted'), scrollTrigger: { trigger: el, start: 'top 90%', once: true } }));
     });
+    // the 3D gold "1" only animates while it is on screen
+    $$('[data-num3d]', root).forEach((n) => new IntersectionObserver(([e]) => n.classList.toggle('is-live', e.isIntersecting)).observe(n));
+    if (reduce) $$('[data-num3d]', root).forEach((n) => n.classList.add('is-counted'));
     // facts pop
     $$('.facts', root).forEach((f) => tw(gsap.from($$('.fact', f), { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: f, start: 'top 90%', once: true } })));
 

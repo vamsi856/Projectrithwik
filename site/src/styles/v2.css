@@ -159,15 +159,56 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .about__lead { font-size: clamp(1.3rem, 2.2vw, 1.75rem); line-height: 1.35; font-weight: 600; margin: 0 0 18px; max-width: 28ch; }
 .about__copy p:not(.about__lead) { max-width: 52ch; margin: 0; opacity: .85; }
 .about__copy .rank p { opacity: 1; max-width: none; }
-/* "No. 1 foxtail millet supplier": a big gold rank beside its label */
-.rank { display: flex; align-items: center; gap: clamp(16px, 2vw, 26px); margin-top: clamp(22px, 3vw, 34px); padding: 18px 26px 18px 22px;
+/* facts row with the client's figures: a small caption, then the number big and bold */
+.fact--num { gap: 6px; }
+.fact__pre { font-size: .78rem !important; font-weight: 800 !important; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+.fact--num b { display: inline-flex; align-items: flex-start; width: fit-content; font-size: clamp(2.6rem, 4.6vw, 3.9rem) !important; line-height: .95 !important;
+  font-variant-numeric: tabular-nums; padding: 2px 10px 0; margin-left: -10px; border-radius: 12px;
+  background: linear-gradient(transparent 58%, rgba(255, 255, 255, .5) 58%, rgba(255, 255, 255, .5) 90%, transparent 90%); }
+.fact--num b span { font: inherit; }
+.fact--num b i { font-style: normal; font-size: .62em; margin-left: 2px; }
+@media (max-width: 640px) { .fact--num b { font-size: clamp(2rem, 9vw, 2.6rem) !important; } }
+/* "No. 1 foxtail millet supplier in India": a 3D gold numeral beside its label */
+.rank { display: flex; align-items: center; gap: clamp(14px, 2vw, 26px); margin-top: clamp(22px, 3vw, 34px); padding: 18px 28px 18px 20px;
   border-radius: 24px; width: fit-content; max-width: 100%; background: rgba(242, 178, 27, .08); box-shadow: inset 0 0 0 1px rgba(242, 178, 27, .28); }
-.rank__fig { display: flex; align-items: flex-start; margin: 0; line-height: .82; color: var(--marigold); }
-.rank__no { font: 400 clamp(1.3rem, 2vw, 1.7rem)/1 var(--display); text-transform: uppercase; margin: .32em .12em 0 0; }
-.rank__n { font: 400 clamp(4.6rem, 8vw, 6.6rem)/.82 var(--display); font-variant-numeric: tabular-nums; min-width: 1.05ch; text-align: center; }
-.rank__label { display: grid; gap: 4px; margin: 0; }
-.rank__label strong { font: 400 clamp(1.35rem, 2.2vw, 1.8rem)/1 var(--display); text-transform: uppercase; color: var(--khaki); }
-.rank__label span { font-size: .95rem; opacity: .75; }
+.rank__fig { display: flex; align-items: stretch; gap: 6px; }
+.rank__side { display: flex; flex-direction: column; justify-content: space-between; padding: .5em 0 .35em; }
+.rank__no { font: 400 clamp(1.25rem, 1.9vw, 1.6rem)/1 var(--display); text-transform: uppercase; color: var(--marigold); }
+.rank__where { font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #fff; text-shadow: 0 1px 6px rgba(0, 0, 0, .6); }
+/* the numeral: a dark-gold extrusion (text-shadow) under a bright gold face (the ::after copy) */
+.num3d { position: relative; display: inline-block; padding: 4px 18px 14px 4px; transform: perspective(700px) rotateY(-18deg) rotateX(5deg); transform-origin: 40% 60%; will-change: transform; }
+.num3d__n { position: relative; display: block; font: 400 clamp(6rem, 10vw, 8.4rem)/.8 var(--display); font-variant-numeric: tabular-nums; min-width: .62em; text-align: center;
+  color: #b07a0b; text-shadow: 1px 1px 0 #c98d12, 2px 2px 0 #c28710, 3px 3px 0 #ba800e, 4px 4px 0 #b2790c, 5px 5px 0 #a9720b, 6px 6px 0 #a06a09, 7px 7px 0 #966208, 8px 8px 0 #8b5a07, 9px 9px 0 #805206, 10px 10px 0 #744a05, 14px 18px 22px rgba(0, 0, 0, .55); }
+.num3d__n::after { content: attr(data-n); position: absolute; inset: 0; text-shadow: none;
+  background: linear-gradient(115deg, #a96d02 0%, #f2b21b 26%, #fff2bd 36%, #f7c94a 44%, #d29410 64%, #ffe39a 82%, #b98006 100%) 0 0 / 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.num3d__glow { position: absolute; left: 50%; top: 50%; width: 170%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 200, 60, .38), rgba(255, 200, 60, 0)); opacity: .5; }
+.num3d__spark { position: absolute; width: 16px; height: 16px; opacity: 0; pointer-events: none;
+  background: radial-gradient(closest-side, #fff, rgba(255, 236, 160, .85) 35%, rgba(255, 210, 80, 0)); clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%); }
+.num3d__spark--a { left: 58%; top: 2%; }
+.num3d__spark--b { left: 22%; top: 46%; width: 11px; height: 11px; }
+.num3d__spark--c { left: 66%; top: 74%; width: 13px; height: 13px; }
+.rank__label { display: grid; gap: 6px; margin: 0; }
+.rank__label strong { font: 400 clamp(1.35rem, 2.2vw, 1.85rem)/1.02 var(--display); text-transform: uppercase; color: var(--khaki); max-width: 15ch; }
+.rank__label span { font-size: .95rem; opacity: .75; max-width: 30ch; }
+@media (prefers-reduced-motion: no-preference) {
+  /* once it reaches 1: a pop, then a slow sway, a light sweeping across the gold, a breathing glow and twinkles */
+  .num3d.is-counted { animation: num3d-pop .7s cubic-bezier(.3, 1.6, .5, 1) both, num3d-sway 7s ease-in-out .7s infinite; }
+  .num3d.is-counted .num3d__n::after { animation: num3d-shine 4.5s ease-in-out 1s infinite; }
+  .num3d.is-counted .num3d__glow { animation: num3d-glow 3.2s ease-in-out infinite; }
+  .num3d.is-counted .num3d__spark--a { animation: num3d-spark 2.6s ease-in-out .9s infinite; }
+  .num3d.is-counted .num3d__spark--b { animation: num3d-spark 3.1s ease-in-out 1.8s infinite; }
+  .num3d.is-counted .num3d__spark--c { animation: num3d-spark 2.9s ease-in-out 2.6s infinite; }
+  .num3d:not(.is-live), .num3d:not(.is-live) * { animation-play-state: paused !important; }
+  .num3d:not(.is-live) .num3d__n::after { animation-play-state: paused !important; }
+}
+@keyframes num3d-pop { from { transform: perspective(700px) rotateY(-40deg) rotateX(5deg) scale(.82); } to { transform: perspective(700px) rotateY(-18deg) rotateX(5deg) scale(1); } }
+@keyframes num3d-sway { 0%, 100% { transform: perspective(700px) rotateY(-18deg) rotateX(5deg); } 50% { transform: perspective(700px) rotateY(-6deg) rotateX(2deg) translateY(-4px); } }
+@keyframes num3d-shine { 0% { background-position: 100% 0; } 45%, 100% { background-position: 0 0; } }
+@keyframes num3d-glow { 0%, 100% { opacity: .35; transform: scale(.92); } 50% { opacity: .8; transform: scale(1.05); } }
+@keyframes num3d-spark { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0deg); } 45% { opacity: 1; transform: scale(1.15) rotate(45deg); } 60% { opacity: 0; transform: scale(.4) rotate(70deg); } }
+@media (max-width: 420px) { .rank { padding: 14px 18px 14px 14px; gap: 10px; } .num3d__n { font-size: 5.4rem; } .rank__label strong { font-size: 1.25rem; } .rank__label span { font-size: .86rem; } }
 .about--bird .about__lead { color: var(--khaki); }
 .about__media { position: relative; }
 .about__photo { margin: 0; overflow: hidden; }

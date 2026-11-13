@@ -230,9 +230,10 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
       </section>
 
       <div class="facts" aria-label="Rithwik Bird Feeds at a glance">
-        <div class="fact"><b data-count={BIRD.length}>{BIRD.length}</b><span>types of feeds in {nBird} grades, processed or unprocessed</span></div>
-        <div class="fact"><b>Summer &amp; winter</b><span>two foxtail crops</span></div>
-        <div class="fact"><b>Since 1925</b><span>a family grain trade</span></div>
+        {/* the client's figures: the numbers count up when the row scrolls in */}
+        <div class="fact fact--num"><span class="fact__pre">Since</span><b><span data-count="1925" data-count-from="1900">1925</span></b><span>a family grain trade</span></div>
+        <div class="fact fact--num"><span class="fact__pre">Annual production</span><b><span data-count="20000" data-count-sep>20,000</span><i>+</i></b></div>
+        <div class="fact fact--num"><span class="fact__pre">Customers</span><b><span data-count="3000" data-count-sep>3,000</span></b><span>traders, pet shops and bird keepers</span></div>
         <div class="fact fact--code"><b>{BRANDS.bird.gstin}</b><span>GSTIN</span></div>
       </div>
 
@@ -241,10 +242,18 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
           <h2 class="section-title" id="b-about-title" data-split>Who we are</h2>
           <p class="about__lead" data-reveal>Rithwik Bird Feeds carries forward a family grain trade that began in 1925.</p>
           <p data-reveal>We bring in seven millets, five kinds of jowar, maize, sunflower and safflower, clean and sort them at our Duvvur warehouse, and supply them processed or unprocessed to traders, pet shops and bird keepers. Foxtail comes from both the summer and winter crops.</p>
-          {/* the client's claim, as a rank that counts down to 1 when it scrolls in */}
+          {/* the client's claim: a 3D gold "1" that counts down from 50, then sways with a sheen and sparkles */}
           <div class="rank" data-reveal>
-            <p class="rank__fig" aria-label="Number 1"><span class="rank__no" aria-hidden="true">No.</span><b class="rank__n" data-count="1" data-count-from="50" data-count-ease="expo.out" aria-hidden="true">1</b></p>
-            <p class="rank__label"><strong>Foxtail millet supplier</strong><span>Summer and winter crops, cleaned and sorted in Kurnool</span></p>
+            <p class="sr">Number 1 foxtail millet supplier in India</p>
+            <div class="rank__fig" aria-hidden="true">
+              <span class="rank__side"><span class="rank__no">No.</span><span class="rank__where">India</span></span>
+              <span class="num3d" data-num3d>
+                <span class="num3d__glow"></span>
+                <b class="num3d__n" data-count="1" data-count-from="50" data-count-ease="expo.out" data-n="1">1</b>
+                <i class="num3d__spark num3d__spark--a"></i><i class="num3d__spark num3d__spark--b"></i><i class="num3d__spark num3d__spark--c"></i>
+              </span>
+            </div>
+            <p class="rank__label" aria-hidden="true"><strong>Foxtail millet supplier in India</strong></p>
           </div>
         </div>
         <div class="about__media">
