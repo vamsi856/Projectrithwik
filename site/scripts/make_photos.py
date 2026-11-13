@@ -1,8 +1,14 @@
-# Builds the self-hosted photo set: every product/scene photo at a few widths, as AVIF and WebP.
-import json, os, sys
+# Builds the self-hosted photo set: every photo in src/data/commons.json at a few widths
+# (480/800/1280), as AVIF and WebP, into public/img, and writes src/data/photo-sizes.json.
+# Run from anywhere: python3 site/scripts/make_photos.py   (needs: pip install pillow pillow-heif)
+# Existing files are never overwritten: to redo a photo, delete public/img/<key>-* first.
+# Client photos live in site/photo-src/<file>.webp (commons entry has own:true, local:'photos/<file>.webp').
+import json, os
 from PIL import Image, ImageOps
-SITE = '/home/claude/Projectrithwik/site'
+SITE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 d = json.load(open(f'{SITE}/src/data/commons.json'))
+SIZES = f'{SITE}/src/data/photo-sizes.json'
+old = json.load(open(SIZES)) if os.path.exists(SIZES) else {}
 OUT = f'{SITE}/public/img'
 WIDTHS = [480, 800, 1280]
 man = {}
@@ -10,8 +16,11 @@ for k, r in d.items():
     if r.get('local'):
         src = f"{SITE}/photo-src/" + r["local"].split("/")[-1]
     else:
-        src = next((f'/home/claude/photo-src/{k}{e}' for e in ('.jpg', '.png') if os.path.exists(f'/home/claude/photo-src/{k}{e}')), None)
+        src = None  # stock photo: its original isn't kept in the repo, only the sizes already made
     if not src or not os.path.exists(src):
+        # already built earlier: keep it as it is
+        if k in old and all(os.path.exists(f'{OUT}/{k}-{w}.webp') for w in old[k]['widths']):
+            man[k] = old[k]; continue
         print('MISSING', k); continue
     im = Image.open(src); im = ImageOps.exif_transpose(im)
     alpha = im.mode in ('RGBA', 'LA') or (im.mode == 'P' and 'transparency' in im.info)
@@ -25,6 +34,6 @@ for k, r in d.items():
             p = f'{OUT}/{k}-{w}.{ext}'
             if not os.path.exists(p): r2.save(p, ext.upper(), **kw)
     man[k] = {'w': im.width, 'h': im.height, 'widths': ws}
-json.dump(man, open(f'{SITE}/src/data/photo-sizes.json', 'w'), indent=0, sort_keys=True)
+json.dump(man, open(SIZES, 'w'), indent=0, sort_keys=True)
 tot = sum(os.path.getsize(f'{OUT}/{f}') for f in os.listdir(OUT))
 print(len(man), 'photos', round(tot / 1e6, 1), 'MB')
