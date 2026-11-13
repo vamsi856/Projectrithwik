@@ -441,10 +441,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .section-title--food { color: var(--ink); }
 
 .facts--food { padding-bottom: clamp(72px, 10vw, 130px); }
-/* the client wants the same gold blocks as Bird Feeds here */
-.facts--food .fact { background: var(--marigold); color: var(--navy); }
-.facts--food { gap: 3px; } .facts--food .fact { box-shadow: inset 0 0 0 1px rgba(11, 25, 36, .18); }
-.facts--food .fact b { color: var(--navy); }
+/* Human Food keeps its own theme here: dark ink blocks, cream words, bronze numbers */
+.facts--food .fact { background: var(--ink); color: var(--khaki); }
+.facts--food .fact b { color: var(--bronze-2); }
 
 /* =========================================================
    ENQUIRE
