@@ -366,6 +366,34 @@ function initSite(view: 'bird' | 'food', root: HTMLElement) {
     ScrollTrigger.refresh();
   }));
 
+  // the seed badge on each photo zooms into it, right there in the card: the zoomed photo
+  // follows the mouse, or a dragging finger; the badge, a tap on the photo or Esc zooms out
+  cards.forEach((card) => {
+    const btn = $<HTMLButtonElement>('[data-zoom]', card), media = $<HTMLElement>('.pcard__media', card);
+    if (!btn || !media) return;
+    const set = (on: boolean) => {
+      media.classList.toggle('is-zoomed', on);
+      btn.setAttribute('aria-pressed', String(on));
+      btn.title = on ? 'Zoom out' : 'Zoom in';
+      if (!on) { media.style.removeProperty('--zx'); media.style.removeProperty('--zy'); }
+      // zoomed in, the browser should fetch the sharpest size of the photo, not the card-sized one
+      else $$('picture source, picture img', media).forEach((el) => el.setAttribute('sizes', '1280px'));
+    };
+    const aim = (e: PointerEvent) => {
+      const r = media.getBoundingClientRect();
+      media.style.setProperty('--zx', `${gsap.utils.clamp(0, 100, ((e.clientX - r.left) / r.width) * 100)}%`);
+      media.style.setProperty('--zy', `${gsap.utils.clamp(0, 100, ((e.clientY - r.top) / r.height) * 100)}%`);
+    };
+    btn.addEventListener('click', (e) => { e.stopPropagation(); set(!media.classList.contains('is-zoomed')); sfx('tick'); });
+    media.addEventListener('pointermove', (e) => { if (media.classList.contains('is-zoomed') && (e.pointerType === 'mouse' || e.buttons)) aim(e); });
+    media.addEventListener('pointerdown', (e) => { if (media.classList.contains('is-zoomed') && e.pointerType !== 'mouse') aim(e); });
+    // a tap on the zoomed photo (not a drag) zooms back out
+    let down = 0;
+    media.addEventListener('pointerdown', () => { down = performance.now(); });
+    media.addEventListener('click', (e) => { if (e.target !== btn && !btn.contains(e.target as Node) && media.classList.contains('is-zoomed') && performance.now() - down < 250) set(false); });
+    card.addEventListener('keydown', (e) => { if (e.key === 'Escape' && media.classList.contains('is-zoomed')) { set(false); btn.focus(); } });
+  });
+
   // variant pickers keep the Ask link in sync
   cards.forEach((card) => card.addEventListener('change', (e) => {
     const r = e.target as HTMLInputElement;

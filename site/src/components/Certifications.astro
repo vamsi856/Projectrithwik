@@ -8,7 +8,7 @@ const { id, tone, regs, photo, photoAlt = '' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const certs = regs.filter((r) => r.mark !== 'GST');
 const title = 'Certifications & standards';
-const lede = 'Our food safety, export and organic credentials. Tap a seal for the details; a copy of any certificate is available on request.';
+const lede = 'Our food safety and export credentials. Tap a seal for the details; a copy of any certificate is available on request.';
 ---
 {regs.length > 0 && <section class:list={['certs', `certs--${tone}`]} id={id} aria-labelledby={`${id}-title`}>
   {photo && (

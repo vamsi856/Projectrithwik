@@ -693,5 +693,16 @@
   "a": "Rithwik",
   "local": "photos/kodo-hulled-rithwik.webp",
   "own": true
+ },
+ "chia-white-rithwik": {
+  "t": "White chia seeds",
+  "u": "",
+  "w": 603,
+  "h": 452,
+  "p": "",
+  "l": "",
+  "a": "Rithwik",
+  "local": "photos/chia-white-rithwik.webp",
+  "own": true
  }
 }

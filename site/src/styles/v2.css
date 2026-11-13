@@ -209,6 +209,17 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .pcard__swatch { position: absolute; z-index: 2; right: 16px; bottom: -22px; width: 54px; height: 54px; }
 .pcard--bird .pcard__swatch { box-shadow: 0 0 0 4px var(--navy-2), inset 0 -6px 10px rgba(0, 0, 0, .28); }
 .pcard--food .pcard__swatch { box-shadow: 0 0 0 4px var(--paper), inset 0 -6px 10px rgba(0, 0, 0, .28); }
+.pcard__swatch { display: grid; place-items: center; padding: 0; border: 0; cursor: zoom-in; transition: transform .25s var(--ease); }
+@media (hover: hover) { .pcard__swatch:hover { transform: scale(1.08); } }
+.pcard__swatch:focus-visible { outline: 3px solid #7cc4ea; outline-offset: 5px; }
+.pcard__zoomicon { width: 24px; height: 24px; fill: none; stroke: #fff; stroke-width: 2.6; stroke-linecap: round; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .7)); }
+.pcard__media.is-zoomed .pcard__zoom-v { display: none; } /* the + turns into a − while zoomed */
+.pcard__media.is-zoomed .pcard__swatch { cursor: zoom-out; }
+/* zoomed: the photo magnifies inside its own frame and follows the pointer (or a dragging finger) */
+.pcard__media.is-zoomed { cursor: zoom-out; touch-action: none; }
+.pcard__media.is-zoomed .pcard__img, .pcard:hover .pcard__media.is-zoomed .pcard__img, .pcard:hover .pcard__media.is-zoomed .pcard__look--whole .pcard__img {
+  transform: scale(2.4); transform-origin: var(--zx, 50%) var(--zy, 50%); transition: transform .45s var(--ease);
+}
 .pcard__body { display: grid; align-content: start; gap: 10px; padding: 20px 20px 18px; }
 .pcard__name { margin: 0; font: 400 1.7rem/1 var(--display); text-transform: uppercase; letter-spacing: .01em; padding-right: 56px; }
 .pcard--bird .pcard__name { color: var(--khaki); }
