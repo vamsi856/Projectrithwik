@@ -34,6 +34,11 @@ const SITE = new URL(base, Astro.site).href;
 const pageUrl = (v: View) => `${SITE}${PATHS[v]}`;
 const href = (v: View) => `${base}${PATHS[v]}`;
 const meta = META[view];
+// only the open view's title is the page's <h1>; the other views' titles are level-1 headings for
+// screen readers but not <h1> tags, so each address has exactly one <h1>
+const H1 = (v: View) => (v === view ? 'h1' : 'p');
+const hRole = (v: View) => (v === view ? {} : { role: 'heading', 'aria-level': '1' });
+const BookH = H1('book'), BirdH = H1('bird'), FoodH = H1('food');
 // the logos painted onto the 3D packs: small webp copies, not the full-size originals
 const birdLogoTex = (await getImage({ src: birdLogo, width: 432, format: 'webp', quality: 88 })).src;
 const foodLogoTex = (await getImage({ src: foodLogo, width: 440, format: 'webp', quality: 90 })).src;
@@ -46,6 +51,8 @@ const birdHeroPhoto = photo('bird-budgies');
 const HERO_SIZES = '(max-width: 860px) 100vw, 58vw';
 // what search engines read about the two businesses (schema.org)
 const abs = (u: string) => new URL(u, Astro.site).href;
+// the picture shown when a page is shared on WhatsApp, Facebook, LinkedIn or X
+const ogImage = abs(`${base}${view === 'bird' ? 'og-bird.jpg' : view === 'food' ? 'og-food.jpg' : 'og.jpg'}`);
 const [lat, lng] = CONTACT.officeAt.split(',').map(Number);
 const birdLogoUrl = abs((await getImage({ src: birdLogo, width: 512, format: 'png' })).src);
 const foodLogoUrl = abs((await getImage({ src: foodLogo, width: 512, format: 'png' })).src);
@@ -58,7 +65,7 @@ const business = (key: 'bird' | 'food', logoUrl: string, desc: string, items: { 
   parentOrganization: { '@id': `${SITE}#family` },
   priceRange: 'Ask for a quote',
   logo: logoUrl,
-  image: [logoUrl, `${SITE}og.jpg`],
+  image: [logoUrl, abs(`${base}og-${key}.jpg`)],
   sameAs: [`https://wa.me/${CONTACT.whatsapp}`],
   email: BRANDS[key].email,
   telephone: CONTACT.phones.map((p) => p.tel),
@@ -68,7 +75,9 @@ const business = (key: 'bird' | 'food', logoUrl: string, desc: string, items: { 
   hasMap: CONTACT.directions,
   areaServed: { '@type': 'Country', name: 'India' },
   contactPoint: { '@type': 'ContactPoint', contactType: 'sales', telephone: CONTACT.phones[0].tel, email: BRANDS[key].email, availableLanguage: ['en', 'te', 'hi'] },
-  hasOfferCatalog: { '@type': 'OfferCatalog', name: `${BRANDS[key].name} range`, itemListElement: items.map((p) => ({ '@type': 'Offer', itemOffered: { '@type': 'Product', name: p.name } })) },
+  hasOfferCatalog: { '@type': 'OfferCatalog', name: `${BRANDS[key].name} range`, itemListElement: items.map((p) => ({ '@type': 'Offer', name: p.name, description: p.variants.length > 1 ? `${p.name}: ${p.variants.map((v) => v.label).join(', ')}` : p.name, availability: 'https://schema.org/InStock', businessFunction: 'http://purl.org/goodrelations/v1#Sell' })) },
+  slogan: key === 'bird' ? 'No. 1 foxtail millet supplier in India' : "Nature's grain, nurtured for you",
+  foundingDate: '1925',
 });
 const birdBiz = business('bird', birdLogoUrl, 'Bird feed grains from Kurnool: foxtail, proso, little, kodo, barnyard and browntop millets, jowar, bajra, ragi, maize, sunflower and safflower, processed or unprocessed. No. 1 foxtail millet supplier in India.', BIRD);
 const foodBiz = business('food', foodLogoUrl, 'Food staples from Kurnool: millets, super foods, oil seeds, pulses, spices and cereals for retail packers, traders and bulk buyers.', FOOD);
@@ -78,7 +87,7 @@ const family = {
   subOrganization: [{ '@id': birdBiz['@id'] }, { '@id': foodBiz['@id'] }],
   address: birdBiz.address, telephone: CONTACT.call.tel,
 };
-const webPage = { '@type': 'WebPage', '@id': `${pageUrl(view)}#page`, url: pageUrl(view), name: meta.title, description: meta.description, inLanguage: 'en-IN', isPartOf: { '@id': `${SITE}#site` }, about: { '@id': view === 'bird' ? birdBiz['@id'] : view === 'food' ? foodBiz['@id'] : `${SITE}#family` }, primaryImageOfPage: `${SITE}og.jpg` };
+const webPage = { '@type': 'WebPage', '@id': `${pageUrl(view)}#page`, url: pageUrl(view), name: meta.title, description: meta.description, inLanguage: 'en-IN', isPartOf: { '@id': `${SITE}#site` }, about: { '@id': view === 'bird' ? birdBiz['@id'] : view === 'food' ? foodBiz['@id'] : `${SITE}#family` }, primaryImageOfPage: ogImage };
 const schema = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -135,14 +144,14 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
   <meta property="og:title" content={meta.ogTitle} />
   <meta property="og:description" content={meta.description} />
   <meta property="og:url" content={pageUrl(view)} />
-  <meta property="og:image" content={abs(`${base}og.jpg`)} />
+  <meta property="og:image" content={ogImage} />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Rithwik Bird Feeds and Rithwik Industries, Kurnool" />
+  <meta property="og:image:alt" content={view === 'bird' ? 'Rithwik Bird Feeds, Kurnool: No. 1 foxtail millet supplier in India' : view === 'food' ? 'Rithwik Industries, Kurnool: millets, super foods, pulses and spices' : 'Rithwik Bird Feeds and Rithwik Industries, Kurnool'} />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={meta.ogTitle} />
   <meta name="twitter:description" content={meta.description} />
-  <meta name="twitter:image" content={abs(`${base}og.jpg`)} />
+  <meta name="twitter:image" content={ogImage} />
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <link rel="icon" href={`${base}favicon.ico`} sizes="48x48" />
   <link rel="icon" href={`${base}favicon-32.png`} type="image/png" sizes="32x32" />
@@ -174,7 +183,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
 
   <!-- ================= THE BOOK ================= -->
   <main class="stage" id="book-view" aria-labelledby="book-title" hidden={view !== 'book'}>
-    <h1 class="sr" id="book-title">Rithwik Bird Feeds and Rithwik Industries, Kurnool</h1>
+    <BookH class="sr" id="book-title" {...hRole('book')}>Rithwik Bird Feeds and Rithwik Industries, Kurnool: a family grain trade since 1925</BookH>
     <div class="stage__grain" aria-hidden="true"></div>
     <canvas class="stage__dust" aria-hidden="true"></canvas>
     <div class="stage__flock" data-flock="2" aria-hidden="true"></div>
@@ -252,7 +261,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         <span class="ghost ghost--bird" data-ghost="Feeds" aria-hidden="true"></span>
         <div class="bird__intro bird__intro--pack">
           <div class="bird__copy">
-            <h1 class="display" id="bird-title"><span class="display__a"><W t="Rithwik" d={0} /></span> <span class="display__b"><W t="Bird" d={1} /> <W t="feeds" d={2} /></span></h1>
+            <BirdH class="display" id="bird-title" {...hRole('bird')}><span class="display__a"><W t="Rithwik" d={0} /></span> <span class="display__b"><W t="Bird" d={1} /> <W t="feeds" d={2} /></span><span class="sr">, Kurnool: foxtail millet and bird seed supplier in India</span></BirdH>
             <p class="bird__lede" data-rise style="--i:0">{BIRD.length} types of feeds in {nBird} grades, sold processed or unprocessed, from our warehouse at Duvvur.</p>
             <div class="actions" data-rise style="--i:1">
               <a class="pill pill--gold" href="#b-feeds" data-jump data-magnetic>See the feeds</a>
@@ -372,7 +381,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         <span class="ghost ghost--food" data-ghost="Grain" aria-hidden="true"></span>
         <div class="food-hero__copy">
           <p class="food-hero__brand" data-rise style="--i:0">Rithwik Industries</p>
-          <h1 class="display display--food" id="food-title"><W t="Nature's" d={0} /> <em class="grainword"><W t="grain," d={1} /></em> <W t="nurtured" d={2} /> <W t="for" d={3} /> <W t="you" d={4} /></h1>
+          <FoodH class="display display--food" id="food-title" {...hRole('food')}><span class="sr">Rithwik Industries, Kurnool: </span><W t="Nature's" d={0} /> <em class="grainword"><W t="grain," d={1} /></em> <W t="nurtured" d={2} /> <W t="for" d={3} /> <W t="you" d={4} /></FoodH>
           <p class="food-hero__lede" data-rise style="--i:1">Millets, super foods, oil seeds, pulses, spices and cereals for retail packers, traders and bulk buyers.</p>
           <div class="actions" data-rise style="--i:2">
             <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>
