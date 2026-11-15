@@ -39,13 +39,19 @@ const scrollTo2 = (y: number) => window.scrollTo({ top: y });
 /* ------------------------------------------------------------------ views */
 const stage = $('#book-view')!;
 const sites: Record<'bird' | 'food', HTMLElement> = { bird: $('[data-site="bird"]')!, food: $('[data-site="food"]')! };
-const titles: Record<View, string> = {
-  book: 'Rithwik, Kurnool: Bird Feeds and Human Food',
-  bird: 'Rithwik Bird Feeds, Kurnool',
-  food: 'Rithwik Industries, Kurnool: millets, super foods, pulses and spices',
+// Each view has its own address (/, /bird-feeds/, /human-food/) and title, written into <html> by
+// Site.astro. Switching happens in place and updates the address bar; the old #bird-feeds and
+// #human-food links still open the right view.
+const H = document.documentElement.dataset;
+const titles: Record<View, string> = { book: H.tBook!, bird: H.tBird!, food: H.tFood! };
+const urls: Record<View, string> = { book: H.uBook!, bird: H.uBird!, food: H.uFood! };
+const pathFor = (v: View) => new URL(urls[v]).pathname;
+const viewFromHash = (): View => {
+  if (location.hash === '#bird-feeds') return 'bird';
+  if (location.hash === '#human-food') return 'food';
+  const p = location.pathname.replace(/\/?$/, '/');
+  return p === pathFor('bird') ? 'bird' : p === pathFor('food') ? 'food' : 'book';
 };
-const hashFor: Record<View, string> = { book: '', bird: '#bird-feeds', food: '#human-food' };
-const viewFromHash = (): View => (location.hash === '#bird-feeds' ? 'bird' : location.hash === '#human-food' ? 'food' : 'book');
 let current: View = 'book';
 const siteTriggers: Record<'bird' | 'food', ScrollTrigger[]> = { bird: [], food: [] };
 const inited = new Set<string>();
@@ -62,6 +68,7 @@ function show(view: View) {
   setMode(view);
   document.dispatchEvent(new Event('rithwik:view'));
   document.title = titles[view];
+  document.querySelector('link[rel="canonical"]')?.setAttribute('href', urls[view]);
   (document.querySelector('meta[name="theme-color"]') as HTMLMetaElement).content = view === 'food' ? '#e4dfc1' : '#0b1924';
   lenis?.scrollTo(0, { immediate: true, force: true });
   window.scrollTo(0, 0);
@@ -74,7 +81,7 @@ function show(view: View) {
 
 function go(view: View, from?: { x: number; y: number; el?: Element }, push = true) {
   if (view === current) return;
-  if (push) history.pushState({ view }, '', hashFor[view] || location.pathname + location.search);
+  if (push) history.pushState({ view }, '', pathFor(view) + location.search);
   sfx('turn');
   const swap = () => show(view);
   if (reduce) return swap();
@@ -965,6 +972,8 @@ $$('[data-year]').forEach((y) => (y.textContent = String(new Date().getFullYear(
 /* ------------------------------------------------------------------ start */
 applyFestive(reduce);
 const first = viewFromHash();
+// an old #bird-feeds / #human-food link: show the page's own address instead
+if (location.hash === '#bird-feeds' || location.hash === '#human-food') history.replaceState({ view: first }, '', pathFor(first) + location.search);
 if (first === 'book') {
   show('book');
   opened = false; // let the cover open on its own

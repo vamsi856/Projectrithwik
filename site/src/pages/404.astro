@@ -53,15 +53,15 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 <body>
   <main>
     <div class="logos">
-      <a href={`${base}#bird-feeds`} aria-label="Rithwik Bird Feeds"><Image src={birdLogo} alt="" width={184} /></a>
-      <a href={`${base}#human-food`} aria-label="Rithwik Industries"><Image src={foodLogo} alt="" width={184} /></a>
+      <a href={`${base}bird-feeds/`} aria-label="Rithwik Bird Feeds"><Image src={birdLogo} alt="" width={184} /></a>
+      <a href={`${base}human-food/`} aria-label="Rithwik Industries"><Image src={foodLogo} alt="" width={184} /></a>
     </div>
     <p class="code" aria-hidden="true">404</p>
     <h1>This page flew off</h1>
     <p>The link may be old or mistyped. Everything we sell is on one of our two sites.</p>
     <nav class="go" aria-label="Where to go">
-      <a class="bird" href={`${base}#bird-feeds`}>Rithwik Bird Feeds</a>
-      <a class="food" href={`${base}#human-food`}>Rithwik Industries</a>
+      <a class="bird" href={`${base}bird-feeds/`}>Rithwik Bird Feeds</a>
+      <a class="food" href={`${base}human-food/`}>Rithwik Industries</a>
       <a href={base}>Open the book</a>
     </nav>
     <p class="reach">Or call <a href="tel:+919245555556">92455 55556</a>, WhatsApp <a href="https://wa.me/919245555556">92455 55556</a>, or email <a href={`mailto:${BRANDS.bird.email}`}>{BRANDS.bird.email}</a> / <a href={`mailto:${BRANDS.food.email}`}>{BRANDS.food.email}</a></p>

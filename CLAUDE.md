@@ -8,7 +8,12 @@ Live at https://vamsi856.github.io/Projectrithwik/ (GitHub Pages, served from th
 - `site/` is the source: an Astro 5 static site (GSAP + ScrollTrigger, Lenis, three.js for the 3D packs).
 - The repo root (`index.html`, `_astro/`, `img/`, `birds/` …) is **generated**: `npm run build` builds `site/dist`
   and `site/scripts/publish.mjs` copies it to the root. Never edit root files by hand.
-- One page, three views: the "book" cover, `#bird-feeds` and `#human-food` (Rithwik Industries).
+- Three addresses, one shared page (`site/src/components/Site.astro`): `/` (the book), `/bird-feeds/` and `/human-food/`
+  (Rithwik Industries). Each has its own title, description, canonical and JSON-LD; `src/pages/*` just pick the view.
+  Switching is in place (`main.ts` pushes the path); old `#bird-feeds` / `#human-food` links still work.
+- SEO files are generated: `src/pages/sitemap.xml.ts`, `robots.txt.ts`, `llms.txt.ts`, `site.webmanifest.ts`.
+  Titles/descriptions and the Search Console code live in `src/data/seo.ts`. The site address is `SITE_URL` in
+  `astro.config.mjs` (everything follows it; for an own domain also add `public/CNAME`).
 
 ## Commands (run in `site/`)
 
@@ -57,14 +62,15 @@ If a push doesn't trigger Pages, push an empty commit.
 - Founders: Bysani Vasavi (left) and Bysani Sudheer (right), shown only as the big round photo on the 2022 dot, on both
   timelines. No macaw on the timeline, and no extra founders photos.
 - Human Food sound is its original generated calm music only (tanpura-style drone, slow raga Mohanam notes, soft
-  chimes, in `sound.ts`): the client's final choice (13 Nov) after trying wind, flute and a grain pour. No birdsong,
-  no click/whoosh effects there. Bird Feeds is the recorded birdsong.
+  chimes, in `sound.ts`): the client's final choice (13 Nov) after trying wind, flute and a grain pour. Raised to
+  about the birdsong's loudness (~-20 dB). No birdsong, no click/whoosh effects there. Bird Feeds is the recorded
+  birdsong. Sound is on by default (starts on the first tap; key `rithwik-sound-v2`).
 - Seeds (chia, quinoa, pumpkin, hulled sunflower, flax, basil) sit in Super foods, not Oil seeds.
 - Names: "Sunflower seeds", "Safflower seeds". Ragi: "Ragi" on Human Food; on Bird Feeds "Finger millet" (option "Ragi"),
   right after Pearl millet.
 - Foxtail has only Summer crop / Winter crop (no processed/unprocessed choice). Chia (Human Food) has Black and White.
 - Each Human Food section opens with a cover cut by **wavy** slanted lines into one slice per product, each slice showing
-  that product's photo (built from the products in `index.astro` with SVG masks; phones use two rows when a section has
+  that product's photo (built from the products in `Site.astro` with SVG masks; phones use two rows when a section has
   more than four).
 - Bird Feeds "Who we are" shows the client's claim "No. 1 foxtail millet supplier in India": a 3D gold 1 (no "No."/"India" beside it) (CSS) that counts
   down from 50, then sways with a sheen and sparkles (paused off screen).
@@ -95,6 +101,9 @@ If a push doesn't trigger Pages, push an empty commit.
 
 ## Still open
 
+- After handover (owner's Google account): Search Console (paste the HTML-tag code into `seo.ts`, submit the sitemap),
+  Google Business Profile, an own domain, directory listings (IndiaMART etc.). Steps are in README.md.
+- ISO: which standard (e.g. ISO 22000:2018) and the certifying body's badge, if the client sends them.
 - Human Food millets show the client's hulled-grain photos (`*-hulled-rithwik`); Bird Feeds shows whole grain.
   The unlabeled bright-yellow photo was taken as hulled proso: confirm with the client.
 - Small client photos were AI-upscaled (EDSR) to ~1100-1280px; originals are in git history. Real sharper close-ups

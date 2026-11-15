@@ -1,0 +1,5 @@
+# Rithwik Bird Feeds & Rithwik Industries, Kurnool
+User-agent: *
+Allow: /
+
+Sitemap: https://vamsi856.github.io/Projectrithwik/sitemap.xml
