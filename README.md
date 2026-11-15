@@ -53,6 +53,20 @@ Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three
    Settings > Pages, and point the domain's DNS at GitHub Pages. HTTPS is free.
 3. Build, commit and push. Add the new address in Search Console and submit its sitemap again.
 
+## Product catalogue (PDF)
+
+`site/public/Rithwik-Catalogue.pdf` (the site's "Download catalogue" button) is generated from the same data as the
+site: 7 A4 pages (cover, who we are, certifications and where we operate, the Rithwik Industries range, the Rithwik
+Bird Feeds range, contact with WhatsApp and website QR codes). After changing products, photos or contact details:
+
+```
+cd site
+npm run catalogue   # rebuilds the PDF (needs Playwright's Chromium)
+npm run build
+```
+
+When the site moves to its own domain, run it with `SITE_URL=https://the-domain/ npm run catalogue` so the QR code points there.
+
 ## Stack
 
 - [Astro 5](https://astro.build) (static output, TypeScript)

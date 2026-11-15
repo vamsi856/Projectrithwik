@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && node scripts/publish.mjs",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "catalogue": "node scripts/catalogue.mjs"
   },
   "dependencies": {
     "@fontsource/anton": "^5.2.6",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@types/three": "^0.187.0",
+    "qrcode": "^1.5.4",
     "typescript": "^5.9.3"
   }
 }

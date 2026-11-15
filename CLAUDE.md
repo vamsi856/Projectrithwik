@@ -42,6 +42,12 @@ If a push doesn't trigger Pages, push an empty commit.
   `flock.ts` is the hero macaw flock, `sound.ts` the birdsong and Human Food music, `pack3d.ts` the 3D packs.
 - `site/src/styles/v2.css`: all styles. Components are in `site/src/components/`.
 
+## Catalogue PDF
+
+`site/scripts/catalogue.mjs` (`npm run catalogue`) builds `public/Rithwik-Catalogue.pdf` from products.ts, registrations,
+legacy, network and the photos (converted to JPEG, ~4.5 MB). Rerun it after product/photo/contact changes, then build.
+It replaced the client's Canva catalogue (which had the removed number 83097 82770 and a stray "$120.00").
+
 ## Adding a client photo
 
 1. Crop it from the original: 4:3, **grain only, no hands or background**, at least ~800px wide if possible.
