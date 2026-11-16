@@ -15,10 +15,10 @@ Mission: to connect farmers directly with industries by sourcing quality agricul
 
 ## Pages
 
-- [Rithwik Bird Feeds](https://vamsi856.github.io/Projectrithwik/bird-feeds/): bird feed grains, processed or unprocessed, for traders, pet shops, bird keepers and export houses.
-- [Rithwik Industries](https://vamsi856.github.io/Projectrithwik/human-food/): food staples for retail packers, traders and bulk buyers.
-- [Home](https://vamsi856.github.io/Projectrithwik/): both businesses, the family story since 1925 and where they operate.
-- [Product catalogue (PDF)](https://vamsi856.github.io/Projectrithwik/Rithwik-Catalogue.pdf)
+- [Rithwik Bird Feeds](https://rithwikbirdfeeds.com/bird-feeds/): bird feed grains, processed or unprocessed, for traders, pet shops, bird keepers and export houses.
+- [Rithwik Industries](https://rithwikbirdfeeds.com/human-food/): food staples for retail packers, traders and bulk buyers.
+- [Home](https://rithwikbirdfeeds.com/): both businesses, the family story since 1925 and where they operate.
+- [Product catalogue (PDF)](https://rithwikbirdfeeds.com/Rithwik-Catalogue.pdf)
 
 ## Contact
 
