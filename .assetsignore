@@ -1,6 +1,7 @@
 # Not part of the website: the source, the notes and the config.
 .git
 .github
+.claude
 .gitignore
 .assetsignore
 .published.json
