@@ -11,3 +11,10 @@
   Cache-Control: public, max-age=31536000, immutable
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
+
+# the macaw animation sheets and the sound recordings: big files that are replaced by adding a
+# new name, not by overwriting, so a returning visitor's browser may keep them for a week
+/birds/*
+  Cache-Control: public, max-age=604800
+/sound/*
+  Cache-Control: public, max-age=604800

@@ -27,6 +27,7 @@ import Legacy from '../components/Legacy.astro';
 import Faq from '../components/Faq.astro';
 import { faqs } from '../data/faq';
 import { META, PATHS, GOOGLE_SITE_VERIFICATION, BING_SITE_VERIFICATION, type View } from '../data/seo';
+import { SINCE, FOUNDERS } from '../data/legacy';
 
 interface Props { view: View }
 const { view } = Astro.props;
@@ -59,7 +60,12 @@ const ogImage = abs(`${base}${view === 'bird' ? 'og-bird.jpg' : view === 'food' 
 const [lat, lng] = CONTACT.officeAt.split(',').map(Number);
 const birdLogoUrl = abs((await getImage({ src: birdLogo, width: 512, format: 'png' })).src);
 const foodLogoUrl = abs((await getImage({ src: foodLogo, width: 512, format: 'png' })).src);
-const business = (key: 'bird' | 'food', logoUrl: string, desc: string, items: { name: string }[]) => ({
+// the name Google shows above the site's results, and the name of the family organisation
+const SITE_NAME = 'Rithwik Bird Feeds & Rithwik Industries';
+const officeAddress = { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' };
+const [wLat, wLng] = CONTACT.warehouseAt.split(',').map(Number);
+const groupOf = (key: 'bird' | 'food', id: string) => (key === 'bird' ? BIRD_GROUPS : FOOD_GROUPS).find((g) => g.id === id)?.label;
+const business = (key: 'bird' | 'food', logoUrl: string, desc: string, items: typeof BIRD) => ({
   '@type': ['LocalBusiness', 'WholesaleStore'],
   '@id': `${pageUrl(key)}#business`,
   name: BRANDS[key].name,
@@ -68,36 +74,57 @@ const business = (key: 'bird' | 'food', logoUrl: string, desc: string, items: { 
   description: desc,
   url: pageUrl(key),
   parentOrganization: { '@id': `${SITE}#family` },
-  priceRange: 'Ask for a quote',
   logo: logoUrl,
   image: [logoUrl, abs(`${base}og-${key}.jpg`)],
   sameAs: [`https://wa.me/${CONTACT.whatsapp}`, ...BRANDS[key].profiles],
   email: BRANDS[key].email,
   telephone: CONTACT.phones.map((p) => p.tel),
   taxID: BRANDS[key].gstin,
-  address: { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' },
+  address: officeAddress,
   geo: { '@type': 'GeoCoordinates', latitude: lat, longitude: lng },
   hasMap: CONTACT.directions,
   areaServed: { '@type': 'Country', name: 'India' },
   contactPoint: { '@type': 'ContactPoint', contactType: 'sales', telephone: CONTACT.phones[0].tel, email: BRANDS[key].email, availableLanguage: ['en', 'te', 'hi'] },
-  hasOfferCatalog: { '@type': 'OfferCatalog', name: `${BRANDS[key].name} range`, itemListElement: items.map((p) => ({ '@type': 'Offer', name: p.name, description: p.variants.length > 1 ? `${p.name}: ${p.variants.map((v) => v.label).join(', ')}` : p.name, availability: 'https://schema.org/InStock', businessFunction: 'http://purl.org/goodrelations/v1#Sell' })) },
+  hasOfferCatalog: { '@type': 'OfferCatalog', name: `${BRANDS[key].name} range`, itemListElement: items.map((p) => ({ '@type': 'Offer', name: p.name, description: p.variants.length > 1 ? `${p.name}: ${p.variants.map((v) => v.label).join(', ')}` : p.name, category: groupOf(key, p.group), businessFunction: 'http://purl.org/goodrelations/v1#Sell' })) },
   slogan: key === 'bird' ? 'No. 1 foxtail millet supplier in India' : "Nature's grain, nurtured for you",
-  foundingDate: '1925',
+  // the people on the last dot of the timeline. "Since 1925" is the family trade, so that year is on
+  // the organisation below and the two firms carry no founding year of their own
+  founder: FOUNDERS.names.map((name) => ({ '@type': 'Person', name })),
 });
 const birdBiz = business('bird', birdLogoUrl, 'Bird feed grains from Kurnool: foxtail, proso, little, kodo, barnyard and browntop millets, jowar, bajra, ragi, maize, sunflower and safflower, processed or unprocessed. No. 1 foxtail millet supplier in India.', BIRD);
 const foodBiz = business('food', foodLogoUrl, 'Food staples from Kurnool: millets, super foods, oil seeds, pulses, spices and cereals for retail packers, traders and bulk buyers.', FOOD);
+// a business that is described in full on this page is pointed to; the other one is named, so
+// nothing on a page points at something the page does not describe
+const inGraph = (key: 'bird' | 'food') => view === 'book' || view === key;
+const bizRef = (key: 'bird' | 'food', biz: typeof birdBiz) => (inGraph(key) ? { '@id': biz['@id'] } : { '@type': 'LocalBusiness', '@id': biz['@id'], name: biz.name, url: biz.url });
 const family = {
-  '@type': 'Organization', '@id': `${SITE}#family`, name: 'Rithwik, Kurnool', url: SITE, logo: foodLogoUrl,
+  '@type': 'Organization', '@id': `${SITE}#family`, name: SITE_NAME, alternateName: ['Rithwik', 'Rithwik, Kurnool'], url: SITE, logo: foodLogoUrl,
   description: 'A Kurnool family grain trade that began in 1925, today Rithwik Bird Feeds and Rithwik Industries.',
-  subOrganization: [{ '@id': birdBiz['@id'] }, { '@id': foodBiz['@id'] }],
-  address: birdBiz.address, telephone: CONTACT.call.tel,
+  foundingDate: String(SINCE),
+  foundingLocation: { '@type': 'Place', name: 'Kurnool, Andhra Pradesh' },
+  subOrganization: [bizRef('bird', birdBiz), bizRef('food', foodBiz)],
+  address: officeAddress, telephone: CONTACT.call.tel,
+  // the office and the main warehouse, both shown on the map tabs
+  location: [
+    { '@type': 'Place', name: 'Rithwik office, Kurnool', address: officeAddress, geo: { '@type': 'GeoCoordinates', latitude: lat, longitude: lng }, hasMap: CONTACT.directions },
+    { '@type': 'Place', name: 'Rithwik main warehouse, Duvvur', address: { '@type': 'PostalAddress', streetAddress: '2/161, 2/162, Sanjivareddypalle', addressLocality: 'Duvvur', addressRegion: 'Andhra Pradesh', addressCountry: 'IN' }, geo: { '@type': 'GeoCoordinates', latitude: wLat, longitude: wLng }, hasMap: CONTACT.warehouseDirections },
+  ],
 };
-const webPage = { '@type': 'WebPage', '@id': `${pageUrl(view)}#page`, url: pageUrl(view), name: meta.title, description: meta.description, inLanguage: 'en-IN', isPartOf: { '@id': `${SITE}#site` }, about: { '@id': view === 'bird' ? birdBiz['@id'] : view === 'food' ? foodBiz['@id'] : `${SITE}#family` }, primaryImageOfPage: ogImage };
+// Home > the business, for the path Google shows above a result (not on the home page itself)
+const crumbs = view === 'book' ? null : {
+  '@type': 'BreadcrumbList', '@id': `${pageUrl(view)}#breadcrumb`,
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE },
+    { '@type': 'ListItem', position: 2, name: BRANDS[view].name, item: pageUrl(view) },
+  ],
+};
+const webPage = { '@type': 'WebPage', '@id': `${pageUrl(view)}#page`, url: pageUrl(view), name: meta.title, description: meta.description, inLanguage: 'en-IN', isPartOf: { '@id': `${SITE}#site` }, about: { '@id': view === 'bird' ? birdBiz['@id'] : view === 'food' ? foodBiz['@id'] : `${SITE}#family` },
+  primaryImageOfPage: { '@type': 'ImageObject', url: ogImage, width: 1200, height: 630 }, ...(crumbs ? { breadcrumb: { '@id': crumbs['@id'] } } : {}) };
 const schema = {
   '@context': 'https://schema.org',
   '@graph': [
-    { '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: 'Rithwik, Kurnool', inLanguage: 'en-IN', publisher: { '@id': `${SITE}#family` } },
-    webPage, family,
+    { '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: SITE_NAME, alternateName: ['Rithwik Bird Feeds', 'Rithwik Industries', 'Rithwik Kurnool'], inLanguage: 'en-IN', publisher: { '@id': `${SITE}#family` } },
+    webPage, family, ...(crumbs ? [crumbs] : []),
     ...(view === 'book' ? [] : [{ '@type': 'FAQPage', '@id': `${pageUrl(view)}#faq`, url: pageUrl(view), isPartOf: { '@id': `${pageUrl(view)}#page` }, inLanguage: 'en-IN',
       mainEntity: FAQ[view].map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }]),
     ...(view === 'food' ? [] : [birdBiz]),
@@ -151,7 +178,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
   <meta name="ICBM" content={`${lat}, ${lng}`} />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_IN" />
-  <meta property="og:site_name" content="Rithwik, Kurnool" />
+  <meta property="og:site_name" content={SITE_NAME} />
   <meta property="og:title" content={meta.ogTitle} />
   <meta property="og:description" content={meta.description} />
   <meta property="og:url" content={pageUrl(view)} />
@@ -174,19 +201,15 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
   <link rel="preload" href={`${base}fonts/instrument-sans-latin-600-normal.woff2`} as="font" type="font/woff2" crossorigin />
   <style is:inline set:html={[['Anton', 400, 'anton-latin-400-normal'], ...[400, 500, 600, 700].map((w) => ['Instrument Sans', w, `instrument-sans-latin-${w}-normal`])]
     .map(([f, w, file]) => `@font-face { font-family: "${f}"; src: url("${base}fonts/${file}.woff2") format("woff2"); font-weight: ${w}; font-style: normal; font-display: swap; }`).join('\n')}></style>
-  <script is:inline define:vars={{ heroSet: birdHeroPhoto?.avif ?? '', heroSizes: HERO_SIZES }}>
-    // A link straight to the bird site: fetch its hero photo at once (it is lazy otherwise,
-    // so the book and the food site never download it).
-    if ((location.hash === '#bird-feeds' || /\/bird-feeds\/?$/.test(location.pathname)) && heroSet) {
-      var l = document.createElement('link');
-      l.rel = 'preload'; l.as = 'image'; l.type = 'image/avif'; l.setAttribute('imagesrcset', heroSet); l.setAttribute('imagesizes', heroSizes); l.setAttribute('fetchpriority', 'high');
-      document.head.appendChild(l);
-    }
-  </script>
+  {/* the Bird Feeds hero photo is the first big thing on that page: start fetching it at once */}
+  {view === 'bird' && birdHeroPhoto && <link rel="preload" as="image" type="image/avif" imagesrcset={birdHeroPhoto.avif} imagesizes={HERO_SIZES} fetchpriority="high" />}
   <script is:inline>
     // Show the right site before first paint when the link points straight at one.
     (function () {
       var h = location.hash, p = location.pathname.replace(/\/?$/, '/'), d = document.documentElement;
+      // an old #bird-feeds / #human-food link: each site now lives only at its own address, so go there
+      var old = h === '#bird-feeds' ? 'bird-feeds/' : h === '#human-food' ? 'human-food/' : '';
+      if (old && p.slice(-old.length - 1) !== '/' + old) return location.replace(d.dataset.base + old + location.search);
       d.dataset.view = h === '#bird-feeds' || /\/bird-feeds\/$/.test(p) ? 'bird' : h === '#human-food' || /\/human-food\/$/.test(p) ? 'food' : 'book';
       // the hero entrance is pure CSS and starts with the first paint
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('has-motion');
@@ -255,8 +278,13 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
 
   <div class="turn" id="turn" aria-hidden="true"></div>
 
+  {/* Each address carries only its own business: /bird-feeds/ has the Bird Feeds view, /human-food/ the
+      Rithwik Industries view, and / only the book. The other view is fetched from its own address when
+      the visitor switches (loadSite in main.ts), so search engines read three different pages and not
+      the same text three times. */}
   <!-- ================= SITE 1: RITHWIK BIRD FEEDS ================= -->
   <div class="site site--bird" id="bird-feeds" data-site="bird" hidden={view !== 'bird'}>
+    {view === 'bird' && <Fragment>
     <a class="skip" href="#b-main" data-skip>Skip to content</a>
     <SiteHeader logo={birdLogo} first="Rithwik" second="Bird Feeds" top="b-top" email={BRANDS.bird.email}
       phones={[CONTACT.phones[1], CONTACT.phones[2]]}
@@ -267,7 +295,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
       <section class="bird__hero" id="b-top" aria-labelledby="bird-title">
         {birdHeroPhoto && (
           <div class="bird__photo" data-parallax="0.18">
-            <Photo name="bird-budgies" alt="" sizes={HERO_SIZES} priority />
+            <Photo name="bird-budgies" alt="" sizes={HERO_SIZES} eager />
           </div>
         )}
         <canvas class="seedfall" aria-hidden="true"></canvas>
@@ -382,10 +410,12 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
       sister={{ view: 'food', href: href('food'), text: 'Rithwik Industries, millets, super foods, pulses and spices for people' }} />
     <!-- the paper bird: a curved gold wing shape that beats as you scroll -->
     <svg class="scrollbird" viewBox="-40 -24 80 48" aria-hidden="true"><g class="pb"><path d="M-32 -9 Q-17 -17 0 2 Q17 -17 32 -9 Q17 -8 0 7 Q-17 -8 -32 -9Z" /></g></svg>
+    </Fragment>}
   </div>
 
   <!-- ================= SITE 2: RITHWIK INDUSTRIES ================= -->
   <div class="site site--food" id="human-food" data-site="food" hidden={view !== 'food'}>
+    {view === 'food' && <Fragment>
     <a class="skip" href="#f-main" data-skip>Skip to content</a>
     <SiteHeader logo={foodLogo} first="Rithwik" second="Industries" top="f-top" email={BRANDS.food.email}
       phones={[CONTACT.phones[0]]}
@@ -397,7 +427,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         <span class="ghost ghost--food" data-ghost="Grain" aria-hidden="true"></span>
         <div class="food-hero__copy">
           <p class="food-hero__brand" data-rise style="--i:0">Rithwik Industries</p>
-          <FoodH class="display display--food" id="food-title" {...hRole('food')}><span class="sr">Rithwik Industries, Kurnool: </span><W t="Nature's" d={0} /> <em class="grainword"><W t="grain," d={1} /></em> <W t="nurtured" d={2} /> <W t="for" d={3} /> <W t="you" d={4} /></FoodH>
+          <FoodH class="display display--food" id="food-title" {...hRole('food')}><span class="sr">Rithwik Industries, Kurnool, bulk supplier of millets, quinoa, chia and pulses: </span><W t="Nature's" d={0} /> <em class="grainword"><W t="grain," d={1} /></em> <W t="nurtured" d={2} /> <W t="for" d={3} /> <W t="you" d={4} /></FoodH>
           <p class="food-hero__lede" data-rise style="--i:1">Millets, super foods, oil seeds, pulses, spices and cereals for retail packers, traders and bulk buyers.</p>
           <div class="actions" data-rise style="--i:2">
             <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>
@@ -509,6 +539,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
 
     <Footer logo={foodLogo} tone="food" brand={BRANDS.food.name} gstin={BRANDS.food.gstin} email={BRANDS.food.email} top="f-top"
       sister={{ view: 'bird', href: href('bird'), text: 'Rithwik Bird Feeds, millets, jowar and sunflower for birds' }} />
+    </Fragment>}
   </div>
 
   <dialog class="credits" id="credits">

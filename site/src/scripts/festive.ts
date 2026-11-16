@@ -28,14 +28,16 @@ function kite([a, b]: string[], tail = 4) {
   </svg>`;
 }
 
-export function applyFestive(reduce: boolean) {
+/** `late`: a site that was fetched into the page after the start (main.ts loadSite). Its ribbon is
+ * already there (the ribbon goes on the still-empty site at the start); it only needs its kites. */
+export function applyFestive(reduce: boolean, late?: HTMLElement) {
   const theme = activeTheme();
   if (theme !== 'sankranti') return;
   document.documentElement.classList.add('fest-sankranti');
 
   // greeting ribbon at the top of each site, dismissable for this visit
   let closed = false; try { closed = sessionStorage.getItem('fest-closed') === '1'; } catch {}
-  if (!closed) document.querySelectorAll<HTMLElement>('[data-site]').forEach((site) => {
+  if (!closed && !late) document.querySelectorAll<HTMLElement>('[data-site]').forEach((site) => {
     const r = document.createElement('div'); r.className = 'fest-ribbon'; r.setAttribute('role', 'note');
     r.innerHTML = `<span>Happy Sankranti! Wishing you a bountiful harvest from everyone at Rithwik.</span><button class="fest-ribbon__close" type="button" aria-label="Close greeting">×</button>`;
     r.querySelector('button')!.addEventListener('click', () => { document.querySelectorAll('.fest-ribbon').forEach((x) => x.remove()); try { sessionStorage.setItem('fest-closed', '1'); } catch {} });
@@ -43,7 +45,9 @@ export function applyFestive(reduce: boolean) {
   });
 
   // kites over the book and both heroes
-  document.querySelectorAll<HTMLElement>('.stage, .bird__hero, .food-hero').forEach((host, h) => {
+  (late ?? document).querySelectorAll<HTMLElement>('.stage, .bird__hero, .food-hero').forEach((host) => {
+    // the same kite colours whether the site was in the page from the start or fetched later
+    const h = host.classList.contains('stage') ? 0 : host.classList.contains('bird__hero') ? 1 : 2;
     const layer = document.createElement('div'); layer.className = 'kites'; layer.setAttribute('aria-hidden', 'true');
     const n = host.classList.contains('stage') ? 4 : 5;
     for (let i = 0; i < n; i++) {

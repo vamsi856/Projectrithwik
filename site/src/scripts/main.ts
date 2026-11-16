@@ -56,6 +56,35 @@ let current: View = 'book';
 const siteTriggers: Record<'bird' | 'food', ScrollTrigger[]> = { bird: [], food: [] };
 const inited = new Set<string>();
 
+// Each address carries only its own site (Site.astro), so search engines read a different page at
+// each one. The other site is fetched from its own address the first time the visitor asks for it;
+// from then on it is in this page and switching works as before.
+const hasSite = (v: View) => v === 'book' || !!sites[v].querySelector('.sbar');
+const fetching: Partial<Record<View, Promise<boolean>>> = {};
+function loadSite(v: View): Promise<boolean> {
+  if (hasSite(v)) return Promise.resolve(true);
+  return (fetching[v] ??= fetch(pathFor(v))
+    .then((r) => (r.ok ? r.text() : Promise.reject(new Error(`HTTP ${r.status}`))))
+    .then((html) => {
+      const from = new DOMParser().parseFromString(html, 'text/html').querySelector(`[data-site="${v}"]`);
+      if (!from?.querySelector('.sbar')) throw new Error('site missing from its page');
+      if (!hasSite(v)) {
+        const root = sites[v as 'bird' | 'food'];
+        root.append(...[...from.childNodes].map((n) => document.importNode(n, true)));
+        $$('[data-year]', root).forEach((y) => (y.textContent = String(new Date().getFullYear())));
+        applyFestive(reduce, root);
+      }
+      return true;
+    })
+    .catch(() => { delete fetching[v]; return false; }));
+}
+// Start fetching before the click: on the book as soon as a real visitor touches, moves or types
+// (their next step is to pick a site), on a site when they reach for the link to the other one.
+const warmBook = () => { if (current === 'book') { loadSite('bird'); loadSite('food'); } };
+(['pointerdown', 'pointermove', 'touchstart', 'keydown'] as const).forEach((t) => addEventListener(t, warmBook, { once: true, passive: true, capture: true }));
+const warmLink = (e: Event) => { const a = (e.target as Element).closest?.<HTMLElement>('[data-switch]'); if (a) loadSite(a.dataset.switch as View); };
+(['pointerover', 'focusin', 'touchstart'] as const).forEach((t) => addEventListener(t, warmLink, { passive: true }));
+
 function show(view: View) {
   current = view;
   stage.hidden = view !== 'book';
@@ -79,8 +108,22 @@ function show(view: View) {
   if (view === 'book') openBook();
 }
 
+let waitingFor: View | null = null;
 function go(view: View, from?: { x: number; y: number; el?: Element }, push = true) {
   if (view === current) return;
+  if (!hasSite(view)) {
+    // not in this page yet: fetch it, then turn the page. If it cannot be fetched (offline, blocked),
+    // open its address the ordinary way.
+    if (waitingFor === view) return;
+    waitingFor = view;
+    loadSite(view).then((ok) => {
+      if (waitingFor !== view) return; // they picked something else meanwhile
+      waitingFor = null;
+      if (ok) go(view, from, push); else location.assign(pathFor(view) + location.search);
+    });
+    return;
+  }
+  waitingFor = null;
   if (push) history.pushState({ view }, '', pathFor(view) + location.search);
   sfx('turn');
   const swap = () => show(view);
@@ -967,7 +1010,7 @@ if (soundPending) {
 /* ------------------------------------------------------------------ misc */
 const dlg = $<HTMLDialogElement>('#credits');
 document.addEventListener('click', (e) => { if ((e.target as Element).closest('[data-credits]')) { e.preventDefault(); dlg?.showModal(); } });
-$$('[data-year]').forEach((y) => (y.textContent = String(new Date().getFullYear())));
+$$('[data-year]').forEach((y) => (y.textContent = String(new Date().getFullYear()))); // a site fetched later: loadSite
 
 /* ------------------------------------------------------------------ start */
 applyFestive(reduce);
@@ -981,7 +1024,9 @@ if (first === 'book') {
   (document.fonts?.ready ?? Promise.resolve()).then(() => setTimeout(openBook, reduce ? 0 : 900));
 } else {
   opened = true; stage.classList.add('is-open');
-  show(first);
+  // the site is in the page when the address is its own; an old # link that got this far fetches it
+  if (hasSite(first)) show(first);
+  else loadSite(first).then((ok) => (ok ? show(first) : location.replace(pathFor(first) + location.search)));
 }
 document.fonts?.ready.then(() => ScrollTrigger.refresh());
 // opening or closing an answer in "Questions buyers ask" changes the page height below it

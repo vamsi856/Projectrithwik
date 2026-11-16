@@ -12,7 +12,7 @@ const W = [320, 360, 390, 414, 600, 760, 761, 768, 820, 1024, 1280, 1440, 1920];
   for (const w of W) {
     const p = await b.newPage({ viewport: { width: w, height: w < 700 ? 800 : 900 }, isMobile: w < 700, hasTouch: w < 1100 });
     const errs = []; p.on('pageerror', (e) => errs.push(e.message));
-    for (const v of ['', '#bird-feeds', '#human-food']) {
+    for (const v of ['', 'bird-feeds/', 'human-food/']) {
       await p.goto(BASE + v, { waitUntil: 'load' }); await p.waitForTimeout(1500);
       // scroll to the bottom to catch anything that overflows late
       const H = await p.evaluate(() => document.documentElement.scrollHeight);

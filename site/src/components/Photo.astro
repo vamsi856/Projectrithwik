@@ -1,8 +1,7 @@
 ---
 import { photo } from '../data/photos';
-// `eager`: load straight away. `priority`: the first photo a visitor sees on one of the two
-// sites. It stays lazy (so it never downloads while its site is hidden) and the page head
-// preloads it when the link opens that site directly.
+// `eager`: load straight away (the first photo a visitor sees on a page). `priority`: lazy, but
+// fetched first once it is needed.
 interface Props { name: string; alt: string; sizes: string; class?: string; eager?: boolean; priority?: boolean }
 const { name, alt, sizes, class: cls, eager = false, priority = false } = Astro.props;
 const p = photo(name);
