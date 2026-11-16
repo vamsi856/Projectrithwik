@@ -63,6 +63,8 @@ const business = (key: 'bird' | 'food', logoUrl: string, desc: string, items: { 
   '@type': ['LocalBusiness', 'WholesaleStore'],
   '@id': `${pageUrl(key)}#business`,
   name: BRANDS[key].name,
+  // how people also spell or shorten the name when they search
+  alternateName: key === 'bird' ? ['Rithvik Bird Feeds', 'Ritwik Bird Feeds', 'Rithwik Birdfeeds', 'Rithwik Bird Feed Kurnool'] : ['Rithvik Industries', 'Ritwik Industries', 'Rithwik Industries Kurnool'],
   description: desc,
   url: pageUrl(key),
   parentOrganization: { '@id': `${SITE}#family` },
