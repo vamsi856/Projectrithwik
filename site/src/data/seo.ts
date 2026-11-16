@@ -16,20 +16,20 @@ const nBird = BIRD.length, gBird = lineCount(BIRD);
 
 export const META: Record<View, { title: string; description: string; ogTitle: string }> = {
   book: {
-    title: 'Rithwik Bird Feeds & Rithwik Industries, Kurnool | Since 1925',
+    title: 'Rithwik Bird Feeds & Rithwik Industries, Kurnool',
     description:
-      'A Kurnool family grain trade since 1925. Rithwik Bird Feeds: foxtail millet, jowar, sunflower and bird seed. Rithwik Industries: millets, super foods, pulses and spices.',
+      'Official website of Rithwik Bird Feeds and Rithwik Industries, Kurnool, since 1925: foxtail millet, bird seed, millets, quinoa, chia, pulses and spices in bulk.',
     ogTitle: 'Rithwik Bird Feeds & Rithwik Industries, Kurnool',
   },
   bird: {
-    title: 'Rithwik Bird Feeds, Kurnool | Foxtail Millet & Bird Seed Supplier in India',
-    description: `No. 1 foxtail millet supplier in India. ${nBird} types of bird feed in ${gBird} grades, processed or unprocessed: foxtail, proso, kodo and little millets, jowar, bajra, ragi, maize, sunflower and safflower.`,
+    title: 'No. 1 Foxtail Millet Supplier in India | Rithwik Bird Feeds',
+    description: `India's No. 1 foxtail millet (korralu) supplier, Kurnool. ${nBird} bird feeds in ${gBird} grades, processed or unprocessed, in bulk across India. WhatsApp 92455 55556.`,
     ogTitle: 'Rithwik Bird Feeds: foxtail millet and bird seed from Kurnool',
   },
   food: {
-    title: 'Rithwik Industries, Kurnool | Millets, Super Foods, Pulses & Spices Supplier',
+    title: 'Bulk Millets, Quinoa & Chia Supplier | Rithwik Industries',
     description:
-      'Millets, quinoa, chia, oil seeds, pulses, spices and cereals from Kurnool, Andhra Pradesh, for retail packers, traders and bulk buyers. 40+ products, a family grain trade since 1925.',
+      'Bulk millets, quinoa, chia, oil seeds, pulses and spices from Kurnool for retail packers, traders and bulk buyers across India. 40+ products, since 1925.',
     ogTitle: 'Rithwik Industries: millets, super foods, pulses and spices from Kurnool',
   },
 };

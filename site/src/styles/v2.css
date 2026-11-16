@@ -442,6 +442,35 @@ html[data-view="bird"] .stage, html[data-view="food"] .stage { display: none; }
 .step p { margin: 0; opacity: .8; }
 @media (max-width: 860px) { .steps__list { grid-template-columns: 1fr; } .steps__path { display: none; } }
 
+/* ---------- questions buyers ask (Faq.astro) ---------- */
+.faq { max-width: var(--max); margin: 0 auto; padding: clamp(40px, 7vw, 100px) var(--gutter) clamp(70px, 10vw, 130px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(24px, 5vw, 72px); align-items: start; }
+.faq--bird .section-title { color: var(--khaki); }
+.faq__head p { margin: 0; max-width: 36ch; opacity: .8; }
+.faq__list { display: grid; gap: 12px; }
+.faq__item { border-radius: 22px; transition: box-shadow .3s; }
+.faq--bird .faq__item { background: var(--navy-2); box-shadow: inset 0 0 0 1px rgba(124, 196, 234, .1); }
+.faq--food .faq__item { background: var(--paper); box-shadow: inset 0 0 0 1px rgba(var(--ink-rgb), .06); }
+.faq--bird .faq__item[open] { box-shadow: inset 0 0 0 1px rgba(242, 178, 27, .45); }
+.faq--food .faq__item[open] { box-shadow: inset 0 0 0 1px rgba(var(--bronze-rgb), .5); }
+.faq__item summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 20px 22px; border-radius: 22px; }
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.faq--food .faq__item summary:focus-visible { outline-color: var(--bronze); }
+.faq__item h3 { margin: 0; font-size: clamp(1.02rem, 1.3vw, 1.15rem); line-height: 1.35; font-weight: 600; }
+.faq__icon { flex: none; position: relative; width: 34px; height: 34px; border-radius: 50%; transition: transform .35s cubic-bezier(.3, .7, .2, 1); }
+.faq--bird .faq__icon { background: var(--marigold); color: var(--navy); }
+.faq--food .faq__icon { background: var(--ink); color: var(--khaki); }
+.faq__icon::before, .faq__icon::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 2px; margin: -1px 0 0 -6px; border-radius: 2px; background: currentColor; }
+.faq__icon::after { transform: rotate(90deg); transition: transform .35s; }
+.faq__item[open] .faq__icon { transform: rotate(180deg); }
+.faq__item[open] .faq__icon::after { transform: rotate(0deg); }
+.faq__item p { margin: 0; padding: 0 22px 22px; max-width: 66ch; opacity: .85; }
+.faq__item a { color: inherit; font-weight: 600; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.faq--bird .faq__item a { color: var(--marigold); }
+.faq--food .faq__item a { color: var(--bronze-ink, var(--ink)); }
+@media (max-width: 860px) { .faq { grid-template-columns: 1fr; gap: 18px; } .faq__item summary { padding: 18px; } .faq__item p { padding: 0 18px 18px; } }
+@media (prefers-reduced-motion: reduce) { .faq__icon, .faq__icon::after { transition: none; } }
+
 /* ---------- scroll bird ---------- */
 /* the scroll flock: a sky over the whole screen that never takes a tap (under the header) */
 /* the paper bird that zigzags down the Bird Feeds page as you scroll */

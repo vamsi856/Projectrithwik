@@ -984,3 +984,5 @@ if (first === 'book') {
   show(first);
 }
 document.fonts?.ready.then(() => ScrollTrigger.refresh());
+// opening or closing an answer in "Questions buyers ask" changes the page height below it
+document.addEventListener('toggle', (e) => { if ((e.target as Element).classList?.contains('faq__item')) ScrollTrigger.refresh(); }, true);

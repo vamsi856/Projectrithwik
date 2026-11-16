@@ -24,6 +24,8 @@ import { held } from '../data/registrations';
 import Certifications from '../components/Certifications.astro';
 import BirdsWeFeed from '../components/BirdsWeFeed.astro';
 import Legacy from '../components/Legacy.astro';
+import Faq from '../components/Faq.astro';
+import { faqs } from '../data/faq';
 import { META, PATHS, GOOGLE_SITE_VERIFICATION, BING_SITE_VERIFICATION, type View } from '../data/seo';
 
 interface Props { view: View }
@@ -34,6 +36,7 @@ const SITE = new URL(base, Astro.site).href;
 const pageUrl = (v: View) => `${SITE}${PATHS[v]}`;
 const href = (v: View) => `${base}${PATHS[v]}`;
 const meta = META[view];
+const FAQ = faqs(new URL(SITE).host);
 // only the open view's title is the page's <h1>; the other views' titles are level-1 headings for
 // screen readers but not <h1> tags, so each address has exactly one <h1>
 const H1 = (v: View) => (v === view ? 'h1' : 'p');
@@ -93,6 +96,8 @@ const schema = {
   '@graph': [
     { '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: 'Rithwik, Kurnool', inLanguage: 'en-IN', publisher: { '@id': `${SITE}#family` } },
     webPage, family,
+    ...(view === 'book' ? [] : [{ '@type': 'FAQPage', '@id': `${pageUrl(view)}#faq`, url: pageUrl(view), isPartOf: { '@id': `${pageUrl(view)}#page` }, inLanguage: 'en-IN',
+      mainEntity: FAQ[view].map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }]),
     ...(view === 'food' ? [] : [birdBiz]),
     ...(view === 'bird' ? [] : [foodBiz]),
   ],
@@ -199,7 +204,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
     <div class="book" id="book">
       <a class="page page--food" href={href('food')} data-enter="food">
         <div class="page__inner">
-          <Picture class="page__emblem page__emblem--food" src={foodLogo} alt="" formats={['avif']} fallbackFormat="webp" widths={[160, 240, 360, 480, 612]} sizes="(max-width: 860px) 25vw, 9vw" quality={60} loading="lazy" />
+          <Picture class="page__emblem page__emblem--food" src={foodLogo} alt="" formats={['avif']} fallbackFormat="webp" widths={[160, 240, 360, 480, 612]} sizes="(max-width: 860px) 25vw, 9vw" quality={60} loading={view === 'book' ? 'eager' : 'lazy'} />
           <div class="page__text">
             <p class="page__kicker">Rithwik Industries</p>
             <h2 class="page__title">Human<br />food</h2>
@@ -226,7 +231,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         </button>
         <a class="cover__back page page--bird" href={href('bird')} data-enter="bird" tabindex="-1">
           <div class="page__inner">
-            <Picture class="page__emblem page__emblem--bird" src={birdLogo} alt="" formats={['avif']} fallbackFormat="webp" widths={[160, 240, 340, 432]} sizes="(max-width: 860px) 26vw, 8vw" quality={65} loading="lazy" />
+            <Picture class="page__emblem page__emblem--bird" src={birdLogo} alt="" formats={['avif']} fallbackFormat="webp" widths={[160, 240, 340, 432]} sizes="(max-width: 860px) 26vw, 8vw" quality={65} loading={view === 'book' ? 'eager' : 'lazy'} />
             <div class="page__text">
               <p class="page__kicker">Rithwik Bird Feeds</p>
               <h2 class="page__title">Bird<br />feeds</h2>
@@ -267,7 +272,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         <span class="ghost ghost--bird" data-ghost="Feeds" aria-hidden="true"></span>
         <div class="bird__intro bird__intro--pack">
           <div class="bird__copy">
-            <BirdH class="display" id="bird-title" {...hRole('bird')}><span class="display__a"><W t="Rithwik" d={0} /></span> <span class="display__b"><W t="Bird" d={1} /> <W t="feeds" d={2} /></span><span class="sr">, Kurnool: foxtail millet and bird seed supplier in India</span></BirdH>
+            <BirdH class="display" id="bird-title" {...hRole('bird')}><span class="display__a"><W t="Rithwik" d={0} /></span> <span class="display__b"><W t="Bird" d={1} /> <W t="feeds" d={2} /></span><span class="sr">, Kurnool: No. 1 foxtail millet supplier in India, bird seed wholesaler</span></BirdH>
             <p class="bird__lede" data-rise style="--i:0">{BIRD.length} types of feeds in {nBird} grades, sold processed or unprocessed, from our warehouse at Duvvur.</p>
             <div class="actions" data-rise style="--i:1">
               <a class="pill pill--gold" href="#b-feeds" data-jump data-magnetic>See the feeds</a>
@@ -363,6 +368,8 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         { title: 'Send it on WhatsApp', body: 'Use the form below or message 92455 55556 with the quantity and your town.' },
         { title: "Get today's price", body: 'We reply with the current rate and work out packing and delivery with you.' },
       ]} />
+
+      <Faq id="b-faq" tone="bird" items={FAQ.bird} />
 
       <Contact id="b-contact" tone="bird" brand={BRANDS.bird.name} email={BRANDS.bird.email} options={birdOptions}
         label="Feed" qtyHint="For example, 50 bags or 2 tonnes" msgHint="Delivery town, packing" />
@@ -490,6 +497,8 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         { title: 'Tell us the quantity', body: 'Use the form below or message 92455 55556 with how much you need and where.' },
         { title: 'Get a quote', body: "We reply with today's price and agree packing and delivery with you." },
       ]} />
+
+      <Faq id="f-faq" tone="food" items={FAQ.food} />
 
       <Contact id="f-contact" tone="food" brand={BRANDS.food.name} email={BRANDS.food.email} options={foodOptions}
         label="Product" qtyHint="For example, 25 kg or 1 tonne" msgHint="Delivery town, packing size" />

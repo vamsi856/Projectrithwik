@@ -106,6 +106,11 @@ It replaced the client's Canva catalogue (which had the removed number 83097 827
 - Never use watermarked stock previews (Bigstock, Shutterstock...) the client forwards: ask for the licensed file.
 - The plant/warehouse photo section was removed on purpose. The warehouse is a map tab (Duvvur, 14.829389, 78.652194).
 - Client grain photos show grain only: no hands, paper or background.
+- "Questions buyers ask" (FAQ, `Faq.astro`, data in `src/data/faq.ts`) sits between "How to order" and the contact
+  section on both sites, for searches like "best foxtail millet supplier in India", "foxtail millet price", local names
+  (korralu, kangni...). Same Q&A go out as FAQPage JSON-LD (open view only) and in llms.txt. Lists come from products.ts.
+- Titles target buyer searches: Bird Feeds "No. 1 Foxtail Millet Supplier in India", Human Food "Bulk Millets, Quinoa,
+  Chia & Pulses Supplier" (`seo.ts`).
 - Photos under ~760px wide are upscaled with OpenCV EDSR (x2/x4) before `make_photos.py`; keep the original crop too.
 
 ## Still open

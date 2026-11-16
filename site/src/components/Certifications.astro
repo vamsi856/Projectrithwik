@@ -1,11 +1,16 @@
 ---
 // Certifications and registrations as seals. Tap a seal for the details and, once
 // the client sends it, a photo of the certificate itself.
+import { readFileSync } from 'node:fs';
 import Photo from './Photo.astro';
 import type { Registration } from '../data/registrations';
 interface Props { id: string; tone: 'bird' | 'food'; regs: Registration[]; photo?: string; photoAlt?: string }
 const { id, tone, regs, photo, photoAlt = '' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+// each logo keeps its width and height (read from the PNG header), so the seal holds its space while it loads
+const size = (file: string) => {
+  try { const b = readFileSync(`public/certs/${file}`); return { width: b.readUInt32BE(16), height: b.readUInt32BE(20) }; } catch { return {}; }
+};
 const certs = regs.filter((r) => r.mark !== 'GST');
 const title = 'Certifications & standards';
 const lede = 'Our food safety and export credentials. Tap a seal for the details; a copy of any certificate is available on request.';
@@ -25,7 +30,7 @@ const lede = 'Our food safety and export credentials. Tap a seal for the details
           <button class="cert" type="button" data-cert={r.id} aria-haspopup="dialog">
             <span class="cert__seal" aria-hidden="true">
               {r.logo ? (
-                <img src={`${base}certs/${r.logo}`} alt="" loading="lazy" />
+                <img src={`${base}certs/${r.logo}`} alt="" loading="lazy" {...size(r.logo)} />
               ) : (
                 <span class="cert__word">{r.mark}</span>
               )}

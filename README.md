@@ -26,7 +26,11 @@ All generated at build time from the site data, so they never go stale:
   every product and option, facts, certifications, locations and contact.
 - Structured data (schema.org JSON-LD) on every page: the family organisation and each business as a LocalBusiness /
   WholesaleStore with address, map pin, phones, emails, GSTIN and its product catalogue.
-- Titles and descriptions: `site/src/data/seo.ts`.
+- Titles and descriptions: `site/src/data/seo.ts`, aimed at what buyers search ("No. 1 foxtail millet supplier in
+  India", "bulk millets, quinoa, chia, pulses").
+- "Questions buyers ask" on both business pages (`site/src/data/faq.ts`): best foxtail millet supplier, prices, bulk
+  buying, local names (korralu, kangni, thinai, navane...), delivery, certifications, contact. Also sent to Google as
+  FAQ structured data and included in llms.txt.
 
 Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three pages.
 

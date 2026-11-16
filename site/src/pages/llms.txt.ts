@@ -6,6 +6,7 @@ import { REGISTRATIONS } from '../data/registrations';
 import { LEGACY } from '../data/legacy';
 import { NETWORK } from '../data/network';
 import { pageUrl, siteUrl } from '../data/site-url';
+import { faqs } from '../data/faq';
 
 const range = (items: Product[], groups: readonly { id: string; label: string }[]) =>
   groups
@@ -70,6 +71,9 @@ ${range(BIRD, BIRD_GROUPS)}
 ## Rithwik Industries range
 
 ${range(FOOD, FOOD_GROUPS)}
+
+## Questions buyers ask
+${(() => { const F = faqs(new URL(S).host); return [...F.bird, ...F.food.filter((f) => !F.bird.some((b) => b.q === f.q || b.a === f.a))].map((f) => `### ${f.q}\n${f.a}`).join('\n\n'); })()}
 
 ## History
 
