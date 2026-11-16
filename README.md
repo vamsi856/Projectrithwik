@@ -30,12 +30,12 @@ All generated at build time from the site data, so they never go stale:
 
 Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three pages.
 
-### To do after handover (needs the owner's Google account)
+### After handover (needs the owner's Google account)
 
-1. **Google Search Console** (https://search.google.com/search-console): add the site, choose the "HTML tag" method,
-   paste the code into `GOOGLE_SITE_VERIFICATION` in `site/src/data/seo.ts`, build and push, press Verify.
-   Then submit `sitemap.xml` and use "URL inspection" > "Request indexing" for the three pages.
-   Searches for "Rithwik Bird Feeds" or "Rithwik Industries Kurnool" usually show the site within days to a few weeks.
+1. **Google Search Console**: done on 16 Nov 2026. `rithwikbirdfeeds.com` is a verified Domain property (owners:
+   rithwikbirdfeeds@gmail.com and the developer), `sitemap.xml` is submitted (3 pages found) and indexing was requested
+   for the three pages. Searches for "Rithwik Bird Feeds" or "Rithwik Industries Kurnool" usually show the site within
+   days to a few weeks. Check Search Console > Pages now and then for problems.
 2. **Google Business Profile** (https://business.google.com): one profile per business (or one for the office), with
    the same name, address and phone as the site, the site's address as the website, and photos. This is what puts the
    business on Google Maps and in "near me" results.

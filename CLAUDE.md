@@ -110,8 +110,8 @@ It replaced the client's Canva catalogue (which had the removed number 83097 827
 
 ## Still open
 
-- After handover (owner's Google account): Search Console for https://rithwikbirdfeeds.com/ (paste the HTML-tag code
-  into `seo.ts`, submit the sitemap), Google Business Profile, directory listings (IndiaMART etc.). Steps in README.md.
+- Search Console is done (16 Nov: Domain property verified, sitemap submitted, 3 pages requested). Still for the
+  owner: Google Business Profile, directory listings (IndiaMART etc.). Steps in README.md.
 - ISO: which standard (e.g. ISO 22000:2018) and the certifying body's badge, if the client sends them.
 - Human Food millets show the client's hulled-grain photos (`*-hulled-rithwik`); Bird Feeds shows whole grain.
   The unlabeled bright-yellow photo was taken as hulled proso: confirm with the client.
