@@ -15,6 +15,8 @@ how to order, contact form and footer.
 
 Each page has its own title, description, canonical address and structured data, so Google can list the two businesses
 separately. Switching between them happens in place, without a reload. Old `#bird-feeds` / `#human-food` links still work.
+Each address sends only its own content (the other business is fetched when the visitor switches to it), so Google
+reads three different pages. Before 16 Nov every address held all three, and Google listed only `/bird-feeds/`.
 
 ## Search engines and AI assistants
 
@@ -32,7 +34,8 @@ All generated at build time from the site data, so they never go stale:
   buying, local names (korralu, kangni, thinai, navane...), delivery, certifications, contact. Also sent to Google as
   FAQ structured data and included in llms.txt.
 
-Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three pages.
+Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three pages. Performance in a local test
+on 16 Nov: 100 (home), 95 (Bird Feeds), 94 (Human Food); it was 85, 76 and 73 when every page held all three views.
 
 ### After handover (needs the owner's Google account)
 
@@ -49,6 +52,43 @@ Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three
 3. **Listings that link back**: IndiaMART, TradeIndia, Justdial and similar directories, plus the company's WhatsApp
    Business profile and any social pages, all pointing to the site. Links from other sites are what lift it for
    general searches like "foxtail millet supplier".
+
+### SEO audit, 16 Nov 2026
+
+A full audit with the Claude SEO plugin (technical, content, structured data, speed, mobile, AI search, local
+listings, links, and what Google ranks today). What it changed in the code, all invisible to visitors: each address
+sends only its own content; the site name, founders, founding year, office and warehouse and a Home > business path
+in the structured data; the Bird Feeds hero photo loads first; a week of browser caching for the bird animation and
+the birdsong. The full report, the action plan and each specialist's findings are in `site/seo-audit/2026-11-16/`.
+
+What is left is outside the code. In order of effect:
+
+1. **Cloudflare > SSL/TLS > Edge Certificates > Always Use HTTPS: turn it on.** Today `http://rithwikbirdfeeds.com`
+   shows the page without moving to `https://`, and `http://www.rithwikbirdfeeds.com` gives an error.
+2. **Search Console > URL Inspection > Request indexing** for `/`, `/bird-feeds/` and `/human-food/` after each
+   deploy that changes them, so Google reads the new pages soon.
+3. **One PIN code everywhere.** The site says 518002. The IndiaMART Bird Feeds listing and a company record say
+   518003. Use the one on the GST certificate; if it is 518003 the site changes too (`CONTACT.office` in
+   `products.ts` and `officeAddress` in `Site.astro`).
+4. **Google Business Profile** for Rithwik Bird Feeds (category "Grain wholesaler", website
+   `https://rithwikbirdfeeds.com/bird-feeds/`) and, if Google allows two at one address, Rithwik Industries
+   (`/human-food/`). Same name, address and 92455 55556 as the site, photos of the grain and the warehouse, and
+   reviews from about ten existing buyers. None could be found on 16 Nov.
+5. **Correct the IndiaMART listings and add the website to them.** Rithwik Industries
+   (https://www.indiamart.com/rithwikindustries/) shows Ramapuram, Kadapa 516175 and "founded 2025". The Bird Feeds
+   listing (https://www.indiamart.com/rithwik-bird-feeds/, if it is the owner's) has PIN 518003 and misspelt products
+   ("Foxtile Millet", "Ragi Milet").
+6. **Justdial** lists "Rithwik Bird Feeds, Ballary Road, Kurnool": claim it, check the phone (the removed number
+   83097 82770 must not be there) and add the website.
+7. **Three or four more free listings** (TradeIndia, ExportersIndia), a Facebook / Instagram / YouTube page with the
+   website in it, and a link from the websites of customers who have one.
+8. **For the developer, from the owner:** opening hours, certificate numbers (FSSAI, APEDA, the ISO standard and who
+   issued it) and which of the two firms holds each certificate. They go into the structured data.
+
+General searches such as "foxtail millet supplier in India" are held by IndiaMART, TradeIndia and similar marketplaces
+with one page per product. With three pages and no extra pages (the client's choice), the site can lead for the brand
+names, for local-name and place searches (korralu wholesale, millet supplier Kurnool) and on Google Maps; the listings
+above are how it reaches the general searches. Only Google Ads puts a site at the top at once.
 
 ## Hosting: rithwikbirdfeeds.com on Cloudflare
 
