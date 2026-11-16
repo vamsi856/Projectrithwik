@@ -8,7 +8,7 @@ import { join, resolve } from 'node:path';
 const dist = resolve('dist');
 const root = resolve('..');
 const manifest = join(root, '.published.json');
-const keep = new Set(['site', 'README.md', '.git', '.gitignore', '.published.json', '.github']);
+const keep = new Set(['site', 'README.md', 'CLAUDE.md', '.git', '.gitignore', '.published.json', '.github', 'wrangler.jsonc', '.assetsignore']);
 
 if (existsSync(manifest)) for (const f of JSON.parse(readFileSync(manifest, 'utf8'))) if (!keep.has(f)) rmSync(join(root, f), { recursive: true, force: true });
 const entries = readdirSync(dist).filter((f) => !keep.has(f));

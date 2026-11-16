@@ -1,0 +1,13 @@
+// Cloudflare Worker "projectrithwik": serves the built website (the files in this folder)
+// on https://rithwikbirdfeeds.com. Cloudflare runs `npx wrangler deploy` on every push to main.
+// The source (site/) and the notes are left out by .assetsignore.
+{
+  "$schema": "https://unpkg.com/wrangler/config-schema.json",
+  "name": "projectrithwik",
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "./",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

@@ -123,6 +123,10 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
 <html lang="en-IN" data-view={view} data-base={base} data-t-book={META.book.title} data-t-bird={META.bird.title} data-t-food={META.food.title} data-u-book={pageUrl('book')} data-u-bird={pageUrl('bird')} data-u-food={pageUrl('food')}>
 <head>
   <meta charset="utf-8" />
+  <script is:inline define:vars={{ home: new URL(Astro.site!).origin }}>
+    // The old GitHub Pages address forwards to the site's own domain, keeping the page.
+    if (location.origin !== home && /\.github\.io$/.test(location.hostname)) location.replace(home + (location.pathname.replace(/^\/Projectrithwik(?=\/|$)/, '') || '/') + location.search + location.hash);
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{meta.title}</title>
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
@@ -160,6 +164,8 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
   <link rel="preload" href={`${base}fonts/anton-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin />
   <link rel="preload" href={`${base}fonts/instrument-sans-latin-400-normal.woff2`} as="font" type="font/woff2" crossorigin />
   <link rel="preload" href={`${base}fonts/instrument-sans-latin-600-normal.woff2`} as="font" type="font/woff2" crossorigin />
+  <style is:inline set:html={[['Anton', 400, 'anton-latin-400-normal'], ...[400, 500, 600, 700].map((w) => ['Instrument Sans', w, `instrument-sans-latin-${w}-normal`])]
+    .map(([f, w, file]) => `@font-face { font-family: "${f}"; src: url("${base}fonts/${file}.woff2") format("woff2"); font-weight: ${w}; font-style: normal; font-display: swap; }`).join('\n')}></style>
   <script is:inline define:vars={{ heroSet: birdHeroPhoto?.avif ?? '', heroSizes: HERO_SIZES }}>
     // A link straight to the bird site: fetch its hero photo at once (it is lazy otherwise,
     // so the book and the food site never download it).

@@ -4,7 +4,7 @@
 //   npm run build && npx astro preview --port 4331     (in one terminal)
 //   node scripts/check-sizes.cjs                        (in another; needs: npx playwright install chromium)
 const { chromium } = require('playwright');
-const BASE = process.env.BASE || 'http://127.0.0.1:4331/Projectrithwik/';
+const BASE = process.env.BASE || 'http://127.0.0.1:4331/';
 const W = [320, 360, 390, 414, 600, 760, 761, 768, 820, 1024, 1280, 1440, 1920];
 (async () => {
   const b = await chromium.launch();

@@ -18,7 +18,7 @@ const tmp = mkdtempSync(join(tmpdir(), 'rithwik-cat-'));
 const require = createRequire(import.meta.url);
 // Playwright is used from wherever it is installed (project or global), like scripts/check-sizes.cjs
 const { chromium } = require('playwright');
-const SITE_URL = (process.env.SITE_URL || 'https://vamsi856.github.io/Projectrithwik/').replace(/\/?$/, '/');
+const SITE_URL = (process.env.SITE_URL || 'https://rithwikbirdfeeds.com/').replace(/\/?$/, '/');
 const BASE = new URL(SITE_URL).pathname;
 
 // ---- the site's data (TypeScript) -------------------------------------------------------

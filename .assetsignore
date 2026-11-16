@@ -1,0 +1,12 @@
+# Not part of the website: the source, the notes and the config.
+.git
+.github
+.gitignore
+.assetsignore
+.published.json
+site
+node_modules
+README.md
+CLAUDE.md
+wrangler.jsonc
+.nojekyll

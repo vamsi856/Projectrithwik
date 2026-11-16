@@ -9,7 +9,7 @@ const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const today = new Date().toISOString().slice(0, 10);
 
 export const GET: APIRoute = ({ site }) => {
-  const abs = (u: string) => new URL(u, site ?? 'https://vamsi856.github.io').href;
+  const abs = (u: string) => new URL(u, site ?? 'https://rithwikbirdfeeds.com').href;
   const images = (items: Product[]) =>
     [...new Set(items.flatMap((p) => [p.photo, ...p.variants.map((v) => v.photo)]).filter(Boolean) as string[])]
       .map((k) => photo(k))
