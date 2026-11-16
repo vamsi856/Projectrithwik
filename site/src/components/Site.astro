@@ -66,7 +66,7 @@ const business = (key: 'bird' | 'food', logoUrl: string, desc: string, items: { 
   priceRange: 'Ask for a quote',
   logo: logoUrl,
   image: [logoUrl, abs(`${base}og-${key}.jpg`)],
-  sameAs: [`https://wa.me/${CONTACT.whatsapp}`],
+  sameAs: [`https://wa.me/${CONTACT.whatsapp}`, ...BRANDS[key].profiles],
   email: BRANDS[key].email,
   telephone: CONTACT.phones.map((p) => p.tel),
   taxID: BRANDS[key].gstin,

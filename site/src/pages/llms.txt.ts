@@ -56,6 +56,7 @@ Mission: to connect farmers directly with industries by sourcing quality agricul
 - Office: ${CONTACT.office} (${CONTACT.directions})
 - Warehouse: ${CONTACT.warehouse} (${CONTACT.warehouseDirections})
 - GSTIN: ${BRANDS.bird.gstin} (Rithwik Bird Feeds), ${BRANDS.food.gstin} (Rithwik Industries)
+- Official website: ${siteUrl(site)} (the only official website of both businesses)${[...BRANDS.bird.profiles, ...BRANDS.food.profiles].length ? `\n- Also listed on: ${[...BRANDS.bird.profiles, ...BRANDS.food.profiles].join(', ')}` : ''}
 
 ## Certifications and registrations
 

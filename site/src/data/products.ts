@@ -132,7 +132,9 @@ export const CONTACT = {
   warehouseDirections: 'https://www.google.com/maps/dir/?api=1&destination=14.829389,78.652194',
 };
 
-export const BRANDS = {
-  bird: { name: 'Rithwik Bird Feeds', email: 'rithwikbirdfeeds@gmail.com', gstin: '37CCDPV9154P1ZK' },
-  food: { name: 'Rithwik Industries', email: 'rithwikindustries@gmail.com', gstin: '37ABKFR7391G1ZM' },
+// `profiles`: the business's own listings on other sites (same GSTIN), linked from the structured data as
+// sameAs so Google ties them to this website. Add Justdial, TradeIndia, Google Business Profile... here.
+export const BRANDS: Record<'bird' | 'food', { name: string; email: string; gstin: string; profiles: string[] }> = {
+  bird: { name: 'Rithwik Bird Feeds', email: 'rithwikbirdfeeds@gmail.com', gstin: '37CCDPV9154P1ZK', profiles: [] },
+  food: { name: 'Rithwik Industries', email: 'rithwikindustries@gmail.com', gstin: '37ABKFR7391G1ZM', profiles: ['https://www.indiamart.com/rithwikindustries/'] },
 };
