@@ -1,10 +1,12 @@
 // Cloudflare Worker "projectrithwik": serves the built website (the files in this folder)
 // on https://rithwikbirdfeeds.com. Cloudflare runs `npx wrangler deploy` on every push to main.
+// www.rithwikbirdfeeds.com is sent here by a Redirect Rule in the Cloudflare dashboard (301).
 // The source (site/) and the notes are left out by .assetsignore.
 {
   "$schema": "https://unpkg.com/wrangler/config-schema.json",
   "name": "projectrithwik",
   "compatibility_date": "2025-06-01",
+  "routes": [{ "pattern": "rithwikbirdfeeds.com", "custom_domain": true }],
   "assets": {
     "directory": "./",
     "html_handling": "auto-trailing-slash",

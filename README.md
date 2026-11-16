@@ -1,7 +1,7 @@
 # Projectrithwik
 
 Website for **Rithwik Bird Feeds** and **Rithwik Industries**, Kurnool.
-Live: https://vamsi856.github.io/Projectrithwik/
+Live: **https://rithwikbirdfeeds.com/** (Cloudflare). The old address https://vamsi856.github.io/Projectrithwik/ forwards there.
 
 The site opens as a book. The cover turns to show two pages, Bird Feeds and Human Food, and each page opens a complete
 site of its own: header, intro, products with photos, history, certifications, vision and mission with the India map,
@@ -39,19 +39,26 @@ Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three
 2. **Google Business Profile** (https://business.google.com): one profile per business (or one for the office), with
    the same name, address and phone as the site, the site's address as the website, and photos. This is what puts the
    business on Google Maps and in "near me" results.
-3. **Own domain** (recommended): a domain such as `rithwikindustries.com` ranks better than a `github.io` address and
-   lets `robots.txt` and `llms.txt` work (crawlers only read them at the root of a domain). See below.
-4. **Listings that link back**: IndiaMART, TradeIndia, Justdial and similar directories, plus the company's WhatsApp
+3. **Listings that link back**: IndiaMART, TradeIndia, Justdial and similar directories, plus the company's WhatsApp
    Business profile and any social pages, all pointing to the site. Links from other sites are what lift it for
    general searches like "foxtail millet supplier".
 
-### Moving to its own domain
+## Hosting: rithwikbirdfeeds.com on Cloudflare
 
-1. Change `SITE_URL` at the top of `site/astro.config.mjs` to the new address, for example `https://rithwikindustries.com/`.
-   Every link, canonical tag, the sitemap, robots.txt, llms.txt and the structured data follow it.
-2. For GitHub Pages: add a file `site/public/CNAME` containing just the domain, set the domain in the repository's
-   Settings > Pages, and point the domain's DNS at GitHub Pages. HTTPS is free.
-3. Build, commit and push. Add the new address in Search Console and submit its sitemap again.
+- **Domain**: `rithwikbirdfeeds.com`, registered at Hostinger on 16 Nov 2026, paid until **16 Nov 2029** (renew before
+  then). Its nameservers point to Cloudflare (`lamar` / `suzanne.ns.cloudflare.com`), so DNS is managed in Cloudflare.
+- **Cloudflare account**: Rithwikbirdfeeds@gmail.com (free plan). The website is the Worker **projectrithwik**
+  (Workers & Pages), connected to this GitHub repository: every push to `main` deploys it in about a minute
+  (`npx wrangler deploy`, settings in `wrangler.jsonc`). `.assetsignore` keeps the source (`site/`) and these notes
+  off the website.
+- **Addresses**: `rithwikbirdfeeds.com` is the Worker's custom domain (free HTTPS). `www.rithwikbirdfeeds.com` is sent
+  to it by a Redirect Rule (Rules > Redirect Rules, 301). The old GitHub Pages address forwards to the domain,
+  keeping the page (`/Projectrithwik/bird-feeds/` opens `/bird-feeds/`).
+- **Email**: the domain has no mailboxes. Its DNS says so on purpose (SPF `-all`, DMARC `reject`, empty DKIM) so
+  nobody can send mail pretending to be @rithwikbirdfeeds.com. If the business later wants email on the domain
+  (Google Workspace, Zoho or Hostinger Mail), replace those three records with the ones the email provider gives.
+- The site address lives in one place, `SITE_URL` in `site/astro.config.mjs`: every link, canonical tag, the
+  sitemap, robots.txt, llms.txt, the structured data and the catalogue QR code follow it.
 
 ## Product catalogue (PDF)
 
@@ -65,8 +72,6 @@ npm run catalogue   # rebuilds the PDF (needs Playwright's Chromium)
 npm run build
 ```
 
-When the site moves to its own domain, run it with `SITE_URL=https://the-domain/ npm run catalogue` so the QR code points there.
-
 ## Stack
 
 - [Astro 5](https://astro.build) (static output, TypeScript)
@@ -79,7 +84,8 @@ When the site moves to its own domain, run it with `SITE_URL=https://the-domain/
 - `site/` is the Astro source. `site/src/components/Site.astro` is the whole page; `site/src/pages/` has one small
   file per address plus the sitemap, robots.txt, llms.txt and manifest.
 - The repository root holds the built website (`index.html`, `bird-feeds/`, `human-food/`, `_astro/`, ...), which
-  GitHub Pages serves from `main`. Never edit those by hand.
+  Cloudflare serves from `main` (GitHub Pages serves the same files only to forward the old address). Never edit
+  those by hand.
 
 ## Editing
 
@@ -93,8 +99,9 @@ When the site moves to its own domain, run it with `SITE_URL=https://the-domain/
 ```
 cd site
 npm install
-npm run dev       # local preview at http://localhost:4321/Projectrithwik/
+npm run dev       # local preview at http://localhost:4321/
 npm run build     # builds and copies the site to the repository root
 ```
 
-Commit and push after `npm run build`; GitHub Pages picks it up in a minute or two.
+Commit and push after `npm run build`; Cloudflare puts it live in a minute or two (Workers & Pages > projectrithwik >
+Deployments shows each build).

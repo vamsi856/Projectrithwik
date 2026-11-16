@@ -1,7 +1,9 @@
 # Rithwik website
 
 Animated one-page site for **Rithwik Bird Feeds** and **Rithwik Industries** (Kurnool, Andhra Pradesh), a client project.
-Live at https://vamsi856.github.io/Projectrithwik/ (GitHub Pages, served from the root of `main`).
+Live at https://rithwikbirdfeeds.com/ (Cloudflare Worker `projectrithwik`, deployed from the root of `main` on every
+push; `wrangler.jsonc` + `.assetsignore`). The old https://vamsi856.github.io/Projectrithwik/ forwards there (inline
+script in Site.astro and 404.astro); www redirects by a Cloudflare Redirect Rule. Hosting details are in README.md.
 
 ## Layout
 
@@ -13,21 +15,22 @@ Live at https://vamsi856.github.io/Projectrithwik/ (GitHub Pages, served from th
   Switching is in place (`main.ts` pushes the path); old `#bird-feeds` / `#human-food` links still work.
 - SEO files are generated: `src/pages/sitemap.xml.ts`, `robots.txt.ts`, `llms.txt.ts`, `site.webmanifest.ts`.
   Titles/descriptions and the Search Console code live in `src/data/seo.ts`. The site address is `SITE_URL` in
-  `astro.config.mjs` (everything follows it; for an own domain also add `public/CNAME`).
+  `astro.config.mjs` (everything follows it, the catalogue QR code too). The base is `/`: fonts are declared inline in
+  Site.astro and 404.astro from the base, so nothing hard-codes a path.
 
 ## Commands (run in `site/`)
 
 ```
 npm install
-npm run dev                                   # http://localhost:4321/Projectrithwik/
+npm run dev                                   # http://localhost:4321/
 npm run build                                 # builds and copies to the repo root
 npx astro preview --port 4331                 # serve the build
 node scripts/check-sizes.cjs                  # 13 widths x 3 views: no sideways spill, header OK
 python3 scripts/make_photos.py                # photo sizes (pip install pillow pillow-heif)
 ```
 
-Deploy = build, commit `site/` **and** the regenerated root files, push to `main`. Pages redeploys in about a minute.
-If a push doesn't trigger Pages, push an empty commit.
+Deploy = build, commit `site/` **and** the regenerated root files, push to `main`. Cloudflare redeploys in about a
+minute (Workers & Pages > projectrithwik > Deployments). `publish.mjs` never touches `wrangler.jsonc`/`.assetsignore`.
 
 ## Where things are
 
@@ -107,8 +110,8 @@ It replaced the client's Canva catalogue (which had the removed number 83097 827
 
 ## Still open
 
-- After handover (owner's Google account): Search Console (paste the HTML-tag code into `seo.ts`, submit the sitemap),
-  Google Business Profile, an own domain, directory listings (IndiaMART etc.). Steps are in README.md.
+- After handover (owner's Google account): Search Console for https://rithwikbirdfeeds.com/ (paste the HTML-tag code
+  into `seo.ts`, submit the sitemap), Google Business Profile, directory listings (IndiaMART etc.). Steps in README.md.
 - ISO: which standard (e.g. ISO 22000:2018) and the certifying body's badge, if the client sends them.
 - Human Food millets show the client's hulled-grain photos (`*-hulled-rithwik`); Bird Feeds shows whole grain.
   The unlabeled bright-yellow photo was taken as hulled proso: confirm with the client.
@@ -117,5 +120,6 @@ It replaced the client's Canva catalogue (which had the removed number 83097 827
 
 ## Hosting
 
-Static site, no server or database. GitHub Pages (current) and Cloudflare Pages are both free, with free automatic HTTPS
-once a domain is connected. The domain is the only running cost; business email (Google Workspace or Zoho) is optional.
+Static site, no server or database, on a free Cloudflare Worker (static assets only). Domain rithwikbirdfeeds.com
+registered at Hostinger (until 16 Nov 2029), DNS on Cloudflare. The domain is the only running cost. DNS has no-mail
+records (SPF -all, DMARC reject): change them only if the client sets up email on the domain.
