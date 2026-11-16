@@ -1,0 +1,21 @@
+---
+import InfoShell from '../../components/InfoShell.astro';
+import { REGISTRATIONS } from '../../data/registrations';
+import { BRANDS } from '../../data/products';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const held = REGISTRATIONS.filter((r) => r.held);
+---
+<InfoShell path="certifications/" h1="Certifications"
+  lede="Our food safety and export credentials, held by Rithwik Bird Feeds and Rithwik Industries. A copy of any certificate is available on request.">
+  <ul class="icerts" role="list" style="list-style:none;padding:0;margin:0">
+    {held.map((r, i) => (
+      <li class="icert">
+        <span class="icert__seal" aria-hidden="true">{r.logo ? <img src={`${base}certs/${r.logo}`} alt="" loading={i < 4 ? 'eager' : 'lazy'} width="64" height="64" /> : r.mark}</span>
+        <div><h2 class="icert__name">{r.name}</h2><small>{r.status} · {r.body}</small><p style="margin:0">{r.what}</p></div>
+      </li>
+    ))}
+  </ul>
+  <h2>GST registration</h2>
+  <p>Both businesses are GST registered, and every order comes with a GST invoice.</p>
+  <p>{BRANDS.bird.name}: GSTIN {BRANDS.bird.gstin}<br />{BRANDS.food.name}: GSTIN {BRANDS.food.gstin}</p>
+</InfoShell>

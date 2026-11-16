@@ -1333,3 +1333,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { width: 0; height: 0; display:
 @keyframes hero-rise { from { opacity: 0; transform: translateY(30px); } }
 main[tabindex="-1"]:focus { outline: none; }
 @media (max-width: 420px) { .map__tabs { left: 10px; right: 10px; top: 10px; } .map__tab { flex: 1; padding: 0 8px; font-size: .8rem; } }
+
+/* footer: links to the plain information pages */
+.foot__pages { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; font-size: .92rem; }
+.foot__pages a { color: inherit; opacity: .85; text-underline-offset: 4px; }
+.foot__pages a:hover { opacity: 1; }

@@ -1,0 +1,22 @@
+---
+import InfoShell from '../../../components/InfoShell.astro';
+import InfoProducts from '../../../components/InfoProducts.astro';
+import { BIRD, BIRD_GROUPS, BRANDS, lineCount } from '../../../data/products';
+import { photo } from '../../../data/photos';
+void lineCount;
+const SITE = new URL(import.meta.env.BASE_URL, Astro.site).href;
+const list = {
+  '@type': 'ItemList', '@id': `${SITE}bird-feeds/products/#list`, name: 'Bird feed products, ' + BRANDS.bird.name, numberOfItems: BIRD.length,
+  itemListElement: BIRD.map((p, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Product', name: p.name, brand: { '@type': 'Brand', name: BRANDS.bird.name },
+    ...(photo(p.photo) ? { image: new URL(photo(p.photo)!.src, Astro.site).href } : {}),
+    description: p.variants.length > 1 ? `${p.name}: ${p.variants.map((v) => v.label).join(', ')}` : p.name } })),
+};
+---
+<InfoShell path="bird-feeds/products/" h1="Bird feed products" schema={[list]}
+  lede={`${BIRD.length} types of feed in ${lineCount(BIRD)} grades, processed or unprocessed, cleaned and sorted at our processing unit. Prices change with the crop: ask for today's rate.`}>
+  <InfoProducts items={BIRD} groups={BIRD_GROUPS} brand={BRANDS.bird.name} />
+  <h2>Processed or unprocessed</h2>
+  <p>Every feed can be supplied unprocessed, as it comes from the farm, or processed: cleaned and sorted at our processing unit. Foxtail millet comes as summer crop or winter crop. We pack by the bag or supply by the tonne, for traders, pet shops, bird keepers and export houses across India.</p>
+  <h2>How to order</h2>
+  <p>Send the feed, the quantity and your delivery town on WhatsApp to 92455 55556. We reply with the day's rate and agree packing and delivery with you.</p>
+</InfoShell>

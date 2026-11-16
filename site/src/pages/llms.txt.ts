@@ -7,6 +7,7 @@ import { LEGACY } from '../data/legacy';
 import { NETWORK } from '../data/network';
 import { pageUrl, siteUrl } from '../data/site-url';
 import { faqs } from '../data/faq';
+import { INFO_PAGES } from '../data/pages';
 
 const range = (items: Product[], groups: readonly { id: string; label: string }[]) =>
   groups
@@ -48,6 +49,7 @@ Mission: to connect farmers directly with industries by sourcing quality agricul
 - [Rithwik Industries](${food}): food staples for retail packers, traders and bulk buyers.
 - [Home](${S}): both businesses, the family story since 1925 and where they operate.
 - [Product catalogue (PDF)](${S}Rithwik-Catalogue.pdf)
+${INFO_PAGES.map((p) => `- [${p.label}](${S}${p.path}): ${p.description}`).join('\n')}
 
 ## Contact
 

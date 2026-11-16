@@ -1,0 +1,51 @@
+---
+import InfoShell from '../../components/InfoShell.astro';
+import { LEGACY, FOUNDERS } from '../../data/legacy';
+import { NETWORK } from '../../data/network';
+import { BIRD, FOOD, BRANDS, lineCount } from '../../data/products';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const main = NETWORK.find((p) => p.main)!;
+const others = NETWORK.filter((p) => !p.main).map((p) => p.name);
+---
+<InfoShell path="about/" h1="About Rithwik"
+  lede="A Kurnool family grain trade that began in 1925. Today it runs as two businesses: Rithwik Bird Feeds, India's No. 1 foxtail millet supplier, and Rithwik Industries, millets, super foods, pulses and spices for people.">
+  <ul class="ifacts" aria-label="Rithwik in numbers">
+    <li><b>1925</b>A family grain trade since</li>
+    <li><b>20,000MT+</b>Annual production</li>
+    <li><b>3,000+</b>Customers</li>
+    <li><b>{BIRD.length + FOOD.length}</b>Products, {lineCount(BIRD) + lineCount(FOOD)} grades and options</li>
+  </ul>
+
+  <h2>Our story</h2>
+  <ol class="itime">
+    {LEGACY.map((l) => <li><b>{l.year}</b>{l.person}, <i>{l.firm}</i></li>)}
+  </ol>
+  <div class="prose">
+    <p>Five generations of the Bysani family have traded grain from Kurnool. In 2022 {FOUNDERS.names.join(' and ')} started
+      Rithwik Bird Feeds and Rithwik Industries, carrying the trade forward with their own processing unit and a main warehouse at {main.name}.</p>
+  </div>
+
+  <h2>Two businesses, one family</h2>
+  <div class="icontact">
+    <div class="ibox">
+      <h3><a href={`${base}bird-feeds/`}>{BRANDS.bird.name}</a></h3>
+      <p>{BIRD.length} types of bird feed in {lineCount(BIRD)} grades, processed or unprocessed: foxtail millet in summer and winter crop, other millets, jowar, maize, sunflower and safflower. For traders, pet shops, bird keepers and export houses.</p>
+      <p><a href={`${base}bird-feeds/products/`}>All bird feed products</a></p>
+    </div>
+    <div class="ibox">
+      <h3><a href={`${base}human-food/`}>{BRANDS.food.name}</a></h3>
+      <p>40+ food products: millets, quinoa, chia and other super foods, oil seeds, pulses, spices and cereals, for retail packers, traders and bulk buyers.</p>
+      <p><a href={`${base}human-food/products/`}>All human food products</a></p>
+    </div>
+  </div>
+
+  <h2>Mission</h2>
+  <div class="prose">
+    <p>Our mission is to connect farmers directly with industries by sourcing quality agricultural produce, ensuring proper cleaning, grading, and processing, and delivering products that meet the specific requirements of every customer.</p>
+    <p>We aim to maintain high quality standards, build trusted partnerships, support farmers, and provide reliable agricultural solutions across different industries.</p>
+    <p><b>Our goal is simple:</b> Empower farmers, ensure quality, and make the right products reach the right industries in the right way.</p>
+  </div>
+
+  <h2>Where we operate</h2>
+  <p>Main warehouse at {main.name}, and operations in {others.slice(0, -1).join(', ')} and {others[others.length - 1]}. We deliver across India.</p>
+</InfoShell>

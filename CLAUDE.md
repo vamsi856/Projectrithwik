@@ -13,6 +13,10 @@ script in Site.astro and 404.astro); www redirects by a Cloudflare Redirect Rule
 - Three addresses, one shared page (`site/src/components/Site.astro`): `/` (the book), `/bird-feeds/` and `/human-food/`
   (Rithwik Industries). Each has its own title, description, canonical and JSON-LD; `src/pages/*` just pick the view.
   Switching is in place (`main.ts` pushes the path); old `#bird-feeds` / `#human-food` links still work.
+- Plain information pages beside the animated site (for Google sitelinks and ranking): `/about/`,
+  `/bird-feeds/products/`, `/human-food/products/`, `/certifications/`, `/contact/`, `/faq/`, `/catalogue/`.
+  List in `src/data/pages.ts` (titles, descriptions, menu order), frame in `InfoShell.astro`, styles in `info.css`,
+  local grain names in `src/data/local-names.ts`. Linked from the main footer (`foot__pages`) and in the sitemap.
 - SEO files are generated: `src/pages/sitemap.xml.ts`, `robots.txt.ts`, `llms.txt.ts`, `site.webmanifest.ts`.
   Titles/descriptions and the Search Console code live in `src/data/seo.ts`. The site address is `SITE_URL` in
   `astro.config.mjs` (everything follows it, the catalogue QR code too). The base is `/`: fonts are declared inline in

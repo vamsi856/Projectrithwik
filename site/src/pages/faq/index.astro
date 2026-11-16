@@ -1,0 +1,22 @@
+---
+import InfoShell from '../../components/InfoShell.astro';
+import { faqs } from '../../data/faq';
+import { BRANDS } from '../../data/products';
+const SITE = new URL(import.meta.env.BASE_URL, Astro.site).href;
+const F = faqs(new URL(SITE).host);
+const sections = [
+  { title: BRANDS.bird.name, items: F.bird },
+  { title: BRANDS.food.name, items: F.food.filter((f) => !F.bird.some((b) => b.q === f.q || b.a === f.a)) },
+];
+const all = sections.flatMap((s) => s.items);
+const faq = { '@type': 'FAQPage', '@id': `${SITE}faq/#faq`, mainEntity: all.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
+---
+<InfoShell path="faq/" h1="Questions buyers ask" schema={[faq]}
+  lede="Short answers to what traders, pet shops, packers and bulk buyers ask us most.">
+  {sections.map((s) => (
+    <section>
+      <h2>{s.title}</h2>
+      <div class="ifaq">{s.items.map((f, i) => <details open={i === 0}><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
+    </section>
+  ))}
+</InfoShell>
