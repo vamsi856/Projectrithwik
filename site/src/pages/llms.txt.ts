@@ -52,12 +52,12 @@ Mission: to connect farmers directly with industries by sourcing quality agricul
 ## Contact
 
 - Phone and WhatsApp: ${CONTACT.call.label} (+91), also ${CONTACT.phones.slice(1).map((p) => p.label).join(' and ')}
-- WhatsApp: https://wa.me/${CONTACT.whatsapp}
+- [WhatsApp ${CONTACT.call.label}](https://wa.me/${CONTACT.whatsapp})
 - Email: ${BRANDS.bird.email} (Bird Feeds), ${BRANDS.food.email} (Industries)
-- Office: ${CONTACT.office} (${CONTACT.directions})
-- Warehouse: ${CONTACT.warehouse} (${CONTACT.warehouseDirections})
+- [Office](${CONTACT.directions}): ${CONTACT.office}
+- [Warehouse](${CONTACT.warehouseDirections}): ${CONTACT.warehouse}
 - GSTIN: ${BRANDS.bird.gstin} (Rithwik Bird Feeds), ${BRANDS.food.gstin} (Rithwik Industries)
-- Official website: ${siteUrl(site)} (the only official website of both businesses)${[...BRANDS.bird.profiles, ...BRANDS.food.profiles].length ? `\n- Also listed on: ${[...BRANDS.bird.profiles, ...BRANDS.food.profiles].join(', ')}` : ''}
+- [Official website](${siteUrl(site)}): the only official website of both businesses${[...BRANDS.bird.profiles, ...BRANDS.food.profiles].map((u) => `\n- [Also listed on ${new URL(u).hostname.replace(/^www\./, '')}](${u})`).join('')}
 
 ## Certifications and registrations
 
