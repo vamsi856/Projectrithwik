@@ -67,6 +67,18 @@ Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three
 - The site address lives in one place, `SITE_URL` in `site/astro.config.mjs`: every link, canonical tag, the
   sitemap, robots.txt, llms.txt, the structured data and the catalogue QR code follow it.
 
+### Checking the SEO again
+
+The site was checked with the open-source [Claude SEO](https://github.com/AgriciDaniel/claude-seo) plugin
+(16 Nov 2026: no issues on the page checks). To rerun a full audit in Claude Code:
+
+```
+/plugin marketplace add AgriciDaniel/claude-seo
+/plugin install claude-seo@agricidaniel-claude-seo
+/seo setup
+/seo audit https://rithwikbirdfeeds.com/
+```
+
 ## Product catalogue (PDF)
 
 `site/public/Rithwik-Catalogue.pdf` (the site's "Download catalogue" button) is generated from the same data as the
