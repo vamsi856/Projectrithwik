@@ -12,7 +12,6 @@ how to order, contact form and footer.
 | The book (both businesses) | `/` |
 | Rithwik Bird Feeds | `/bird-feeds/` |
 | Rithwik Industries (human food) | `/human-food/` |
-| About us, Bird feed products, Human food products, Certifications, Contact, Questions buyers ask, Catalogue | `/about/`, `/bird-feeds/products/`, `/human-food/products/`, `/certifications/`, `/contact/`, `/faq/`, `/catalogue/` |
 
 Each page has its own title, description, canonical address and structured data, so Google can list the two businesses
 separately. Switching between them happens in place, without a reload. Old `#bird-feeds` / `#human-food` links still work.

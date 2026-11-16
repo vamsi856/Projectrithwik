@@ -4,8 +4,6 @@ import { BIRD, FOOD, type Product } from '../data/products';
 import { photo } from '../data/photos';
 import { pageUrl } from '../data/site-url';
 import type { View } from '../data/seo';
-import { INFO_PAGES } from '../data/pages';
-import { siteUrl } from '../data/site-url';
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const today = new Date().toISOString().slice(0, 10);
@@ -29,7 +27,6 @@ export const GET: APIRoute = ({ site }) => {
 ${url('book', '1.0')}
 ${url('bird', '0.9', images(BIRD))}
 ${url('food', '0.9', images(FOOD))}
-${INFO_PAGES.map((p) => `  <url>\n    <loc>${esc(siteUrl(site) + p.path)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>${p.path.includes('products') ? '0.8' : '0.6'}</priority>\n  </url>`).join('\n')}
 </urlset>
 `;
   return new Response(body, { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });

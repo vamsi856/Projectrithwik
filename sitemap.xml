@@ -79,46 +79,4 @@
     <image:image><image:loc>https://rithwikbirdfeeds.com/img/buckwheat-800.webp</image:loc></image:image>
     <image:image><image:loc>https://rithwikbirdfeeds.com/img/oats-800.webp</image:loc></image:image>
   </url>
-  <url>
-    <loc>https://rithwikbirdfeeds.com/about/</loc>
-    <lastmod>2026-11-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://rithwikbirdfeeds.com/bird-feeds/products/</loc>
-    <lastmod>2026-11-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://rithwikbirdfeeds.com/human-food/products/</loc>
-    <lastmod>2026-11-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://rithwikbirdfeeds.com/certifications/</loc>
-    <lastmod>2026-11-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://rithwikbirdfeeds.com/contact/</loc>
-    <lastmod>2026-11-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://rithwikbirdfeeds.com/faq/</loc>
-    <lastmod>2026-11-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://rithwikbirdfeeds.com/catalogue/</loc>
-    <lastmod>2026-11-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
 </urlset>
