@@ -39,6 +39,9 @@ Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three
 2. **Google Business Profile** (https://business.google.com): one profile per business (or one for the office), with
    the same name, address and phone as the site, the site's address as the website, and photos. This is what puts the
    business on Google Maps and in "near me" results.
+   Bing and the other IndexNow engines (Bing feeds ChatGPT search, Copilot and DuckDuckGo) were notified by IndexNow:
+   the key file is `site/public/58e39489ee89a3cc49b430cdc34b6822.txt`. After a big change, ping them again with
+   `curl -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json' -d '{"host":"rithwikbirdfeeds.com","key":"58e39489ee89a3cc49b430cdc34b6822","urlList":["https://rithwikbirdfeeds.com/","https://rithwikbirdfeeds.com/bird-feeds/","https://rithwikbirdfeeds.com/human-food/"]}'`.
 3. **Listings that link back**: IndiaMART, TradeIndia, Justdial and similar directories, plus the company's WhatsApp
    Business profile and any social pages, all pointing to the site. Links from other sites are what lift it for
    general searches like "foxtail millet supplier".
