@@ -27,7 +27,6 @@ import Legacy from '../components/Legacy.astro';
 import Faq from '../components/Faq.astro';
 import { faqs } from '../data/faq';
 import { META, PATHS, GOOGLE_SITE_VERIFICATION, BING_SITE_VERIFICATION, type View } from '../data/seo';
-import { SINCE, FOUNDERS } from '../data/legacy';
 
 interface Props { view: View }
 const { view } = Astro.props;
@@ -53,84 +52,10 @@ const foodOptions = FOOD.flatMap((p) => p.variants.map((v) => lineName(p, v)));
 const marquee = (names: string[]) => [...new Set(names)];
 const birdHeroPhoto = photo('bird-budgies');
 const HERO_SIZES = '(max-width: 860px) 100vw, 58vw';
-// what search engines read about the two businesses (schema.org)
-const abs = (u: string) => new URL(u, Astro.site).href;
 // the picture shown when a page is shared on WhatsApp, Facebook, LinkedIn or X
+const abs = (u: string) => new URL(u, Astro.site).href;
 const ogImage = abs(`${base}${view === 'bird' ? 'og-bird.jpg' : view === 'food' ? 'og-food.jpg' : 'og.jpg'}`);
 const [lat, lng] = CONTACT.officeAt.split(',').map(Number);
-const birdLogoUrl = abs((await getImage({ src: birdLogo, width: 512, format: 'png' })).src);
-const foodLogoUrl = abs((await getImage({ src: foodLogo, width: 512, format: 'png' })).src);
-// the name Google shows above the site's results, and the name of the family organisation
-const SITE_NAME = 'Rithwik Bird Feeds & Rithwik Industries';
-const officeAddress = { '@type': 'PostalAddress', streetAddress: '87/1404, Dhanalakshmi Nagar, near Nandyal Checkpost', addressLocality: 'Kurnool', addressRegion: 'Andhra Pradesh', postalCode: '518002', addressCountry: 'IN' };
-const [wLat, wLng] = CONTACT.warehouseAt.split(',').map(Number);
-const groupOf = (key: 'bird' | 'food', id: string) => (key === 'bird' ? BIRD_GROUPS : FOOD_GROUPS).find((g) => g.id === id)?.label;
-const business = (key: 'bird' | 'food', logoUrl: string, desc: string, items: typeof BIRD) => ({
-  '@type': ['LocalBusiness', 'WholesaleStore'],
-  '@id': `${pageUrl(key)}#business`,
-  name: BRANDS[key].name,
-  // how people also spell or shorten the name when they search
-  alternateName: key === 'bird' ? ['Rithvik Bird Feeds', 'Ritwik Bird Feeds', 'Rithwik Birdfeeds', 'Rithwik Bird Feed Kurnool'] : ['Rithvik Industries', 'Ritwik Industries', 'Rithwik Industries Kurnool'],
-  description: desc,
-  url: pageUrl(key),
-  parentOrganization: { '@id': `${SITE}#family` },
-  logo: logoUrl,
-  image: [logoUrl, abs(`${base}og-${key}.jpg`)],
-  sameAs: [`https://wa.me/${CONTACT.whatsapp}`, ...BRANDS[key].profiles],
-  email: BRANDS[key].email,
-  telephone: CONTACT.phones.map((p) => p.tel),
-  taxID: BRANDS[key].gstin,
-  address: officeAddress,
-  geo: { '@type': 'GeoCoordinates', latitude: lat, longitude: lng },
-  hasMap: CONTACT.directions,
-  areaServed: { '@type': 'Country', name: 'India' },
-  contactPoint: { '@type': 'ContactPoint', contactType: 'sales', telephone: CONTACT.phones[0].tel, email: BRANDS[key].email, availableLanguage: ['en', 'te', 'hi'] },
-  hasOfferCatalog: { '@type': 'OfferCatalog', name: `${BRANDS[key].name} range`, itemListElement: items.map((p) => ({ '@type': 'Offer', name: p.name, description: p.variants.length > 1 ? `${p.name}: ${p.variants.map((v) => v.label).join(', ')}` : p.name, category: groupOf(key, p.group), businessFunction: 'http://purl.org/goodrelations/v1#Sell' })) },
-  slogan: key === 'bird' ? 'No. 1 foxtail millet supplier in India' : "Nature's grain, nurtured for you",
-  // the people on the last dot of the timeline. "Since 1925" is the family trade, so that year is on
-  // the organisation below and the two firms carry no founding year of their own
-  founder: FOUNDERS.names.map((name) => ({ '@type': 'Person', name })),
-});
-const birdBiz = business('bird', birdLogoUrl, 'Bird feed grains from Kurnool: foxtail, proso, little, kodo, barnyard and browntop millets, jowar, bajra, ragi, maize, sunflower and safflower, processed or unprocessed. No. 1 foxtail millet supplier in India.', BIRD);
-const foodBiz = business('food', foodLogoUrl, 'Food staples from Kurnool: millets, super foods, oil seeds, pulses, spices and cereals for retail packers, traders and bulk buyers.', FOOD);
-// a business that is described in full on this page is pointed to; the other one is named, so
-// nothing on a page points at something the page does not describe
-const inGraph = (key: 'bird' | 'food') => view === 'book' || view === key;
-const bizRef = (key: 'bird' | 'food', biz: typeof birdBiz) => (inGraph(key) ? { '@id': biz['@id'] } : { '@type': 'LocalBusiness', '@id': biz['@id'], name: biz.name, url: biz.url });
-const family = {
-  '@type': 'Organization', '@id': `${SITE}#family`, name: SITE_NAME, alternateName: ['Rithwik', 'Rithwik, Kurnool'], url: SITE, logo: foodLogoUrl,
-  description: 'A Kurnool family grain trade that began in 1925, today Rithwik Bird Feeds and Rithwik Industries.',
-  foundingDate: String(SINCE),
-  foundingLocation: { '@type': 'Place', name: 'Kurnool, Andhra Pradesh' },
-  subOrganization: [bizRef('bird', birdBiz), bizRef('food', foodBiz)],
-  address: officeAddress, telephone: CONTACT.call.tel,
-  // the office and the main warehouse, both shown on the map tabs
-  location: [
-    { '@type': 'Place', name: 'Rithwik office, Kurnool', address: officeAddress, geo: { '@type': 'GeoCoordinates', latitude: lat, longitude: lng }, hasMap: CONTACT.directions },
-    { '@type': 'Place', name: 'Rithwik main warehouse, Duvvur', address: { '@type': 'PostalAddress', streetAddress: '2/161, 2/162, Sanjivareddypalle', addressLocality: 'Duvvur', addressRegion: 'Andhra Pradesh', addressCountry: 'IN' }, geo: { '@type': 'GeoCoordinates', latitude: wLat, longitude: wLng }, hasMap: CONTACT.warehouseDirections },
-  ],
-};
-// Home > the business, for the path Google shows above a result (not on the home page itself)
-const crumbs = view === 'book' ? null : {
-  '@type': 'BreadcrumbList', '@id': `${pageUrl(view)}#breadcrumb`,
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: SITE },
-    { '@type': 'ListItem', position: 2, name: BRANDS[view].name, item: pageUrl(view) },
-  ],
-};
-const webPage = { '@type': 'WebPage', '@id': `${pageUrl(view)}#page`, url: pageUrl(view), name: meta.title, description: meta.description, inLanguage: 'en-IN', isPartOf: { '@id': `${SITE}#site` }, about: { '@id': view === 'bird' ? birdBiz['@id'] : view === 'food' ? foodBiz['@id'] : `${SITE}#family` },
-  primaryImageOfPage: { '@type': 'ImageObject', url: ogImage, width: 1200, height: 630 }, ...(crumbs ? { breadcrumb: { '@id': crumbs['@id'] } } : {}) };
-const schema = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    { '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: SITE_NAME, alternateName: ['Rithwik Bird Feeds', 'Rithwik Industries', 'Rithwik Kurnool'], inLanguage: 'en-IN', publisher: { '@id': `${SITE}#family` } },
-    webPage, family, ...(crumbs ? [crumbs] : []),
-    ...(view === 'book' ? [] : [{ '@type': 'FAQPage', '@id': `${pageUrl(view)}#faq`, url: pageUrl(view), isPartOf: { '@id': `${pageUrl(view)}#page` }, inLanguage: 'en-IN',
-      mainEntity: FAQ[view].map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }]),
-    ...(view === 'food' ? [] : [birdBiz]),
-    ...(view === 'bird' ? [] : [foodBiz]),
-  ],
-};
 void photo;
 const birdAboutPhoto = photo('bird-on-millet');
 const birdFlightPhoto = photo('bird-parakeet-flight');
@@ -178,19 +103,18 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
   <meta name="ICBM" content={`${lat}, ${lng}`} />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_IN" />
-  <meta property="og:site_name" content={SITE_NAME} />
-  <meta property="og:title" content={meta.ogTitle} />
+  <meta property="og:site_name" content="Rithwik Bird Feeds & Rithwik Industries" />
+  <meta property="og:title" content={meta.title} />
   <meta property="og:description" content={meta.description} />
   <meta property="og:url" content={pageUrl(view)} />
   <meta property="og:image" content={ogImage} />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content={view === 'bird' ? 'Rithwik Bird Feeds, Kurnool: No. 1 foxtail millet supplier in India' : view === 'food' ? 'Rithwik Industries, Kurnool: millets, super foods, pulses and spices' : 'Rithwik Bird Feeds and Rithwik Industries, Kurnool'} />
+  <meta property="og:image:alt" content={meta.title} />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={meta.ogTitle} />
+  <meta name="twitter:title" content={meta.title} />
   <meta name="twitter:description" content={meta.description} />
   <meta name="twitter:image" content={ogImage} />
-  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   <link rel="icon" href={`${base}icon-192.png`} type="image/png" sizes="192x192" />
   <link rel="icon" href={`${base}favicon.ico`} sizes="48x48" />
   <link rel="icon" href={`${base}favicon-32.png`} type="image/png" sizes="32x32" />
@@ -303,7 +227,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         <span class="ghost ghost--bird" data-ghost="Feeds" aria-hidden="true"></span>
         <div class="bird__intro bird__intro--pack">
           <div class="bird__copy">
-            <BirdH class="display" id="bird-title" {...hRole('bird')}><span class="display__a"><W t="Rithwik" d={0} /></span> <span class="display__b"><W t="Bird" d={1} /> <W t="feeds" d={2} /></span><span class="sr">, Kurnool: No. 1 foxtail millet supplier in India, bird seed wholesaler</span></BirdH>
+            <BirdH class="display" id="bird-title" {...hRole('bird')}><span class="display__a"><W t="Rithwik" d={0} /></span> <span class="display__b"><W t="Bird" d={1} /> <W t="feeds" d={2} /></span><span class="sr">, Kurnool</span></BirdH>
             <p class="bird__lede" data-rise style="--i:0">{BIRD.length} types of feeds in {nBird} grades, sold processed or unprocessed, from our warehouse at Duvvur.</p>
             <div class="actions" data-rise style="--i:1">
               <a class="pill pill--gold" href="#b-feeds" data-jump data-magnetic>See the feeds</a>
@@ -427,7 +351,7 @@ const waveMask = (n: number, first: boolean, last: boolean, w: typeof WAVE.desk)
         <span class="ghost ghost--food" data-ghost="Grain" aria-hidden="true"></span>
         <div class="food-hero__copy">
           <p class="food-hero__brand" data-rise style="--i:0">Rithwik Industries</p>
-          <FoodH class="display display--food" id="food-title" {...hRole('food')}><span class="sr">Rithwik Industries, Kurnool, bulk supplier of millets, quinoa, chia and pulses: </span><W t="Nature's" d={0} /> <em class="grainword"><W t="grain," d={1} /></em> <W t="nurtured" d={2} /> <W t="for" d={3} /> <W t="you" d={4} /></FoodH>
+          <FoodH class="display display--food" id="food-title" {...hRole('food')}><span class="sr">Rithwik Industries, Kurnool: </span><W t="Nature's" d={0} /> <em class="grainword"><W t="grain," d={1} /></em> <W t="nurtured" d={2} /> <W t="for" d={3} /> <W t="you" d={4} /></FoodH>
           <p class="food-hero__lede" data-rise style="--i:1">Millets, super foods, oil seeds, pulses, spices and cereals for retail packers, traders and bulk buyers.</p>
           <div class="actions" data-rise style="--i:2">
             <a class="pill pill--ink" href="#f-range" data-jump data-magnetic>Browse the range</a>

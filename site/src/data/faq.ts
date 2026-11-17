@@ -1,5 +1,4 @@
-// Questions buyers ask, shown near the end of each business page and sent to search engines as FAQPage
-// structured data (and in llms.txt). Written for the searches buyers actually type: "best foxtail millet
+// Questions buyers ask, shown near the end of each business page. Written for the searches buyers actually type: "best foxtail millet
 // supplier in India", "foxtail millet price", "korralu", "millets in bulk"... Lists and counts come from the
 // product data, so the answers stay true when products change.
 import { BIRD, FOOD, FOOD_GROUPS, BRANDS, CONTACT, lineCount, type Product } from './products';

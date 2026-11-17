@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 // The site's full address (served by the Cloudflare Worker "projectrithwik"). Every link, the
-// canonical tags, sitemap.xml, robots.txt, llms.txt and the structured data follow it.
+// canonical tags, sitemap.xml and robots.txt follow it.
 // The old GitHub Pages address (vamsi856.github.io/Projectrithwik/) forwards here.
 const SITE_URL = process.env.SITE_URL || 'https://rithwikbirdfeeds.com/';
 const url = new URL(SITE_URL);

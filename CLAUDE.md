@@ -11,13 +11,13 @@ script in Site.astro and 404.astro); www redirects by a Cloudflare Redirect Rule
 - The repo root (`index.html`, `_astro/`, `img/`, `birds/` …) is **generated**: `npm run build` builds `site/dist`
   and `site/scripts/publish.mjs` copies it to the root. Never edit root files by hand.
 - Three addresses, one shared page (`site/src/components/Site.astro`): `/` (the book), `/bird-feeds/` and `/human-food/`
-  (Rithwik Industries). Each has its own title, description, canonical and JSON-LD; `src/pages/*` just pick the view.
+  (Rithwik Industries). Each has its own title, description and canonical; `src/pages/*` just pick the view.
   Switching is in place (`main.ts` pushes the path); old `#bird-feeds` / `#human-food` links still work.
 - **Each address's HTML holds only its own view** (the small book is in all three). The other site is fetched from its
   own address on the first switch (`loadSite` in `main.ts`; it falls back to an ordinary page load). Keep it so: when
   every page held all three views, Google saw three copies of one page and listed only `/bird-feeds/` (16 Nov).
   Anything `main.ts` does to a site at start-up must also run for a site fetched later (see `loadSite`).
-- SEO files are generated: `src/pages/sitemap.xml.ts`, `robots.txt.ts`, `llms.txt.ts`, `site.webmanifest.ts`.
+- Generated files: `src/pages/sitemap.xml.ts`, `robots.txt.ts`, `site.webmanifest.ts` (no llms.txt since 17 Nov).
   Titles/descriptions and the Search Console code live in `src/data/seo.ts`. The site address is `SITE_URL` in
   `astro.config.mjs` (everything follows it, the catalogue QR code too). The base is `/`: fonts are declared inline in
   Site.astro and 404.astro from the base, so nothing hard-codes a path.
@@ -112,14 +112,14 @@ It replaced the client's Canva catalogue (which had the removed number 83097 827
 - Client grain photos show grain only: no hands, paper or background.
 - "Questions buyers ask" (FAQ, `Faq.astro`, data in `src/data/faq.ts`) sits between "How to order" and the contact
   section on both sites, for searches like "best foxtail millet supplier in India", "foxtail millet price", local names
-  (korralu, kangni...). Same Q&A go out as FAQPage JSON-LD (open view only) and in llms.txt. Lists come from products.ts.
-- Titles target buyer searches: Bird Feeds "No. 1 Foxtail Millet Supplier in India", Human Food "Bulk Millets, Quinoa
-  & Chia Supplier" (`seo.ts`).
+  (korralu, kangni...). It is page content and stays. Lists come from products.ts.
+- **No SEO (client, 17 Nov).** Titles and descriptions in `seo.ts` are just the business names and the town ("Rithwik
+  Bird Feeds", "Rithwik Industries", "Rithwik Bird Feeds & Rithwik Industries"); no structured data (JSON-LD), no
+  `llms.txt`, no keyword text hidden in the headings. The site stays listed: keep `index, follow`, the canonical tags,
+  `sitemap.xml` and `robots.txt`. Don't add keyword titles, structured data or llms.txt back without asking (they are
+  in git history before 17 Nov). The visible "No. 1 foxtail millet supplier" claim on the page is the client's and stays.
 - No extra pages (client, 16 Nov): plain information pages were added for Google sitelinks and removed again the same
-  day. Don't add product or information pages without asking; SEO work stays inside the three addresses.
-- Structured data (Site.astro): the site and the family organisation are named "Rithwik Bird Feeds & Rithwik
-  Industries" (what Google shows as the site name); 1925 is the founding year of the family organisation only, the
-  two firms carry the founders and no year; office and Duvvur warehouse are the organisation's `location`.
+  day. Don't add product or information pages without asking.
 - Photos under ~760px wide are upscaled with OpenCV EDSR (x2/x4) before `make_photos.py`; keep the original crop too.
 
 ## Still open
@@ -128,10 +128,8 @@ It replaced the client's Canva catalogue (which had the removed number 83097 827
   owner: Google Business Profile, directory listings (IndiaMART etc.). Steps in README.md.
 - From the 16 Nov SEO audit (README "SEO audit, 16 Nov 2026"), waiting on the owner: "Always Use HTTPS" in Cloudflare;
   the right PIN code (site says 518002, IndiaMART Bird Feeds and a company record say 518003); the IndiaMART
-  Industries listing says Ramapuram, Kadapa and "founded 2025"; opening hours and certificate numbers for the
-  structured data. When a Google Business Profile or a corrected listing is live, add its address to
-  `BRANDS.*.profiles` in `products.ts` (https://www.indiamart.com/rithwik-bird-feeds/ is waiting for the owner to
-  confirm it is theirs).
+  Industries listing says Ramapuram, Kadapa and "founded 2025". (Opening hours and certificate numbers were wanted for
+  the structured data, removed on 17 Nov.)
 - ISO: which standard (e.g. ISO 22000:2018) and the certifying body's badge, if the client sends them.
 - Human Food millets show the client's hulled-grain photos (`*-hulled-rithwik`); Bird Feeds shows whole grain.
   The unlabeled bright-yellow photo was taken as hulled proso: confirm with the client.

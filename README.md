@@ -13,29 +13,26 @@ how to order, contact form and footer.
 | Rithwik Bird Feeds | `/bird-feeds/` |
 | Rithwik Industries (human food) | `/human-food/` |
 
-Each page has its own title, description, canonical address and structured data, so Google can list the two businesses
+Each page has its own title, description and canonical address, so Google can list the two businesses
 separately. Switching between them happens in place, without a reload. Old `#bird-feeds` / `#human-food` links still work.
 Each address sends only its own content (the other business is fetched when the visitor switches to it), so Google
 reads three different pages. Before 16 Nov every address held all three, and Google listed only `/bird-feeds/`.
 
-## Search engines and AI assistants
+## Search engines
 
-All generated at build time from the site data, so they never go stale:
+**The SEO was removed on 17 Nov 2026 at the client's request.** The site stays in Google and Bing, but nothing is
+tuned for buyer searches any more:
 
-- `sitemap.xml`: the three pages, with the product photos for Google Images.
-- `robots.txt`: everything may be crawled, by search engines and AI crawlers alike.
-- `llms.txt`: a plain summary for ChatGPT, Claude, Gemini, Perplexity and others: what the two businesses sell,
-  every product and option, facts, certifications, locations and contact.
-- Structured data (schema.org JSON-LD) on every page: the family organisation and each business as a LocalBusiness /
-  WholesaleStore with address, map pin, phones, emails, GSTIN and its product catalogue.
-- Titles and descriptions: `site/src/data/seo.ts`, aimed at what buyers search ("No. 1 foxtail millet supplier in
-  India", "bulk millets, quinoa, chia, pulses").
-- "Questions buyers ask" on both business pages (`site/src/data/faq.ts`): best foxtail millet supplier, prices, bulk
-  buying, local names (korralu, kangni, thinai, navane...), delivery, certifications, contact. Also sent to Google as
-  FAQ structured data and included in llms.txt.
+- Titles and descriptions (`site/src/data/seo.ts`) are just the business names and the town: "Rithwik Bird Feeds",
+  "Rithwik Industries", "Rithwik Bird Feeds & Rithwik Industries".
+- No structured data (schema.org JSON-LD) and no `llms.txt`. Both were taken out; they are in git history before
+  17 Nov if they are ever wanted again.
 
-Lighthouse (mobile): SEO 100, Accessibility 100, Best practices 100 on all three pages. Performance in a local test
-on 16 Nov: 100 (home), 95 (Bird Feeds), 94 (Human Food); it was 85, 76 and 73 when every page held all three views.
+Still in place, because the site stays listed: `sitemap.xml` (the three pages and their photos), `robots.txt`
+(everything may be crawled), the canonical address of each page, and the "Questions buyers ask" section on both
+business pages (`site/src/data/faq.ts`), which is page content.
+
+Performance in a local mobile Lighthouse test on 16 Nov: 100 (home), 95 (Bird Feeds), 94 (Human Food).
 
 ### After handover (needs the owner's Google account)
 
@@ -54,6 +51,9 @@ on 16 Nov: 100 (home), 95 (Bird Feeds), 94 (Human Food); it was 85, 76 and 73 wh
    general searches like "foxtail millet supplier".
 
 ### SEO audit, 16 Nov 2026
+
+(On 17 Nov the client had the keyword titles, the structured data and `llms.txt` removed; see "Search engines"
+above. The owner's list below still applies to being found on Google Maps and in directories.)
 
 A full audit with the Claude SEO plugin (technical, content, structured data, speed, mobile, AI search, local
 listings, links, and what Google ranks today). What it changed in the code, all invisible to visitors: each address
@@ -83,7 +83,8 @@ What is left is outside the code. In order of effect:
 7. **Three or four more free listings** (TradeIndia, ExportersIndia), a Facebook / Instagram / YouTube page with the
    website in it, and a link from the websites of customers who have one.
 8. **For the developer, from the owner:** opening hours, certificate numbers (FSSAI, APEDA, the ISO standard and who
-   issued it) and which of the two firms holds each certificate. They go into the structured data.
+   issued it) and which of the two firms holds each certificate. (They were meant for the structured data, which
+   was removed on 17 Nov; they are still worth showing on the certifications.)
 
 General searches such as "foxtail millet supplier in India" are held by IndiaMART, TradeIndia and similar marketplaces
 with one page per product. With three pages and no extra pages (the client's choice), the site can lead for the brand
@@ -105,7 +106,7 @@ above are how it reaches the general searches. Only Google Ads puts a site at th
   nobody can send mail pretending to be @rithwikbirdfeeds.com. If the business later wants email on the domain
   (Google Workspace, Zoho or Hostinger Mail), replace those three records with the ones the email provider gives.
 - The site address lives in one place, `SITE_URL` in `site/astro.config.mjs`: every link, canonical tag, the
-  sitemap, robots.txt, llms.txt, the structured data and the catalogue QR code follow it.
+  sitemap, robots.txt and the catalogue QR code follow it.
 
 ### Checking the SEO again
 
@@ -141,7 +142,7 @@ npm run build
 ## Layout
 
 - `site/` is the Astro source. `site/src/components/Site.astro` is the whole page; `site/src/pages/` has one small
-  file per address plus the sitemap, robots.txt, llms.txt and manifest.
+  file per address plus the sitemap, robots.txt and manifest.
 - The repository root holds the built website (`index.html`, `bird-feeds/`, `human-food/`, `_astro/`, ...), which
   Cloudflare serves from `main` (GitHub Pages serves the same files only to forward the old address). Never edit
   those by hand.

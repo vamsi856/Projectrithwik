@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://rithwikbirdfeeds.com/</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://rithwikbirdfeeds.com/bird-feeds/</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <image:image><image:loc>https://rithwikbirdfeeds.com/img/foxtail-800.webp</image:loc></image:image>
@@ -33,7 +33,7 @@
   </url>
   <url>
     <loc>https://rithwikbirdfeeds.com/human-food/</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <image:image><image:loc>https://rithwikbirdfeeds.com/img/foxtail-hulled-rithwik-800.webp</image:loc></image:image>
