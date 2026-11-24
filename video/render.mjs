@@ -7,9 +7,10 @@
 //
 //   node render.mjs              everything
 //   node render.mjs --1080       1080p only (renders the picture at 1080p, quicker)
+//   node render.mjs --keep-picture   reuse the picture from last time (only the sound changed)
 import { bundle } from '@remotion/bundler';
 import { renderMedia, selectComposition, ensureBrowser } from '@remotion/renderer';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { browserExecutable } from './browser.mjs';
@@ -33,7 +34,9 @@ const pick = (id, inputProps) => selectComposition({ serveUrl, id, inputProps, b
 // 1. the picture
 const scale = only1080 ? 1 : 2;
 const master = path.join(out, `master-${only1080 ? '1080p' : '4k'}.mp4`);
-{
+// --keep-picture: only the sound changed, reuse the picture rendered last time
+if (args.includes('--keep-picture') && fs.existsSync(master)) log(`picture: keeping ${path.relative(root, master)}`);
+else {
   const inputProps = { soundtrack: 'calm', footage: 'footage' };
   const composition = await pick('RithwikAd-Calm', inputProps);
   let last = -1;
@@ -53,8 +56,9 @@ for (const [name, id] of [['Birdsong', 'RithwikAd-Birdsong'], ['Calm', 'RithwikA
   const wav = path.join(out, `mix-${name}.wav`);
   await renderMedia({ serveUrl, composition, inputProps, browserExecutable, outputLocation: wav, codec: 'wav', concurrency: 3 });
   // two-pass loudness normalisation (EBU R128 measurement)
-  const stats = execFileSync('ffmpeg', ['-hide_banner', '-nostdin', '-i', wav, '-af', `loudnorm=I=${LUFS}:TP=-1.5:LRA=11:print_format=json`, '-f', 'null', '-'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  const m = JSON.parse(String(stats).slice(String(stats).lastIndexOf('{')));
+  // (ffmpeg prints the measurement on stderr)
+  const { stderr } = spawnSync('ffmpeg', ['-hide_banner', '-nostdin', '-i', wav, '-af', `loudnorm=I=${LUFS}:TP=-1.5:LRA=11:print_format=json`, '-f', 'null', '-'], { encoding: 'utf8' });
+  const m = JSON.parse(stderr.slice(stderr.lastIndexOf('{')));
   audio[name] = path.join(out, `mix-${name}.m4a`);
   ff('-i', wav, '-af', `loudnorm=I=${LUFS}:TP=-1.5:LRA=11:measured_I=${m.input_i}:measured_TP=${m.input_tp}:measured_LRA=${m.input_lra}:measured_thresh=${m.input_thresh}:offset=${m.target_offset}:linear=true,aresample=48000`,
     '-c:a', 'aac', '-b:a', '320k', '-ar', '48000', audio[name]);
