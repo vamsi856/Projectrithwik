@@ -10,7 +10,7 @@ Two soundtracks, same picture:
   opens, the page-turn sound, then the site's calm Human Food music (tanpura drone, raga Mohanam) to the end.
 - **Calm**: one plain, calm piece all the way through (soft pad, felt piano, bass, D major).
 
-Files (in `out/`, not in git): `Rithwik-Ad-4K-Birdsong.mp4`, `Rithwik-Ad-4K-Calm.mp4` (3840x2160) and
+Files (in `out/Rithwik-Ad/`, not in git): `Rithwik-Ad-4K-Birdsong.mp4`, `Rithwik-Ad-4K-Calm.mp4` (3840x2160) and
 `Rithwik-Ad-1080p-Birdsong.mp4`, `Rithwik-Ad-1080p-Calm.mp4` (1920x1080). 25 fps (the Indian TV standard),
 H.264 + AAC 48 kHz, sound at -16 LUFS. A channel that asks for EBU R128 (-24 LKFS) gets it with
 `node render.mjs --lufs -24`.

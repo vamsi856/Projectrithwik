@@ -1,4 +1,4 @@
-// Renders the finished ad files into out/:
+// Renders the finished ad files into out/Rithwik-Ad/ (working files stay in out/):
 //   Rithwik-Ad-4K-Birdsong.mp4     Rithwik-Ad-4K-Calm.mp4       3840x2160, 25 fps
 //   Rithwik-Ad-1080p-Birdsong.mp4  Rithwik-Ad-1080p-Calm.mp4    1920x1080, 25 fps
 // The picture is rendered once in 4K (the two versions differ only in sound) and the 1080p files
@@ -16,10 +16,11 @@ import { browserExecutable } from './browser.mjs';
 
 const root = path.dirname(new URL(import.meta.url).pathname);
 const out = path.join(root, 'out');
+const finals = path.join(out, 'Rithwik-Ad');
 const args = process.argv.slice(2);
 const only1080 = args.includes('--1080');
 const LUFS = Number(args[args.indexOf('--lufs') + 1] || -16) || -16;
-fs.mkdirSync(out, { recursive: true });
+fs.mkdirSync(finals, { recursive: true });
 const ff = (...a) => execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-nostdin', '-y', ...a], { stdio: 'inherit' });
 const t0 = Date.now();
 const log = (m) => console.log(`[${((Date.now() - t0) / 1000).toFixed(0).padStart(4)} s] ${m}`);
@@ -69,7 +70,7 @@ if (!only1080) {
   log('1080p picture made from the 4K master');
 }
 for (const name of Object.keys(audio)) {
-  if (!only1080) ff('-i', master, '-i', audio[name], '-map', '0:v', '-map', '1:a', '-c', 'copy', '-shortest', ...tags, path.join(out, `Rithwik-Ad-4K-${name}.mp4`));
-  ff('-i', hd, '-i', audio[name], '-map', '0:v', '-map', '1:a', '-c', 'copy', '-shortest', ...tags, path.join(out, `Rithwik-Ad-1080p-${name}.mp4`));
+  if (!only1080) ff('-i', master, '-i', audio[name], '-map', '0:v', '-map', '1:a', '-c', 'copy', '-shortest', ...tags, path.join(finals, `Rithwik-Ad-4K-${name}.mp4`));
+  ff('-i', hd, '-i', audio[name], '-map', '0:v', '-map', '1:a', '-c', 'copy', '-shortest', ...tags, path.join(finals, `Rithwik-Ad-1080p-${name}.mp4`));
 }
-log('done: ' + fs.readdirSync(out).filter((f) => f.startsWith('Rithwik-Ad-')).join(', '));
+log('done: ' + path.relative(root, finals) + '/ ' + fs.readdirSync(finals).join(', '));
