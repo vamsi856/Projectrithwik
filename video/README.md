@@ -25,15 +25,42 @@ H.264 + AAC 48 kHz, sound at -16 LUFS. A channel that asks for EBU R128 (-24 LKF
 - Remotion is free for individuals and companies of up to 3 people; a larger company needs a Remotion company
   licence (remotion.dev/license).
 
+## Rendering on a Windows laptop
+
+Install once: [Node.js 22 LTS](https://nodejs.org), [Git](https://git-scm.com), and ffmpeg (in PowerShell:
+`winget install --id Gyan.FFmpeg -e`, then close and reopen PowerShell). Then, in PowerShell:
+
+```
+git clone https://github.com/vamsi856/Projectrithwik.git
+cd Projectrithwik
+git checkout claude/claude-seo-plugin-setup-ocysf7
+cd site
+npm install
+npx astro build
+cd ..\video
+npm install
+npx playwright install chromium
+node capture/record.cjs
+node audio/make-music.cjs
+node render.mjs
+```
+
+The four files land in `video\out\Rithwik-Ad\`. Recording takes about 15 minutes and rendering 20 to 60, depending
+on the laptop; keep it plugged in. `node render.mjs --1080` makes only the 1080p files, faster. (Written and tested
+on Linux; the Windows steps are the same commands, not yet run on Windows.)
+
 ## Making it again (after the site changes)
 
 ```
 cd site && npx astro build          # the site to record
 cd ../video && npm install
+npx playwright install chromium     # the recording browser (once)
 node capture/record.cjs             # records the three clips in 4K (about 10 minutes)
 node audio/make-music.cjs           # renders the music and sounds
-node render.mjs                     # the four finished files (about 30 to 60 minutes)
+node render.mjs                     # the four finished files (about 15 to 60 minutes)
 ```
+
+Needs Node.js 22 and ffmpeg on the PATH.
 
 - `capture/record.cjs`: what is recorded. Each clip is one page load; its segments say where the page is scrolled
   and for how long. `capture/clock.js` is the frame-by-frame clock that keeps every animation smooth.

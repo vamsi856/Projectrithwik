@@ -4,9 +4,10 @@ import { bundle } from '@remotion/bundler';
 import { renderStill, selectComposition, ensureBrowser } from '@remotion/renderer';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { browserExecutable } from './browser.mjs';
 
-const root = path.dirname(new URL(import.meta.url).pathname);
+const root = path.dirname(fileURLToPath(import.meta.url)); // (also right on Windows)
 const frames = process.argv.slice(2).map(Number);
 const footage = fs.existsSync(path.join(root, 'public', 'footage-1080')) ? 'footage-1080' : 'footage';
 const out = path.join(root, 'out', 'stills');

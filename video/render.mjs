@@ -13,9 +13,10 @@ import { renderMedia, selectComposition, ensureBrowser } from '@remotion/rendere
 import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { browserExecutable } from './browser.mjs';
 
-const root = path.dirname(new URL(import.meta.url).pathname);
+const root = path.dirname(fileURLToPath(import.meta.url)); // (also right on Windows)
 const out = path.join(root, 'out');
 const finals = path.join(out, 'Rithwik-Ad');
 const args = process.argv.slice(2);
