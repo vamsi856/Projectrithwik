@@ -132,6 +132,13 @@ npm run catalogue   # rebuilds the PDF (needs Playwright's Chromium)
 npm run build
 ```
 
+## Ad video (TV and web)
+
+`video/` makes a 60-second ad from the website itself, in 4K and 1080p, with two soundtracks (the site's birdsong and
+Human Food music, or one plain calm piece). The site is recorded frame by frame in Chromium and edited in Remotion;
+the music is generated, so it is free to broadcast. The finished files are not in git (they are large): see
+`video/README.md` to make them again after the site changes. `video/` is not part of the website (`.assetsignore`).
+
 ## Stack
 
 - [Astro 5](https://astro.build) (static output, TypeScript)

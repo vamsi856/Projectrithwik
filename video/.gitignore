@@ -1,0 +1,4 @@
+# made by the scripts (see README.md): recordings, generated sound, renders
+out/
+public/footage/*.mp4
+public/audio/

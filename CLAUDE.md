@@ -8,6 +8,9 @@ script in Site.astro and 404.astro); www redirects by a Cloudflare Redirect Rule
 ## Layout
 
 - `site/` is the source: an Astro 5 static site (GSAP + ScrollTrigger, Lenis, three.js for the 3D packs).
+- `video/` is the 60 s TV/web ad (Nov 2026): the site recorded frame by frame on a virtual clock
+  (`video/capture/`), edited in Remotion (`video/src/timeline.ts`), generated music (`video/audio/synth.js`).
+  Not part of the website (listed in `.assetsignore`); its renders and recordings are not in git. See video/README.md.
 - The repo root (`index.html`, `_astro/`, `img/`, `birds/` …) is **generated**: `npm run build` builds `site/dist`
   and `site/scripts/publish.mjs` copies it to the root. Never edit root files by hand.
 - Three addresses, one shared page (`site/src/components/Site.astro`): `/` (the book), `/bird-feeds/` and `/human-food/`

@@ -1,0 +1,24 @@
+{
+  "name": "rithwik-ad",
+  "private": true,
+  "type": "module",
+  "description": "The Rithwik TV / web ad: the website recorded frame by frame, edited in Remotion.",
+  "scripts": {
+    "capture": "node capture/record.cjs",
+    "music": "node audio/make-music.cjs",
+    "studio": "remotion studio",
+    "render": "node render.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.546",
+    "@remotion/fonts": "4.0.546",
+    "@remotion/transitions": "^4.0.546",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.546"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,123 @@
+{
+ "open": {
+  "file": "footage/open.mp4",
+  "fps": 25,
+  "width": 3840,
+  "height": 2160,
+  "frames": 325,
+  "segments": [
+   {
+    "name": "book",
+    "from": 0,
+    "frames": 140
+   },
+   {
+    "name": "turn",
+    "from": 140,
+    "frames": 185
+   }
+  ],
+  "clicks": [
+   {
+    "frame": 140,
+    "x": 638,
+    "y": 541
+   }
+  ]
+ },
+ "bird": {
+  "file": "footage/bird.mp4",
+  "fps": 25,
+  "width": 3840,
+  "height": 2160,
+  "frames": 1239,
+  "segments": [
+   {
+    "name": "hero",
+    "from": 0,
+    "frames": 150
+   },
+   {
+    "name": "about",
+    "from": 150,
+    "frames": 163
+   },
+   {
+    "name": "legacy",
+    "from": 313,
+    "frames": 125
+   },
+   {
+    "name": "packs",
+    "from": 438,
+    "frames": 113
+   },
+   {
+    "name": "birds",
+    "from": 551,
+    "frames": 113
+   },
+   {
+    "name": "feeds",
+    "from": 664,
+    "frames": 150
+   },
+   {
+    "name": "story",
+    "from": 814,
+    "frames": 175
+   },
+   {
+    "name": "vision",
+    "from": 989,
+    "frames": 150
+   },
+   {
+    "name": "certs",
+    "from": 1139,
+    "frames": 100
+   }
+  ],
+  "clicks": []
+ },
+ "food": {
+  "file": "footage/food.mp4",
+  "fps": 25,
+  "width": 3840,
+  "height": 2160,
+  "frames": 864,
+  "segments": [
+   {
+    "name": "hero",
+    "from": 0,
+    "frames": 150
+   },
+   {
+    "name": "about",
+    "from": 150,
+    "frames": 138
+   },
+   {
+    "name": "packs",
+    "from": 288,
+    "frames": 113
+   },
+   {
+    "name": "range",
+    "from": 401,
+    "frames": 175
+   },
+   {
+    "name": "story",
+    "from": 576,
+    "frames": 150
+   },
+   {
+    "name": "vision",
+    "from": 726,
+    "frames": 138
+   }
+  ],
+  "clicks": []
+ }
+}
